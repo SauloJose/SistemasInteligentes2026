@@ -11,7 +11,8 @@ pkg load control % Carrega o pacote de controle no Octave
 % ---- 1. Sistema Real ----
 omega = 1;             % frequência da função seno
 dt = 0.01;             % intervalo de amostragem
-t = 0:dt:10;           % 10 segundos de dados
+TMAX = 10;             % Tempo máximo da amostragem
+t = (0:dt:TMAX)';         % Vetor de tempo
 N_execucoes = 10;      % Quantidade de simulações para teste de robustez
 
 % Definindo o Modelo Contínuo e Discreto
@@ -48,7 +49,7 @@ for exec = 1:N_execucoes
   % Resetando as condições iniciais para a nova execução
   P = eye(grau);
   x_real = [1; 0];
-  x_est  = [1; 0];
+  x_est  = [10; 0];
 
   res_real = zeros(length(t), grau);
   res_est  = zeros(length(t), grau);
