@@ -1,4 +1,4 @@
-% Projeto de um filtro de Kalman - Modelo 1 (Linear) - Múltiplas Execuções
+% Projeto de um filtro de Kalman - Modelo 1 (Linear) - Não considerando o efeito da discretização
 % Por: Saulo José Almeida Silva
 % Instituição: Universidade Federal de Campina Grande
 % Matéria: Sistemas Inteligentes.
@@ -26,17 +26,13 @@ Ad = expm(A*dt);
 Hd = H;
 Bd = B;
 
+
 % --- 2. Parâmetros das Covariâncias ---
 % (A dedução analítica exata se mantém)
-var_w1 = 1;
-var_w2 = 1;
-Q11 = var_w1 * dt + var_w2 * (dt^3)/3;
-Q12 = (var_w2 - var_w1 * omega^2) * (dt^2)/2;
-Q21 = Q12;
-Q22 = var_w2 * dt + var_w1 * (omega^4) * (dt^3)/3;
-Qd = [ Q11, Q12 ;
-       Q21, Q22 ];
-R = 1;
+var_w1 = 0.01;
+var_w2 = 0.1;
+Qd = [ var_w1, 0; 0, var_w2]
+R = 0.1;
 
 % Matriz para armazenar todos os MSEs: linhas = tempo, colunas = execução
 todos_mse = zeros(length(t), N_execucoes);

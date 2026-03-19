@@ -6,7 +6,7 @@ pkg load control;
 
 % ---- 1. Configurações da Simulação Real ----
 A_real = 1.5;           % Amplitude real
-omega_real = 2.0;       % Frequência real (rad/s)
+omega_real = 1.2;       % Frequência real (rad/s)
 z_real = omega_real^2;  % Frequência ao quadrado real
 dt = 0.01;              % Período de amostragem
 TMAX = 10;              % Tempo máximo
@@ -16,8 +16,8 @@ N_execucoes = 10;
 % ---- 2. Parâmetros do Filtro ----
 grau = 3;               % Estado: [y; y_dot; z]
 H = [1, 0, 0];          % Observação linear
-R = 0.05;               % Covariância da medição (Ruído do sensor)
-sig_z_sq = 0.1;         % Incerteza do processo sobre z
+R = 0.1;                % Covariância da medição (Ruído do sensor)
+sig_z_sq = 0.001;         % Incerteza do processo sobre z
 
 % ---- 3. Simulação de Monte Carlo ----
 todos_mse = zeros(length(t), N_execucoes);
@@ -33,7 +33,7 @@ omega_real_vetor = omega_real * ones(length(t), 1);
 
 for exec = 1:N_execucoes
     % Condições Iniciais do Filtro (com erro proposital)
-    x_est = [y_real_vetor(1); ydot_real_vetor(1); 1.0]; % z começa em 1.0
+    x_est = [2,5,10]; % z começa em 1.0
     P = eye(grau) * 0.5;
 
     est_param = zeros(length(t), grau);
@@ -93,39 +93,63 @@ mse_medio_geral = mean(todos_mse, 2);
 mse_medio_z     = mean(mse_z, 2);
 mse_medio_omega = mean(mse_omega, 2);
 
+% Definição global de tamanho de fonte
+fSize = 14;
+
 % ---- 4. Plotagem ----
 
 % Figura 1: Rastreamento e Convergência (Última Execução)
 figure(1);
 subplot(3,1,1);
-plot(t, y_real_vetor, 'b', 'LineWidth', 1.5); hold on;
-plot(t, est_param(:,1), 'r--', 'LineWidth', 1);
-title('1. Rastreamento do Sinal (y)'); ylabel('Amplitude'); legend('Real','EKF'); grid on;
+plot(t, y_real_vetor, 'b', 'LineWidth', 2); hold on;
+plot(t, est_param(:,1), 'r--', 'LineWidth', 1.5);
+title('1. Rastreamento do Sinal ($y$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('Amplitude', 'FontSize', fSize);
+legend({'Real','EKF'}, 'FontSize', fSize-2, 'Location', 'northeast');
+grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,2);
-plot(t, z_real_vetor, 'k--', 'LineWidth', 1.5); hold on;
-plot(t, est_param(:,3), 'g', 'LineWidth', 1.5);
-title('2. Convergência de z (\omega^2)'); ylabel('rad^2/s^2'); grid on;
+plot(t, z_real_vetor, 'k--', 'LineWidth', 2); hold on;
+plot(t, est_param(:,3), 'g', 'LineWidth', 2);
+title('2. Convergência de $z$ ($\omega^2$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('rad$^2$/s$^2$', 'FontSize', fSize, 'Interpreter', 'latex');
+grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,3);
-plot(t, omega_real_vetor, 'k--', 'LineWidth', 1.5); hold on;
-plot(t, omega_est_vetor, 'm', 'LineWidth', 1.5);
-title('3. Frequência Recuperada (\omega)'); ylabel('rad/s'); grid on;
+plot(t, omega_real_vetor, 'k--', 'LineWidth', 2); hold on;
+plot(t, omega_est_vetor, 'm', 'LineWidth', 2);
+title('3. Frequência Recuperada ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('rad/s', 'FontSize', fSize);
+xlabel('Tempo (s)', 'FontSize', fSize); % Adicionado xlabel para melhor acabamento
+grid on;
+set(gca, 'FontSize', fSize);
 
 % Figura 2: Análise de Robustez - MSE do Sinal (Estilo Modelo 2)
 figure(2);
-plot(t, todos_mse, 'Color', [0.7 0.7 0.7], 'LineWidth', 1); hold on;
-plot(t, mse_medio_geral, 'k', 'LineWidth', 2);
-title(sprintf('Erro Quadrático Médio (MSE) do Sinal - %d Execuções', N_execucoes));
-xlabel('Tempo (s)'); ylabel('MSE Progressivo');
-legend('Execuções Individuais', 'Média Geral'); grid on;
+plot(t, todos_mse, 'Color', [0.7 0.7 0.7], 'LineWidth', 1.5); hold on;
+plot(t, mse_medio_geral, 'k', 'LineWidth', 2.5);
+title(sprintf('Erro Quadrático Médio (MSE) do Sinal - %d Execuções', N_execucoes), 'FontSize', fSize);
+xlabel('Tempo (s)', 'FontSize', fSize);
+ylabel('MSE Progressivo', 'FontSize', fSize);
+legend({'Execuções Individuais', 'Média Geral'}, 'FontSize', fSize-2, 'Location', 'northeast');
+grid on;
+set(gca, 'FontSize', fSize);
 
 % Figura 3: MSE Médio por Estado
 figure(3);
 subplot(2,1,1);
-plot(t, mse_medio_z, 'g', 'LineWidth', 2);
-title('MSE Médio: Frequência ao Quadrado (z)'); grid on;
+plot(t, mse_medio_z, 'g', 'LineWidth', 2.5);
+title('MSE Médio: Frequência ao Quadrado ($z$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('MSE', 'FontSize', fSize);
+grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(2,1,2);
-plot(t, mse_medio_omega, 'r', 'LineWidth', 2);
-title('MSE Médio: Frequência Angular (\omega)'); xlabel('Tempo (s)'); grid on;
+plot(t, mse_medio_omega, 'r', 'LineWidth', 2.5);
+title('MSE Médio: Frequência Angular ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('MSE', 'FontSize', fSize);
+xlabel('Tempo (s)', 'FontSize', fSize);
+grid on;
+set(gca, 'FontSize', fSize);

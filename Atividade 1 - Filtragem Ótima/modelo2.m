@@ -24,14 +24,14 @@ F = [1 dt 0;
 
 % Covariância do Ruído de Processo (Qc[1,1] = 0 conforme pedido)
 sig_omega = 0.001; % Incerteza na frequência
-sig_A = 0.02;     % Incerteza na amplitude
+sig_A = 0.001;     % Incerteza na amplitude
 
 Qk = [ (sig_omega^2)*(dt^3)/3, (sig_omega^2)*(dt^2)/2, 0;
        (sig_omega^2)*(dt^2)/2, (sig_omega^2)*dt,       0;
        0,                      0,               (sig_A^2)*dt ];
 
 % Covariância da Medição (Escalar)
-R = 0.05;
+R = 0.1;
 
 % ---- 3. Simulação de Monte Carlo ----
 todos_mse = zeros(length(t), N_execucoes);
@@ -48,7 +48,7 @@ amp_real_vetor  = A_real * ones(length(t), 1);     % Constante
 
 for exec = 1:N_execucoes
     % Condições Iniciais do Filtro (Estimativa inicial com erro)
-    x_est = [0.1; 1.0; 1.0]; % Começa com valores diferentes do real [fase, fre. ang, Amplitude]
+    x_est = [0; -1.0; -1.0]; % Começa com valores diferentes do real [fase, fre. ang, Amplitude]
     P = eye(grau) * 0.1;
 
     res_real = A_real * sin(omega_real * t + phi0_real);
@@ -109,49 +109,69 @@ mse_medio_fase  = mean(mse_fase, 2);
 mse_medio_freq  = mean(mse_freq, 2);
 mse_medio_amp   = mean(mse_amp, 2);
 
-% ---- 4. Plotagem ----
+% Definição global de tamanho de fonte para facilitar ajustes futuros
+fSize = 14;
+
+% Definição global de tamanho de fonte para padronização
+fSize = 14;
+
+% ---- Figure 1: Rastreamento e Parâmetros ----
 figure(1);
 subplot(3,1,1);
-plot(t, res_real, 'b', 'LineWidth', 1.5); hold on;
-plot(t, res_est, 'r--', 'LineWidth', 1);
-title('Rastreamento do Sinal (Última Execução)');
-legend('Real', 'EKF'); grid on;
+plot(t, res_real, 'b', 'LineWidth', 2); hold on;
+plot(t, res_est, 'r--', 'LineWidth', 1.5);
+title('Rastreamento do Sinal (Última Execução)', 'FontSize', fSize, 'Interpreter', 'latex');
+legend({'Real', 'EKF'}, 'FontSize', fSize-2, 'Location', 'northeast');
+grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,2);
-plot(t, est_param(:,2), 'm', 'LineWidth', 1.5); hold on;
-line([t(1) t(end)], [omega_real omega_real], 'Color', 'k', 'LineStyle', '--');
-title('Convergência da Frequência (\omega)');
-legend('Estimado', 'Real'); grid on;
+plot(t, est_param(:,2), 'm', 'LineWidth', 2); hold on;
+line([t(1) t(end)], [omega_real omega_real], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 1.5);
+title('Convergência da Frequência ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
+legend({'Estimado', 'Real'}, 'FontSize', fSize-2, 'Location', 'northeast');
+grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,3);
-plot(t, est_param(:,3), 'm', 'LineWidth', 1.5); hold on;
-line([t(1) t(end)], [A_real A_real], 'Color', 'k', 'LineStyle', '--');
-title('Convergência da Amplitude (A)');
-legend('Estimado', 'Real'); grid on;
-
-figure(2);
-plot(t, todos_mse, 'Color', [0.8 0.8 0.8]); hold on;
-plot(t, mse_medio_geral, 'k', 'LineWidth', 2);
-title('Análise de Monte Carlo: MSE do Sinal');
-xlabel('Tempo (s)'); ylabel('MSE');
+plot(t, est_param(:,3), 'm', 'LineWidth', 2); hold on;
+line([t(1) t(end)], [A_real A_real], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 1.5);
+title('Convergência da Amplitude ($A$)', 'FontSize', fSize, 'Interpreter', 'latex');
+legend({'Estimado', 'Real'}, 'FontSize', fSize-2, 'Location', 'northeast');
 grid on;
+set(gca, 'FontSize', fSize);
 
-% ---- Gráficos do MSE dos Estados Individuais ----
+% ---- Figure 2: Monte Carlo MSE Geral ----
+figure(2);
+plot(t, todos_mse, 'Color', [0.8 0.8 0.8], 'LineWidth', 1.5); hold on;
+plot(t, mse_medio_geral, 'k', 'LineWidth', 2.5);
+title('Análise de Monte Carlo: MSE do Sinal', 'FontSize', fSize, 'Interpreter', 'latex');
+xlabel('Tempo (s)', 'FontSize', fSize);
+ylabel('MSE', 'FontSize', fSize);
+legend({'Execuções Individuais', 'Média Geral'}, 'FontSize', fSize-2, 'Location', 'northeast');
+grid on;
+set(gca, 'FontSize', fSize);
+
+% ---- Figure 3: MSE dos Estados Individuais ----
 figure(3);
 subplot(3,1,1);
-plot(t, mse_medio_fase, 'b', 'LineWidth', 2);
-title('Análise de Monte Carlo: MSE Médio da Fase');
-xlabel('Tempo (s)'); ylabel('MSE');
+plot(t, mse_medio_fase, 'b', 'LineWidth', 2.5);
+title('Análise de Monte Carlo: MSE Médio da Fase', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('MSE', 'FontSize', fSize);
 grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,2);
-plot(t, mse_medio_freq, 'r', 'LineWidth', 2);
-title('Análise de Monte Carlo: MSE Médio da Frequência');
-xlabel('Tempo (s)'); ylabel('MSE');
+plot(t, mse_medio_freq, 'r', 'LineWidth', 2.5);
+title('Análise de Monte Carlo: MSE Médio da Frequência ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('MSE', 'FontSize', fSize);
 grid on;
+set(gca, 'FontSize', fSize);
 
 subplot(3,1,3);
-plot(t, mse_medio_amp, 'g', 'LineWidth', 2);
-title('Análise de Monte Carlo: MSE Médio da Amplitude');
-xlabel('Tempo (s)'); ylabel('MSE');
+plot(t, mse_medio_amp, 'g', 'LineWidth', 2.5);
+title('Análise de Monte Carlo: MSE Médio da Amplitude ($A$)', 'FontSize', fSize, 'Interpreter', 'latex');
+xlabel('Tempo (s)', 'FontSize', fSize);
+ylabel('MSE', 'FontSize', fSize);
 grid on;
+set(gca, 'FontSize', fSize);
