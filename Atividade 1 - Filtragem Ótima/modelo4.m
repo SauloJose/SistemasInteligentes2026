@@ -34,7 +34,7 @@ omega_real_vetor = omega_real * ones(length(t), 1);
 for exec = 1:N_execucoes
     % Condições Iniciais: [y; y_dot; omega]
     % Chute inicial: Começa com frequência errada (1.0) para testar convergência
-    x_est = [2;2;3];
+    x_est = [0;1;-1];
     P = eye(grau) * 0.5;
 
     est_param = zeros(length(t), grau);

@@ -5,7 +5,7 @@ clc; clear all; close all;
 pkg load control;
 
 % ---- 1. Configurações da Simulação Real ----
-A_real = 1.5;           % Amplitude real
+A_real = 1.5;            % Amplitude real
 omega_real = 1.2;       % Frequência real (rad/s)
 z_real = omega_real^2;  % Frequência ao quadrado real
 dt = 0.01;              % Período de amostragem
@@ -22,6 +22,7 @@ sig_z_sq = 0.001;         % Incerteza do processo sobre z
 % ---- 3. Simulação de Monte Carlo ----
 todos_mse = zeros(length(t), N_execucoes);
 mse_y     = zeros(length(t), N_execucoes);
+mse_ydot  = zeros(length(t), N_execucoes); % ADICIONADO: Matriz para MSE de y_dot
 mse_z     = zeros(length(t), N_execucoes);
 mse_omega = zeros(length(t), N_execucoes);
 
@@ -33,7 +34,7 @@ omega_real_vetor = omega_real * ones(length(t), 1);
 
 for exec = 1:N_execucoes
     % Condições Iniciais do Filtro (com erro proposital)
-    x_est = [2,5,10]; % z começa em 1.0
+    x_est = [10,10,-10]; % z começa em 1.0 [y; ydot; z]
     P = eye(grau) * 0.5;
 
     est_param = zeros(length(t), grau);
@@ -74,22 +75,26 @@ for exec = 1:N_execucoes
 
         % Salva resultados
         est_param(i, :) = x_est';
+        % Usa abs para garantir estabilidade numérica na raiz
         omega_est_vetor(i) = sqrt(abs(x_est(3)));
     end
 
     % --- CÁLCULO DOS ERROS DA EXECUÇÃO ATUAL ---
     err_y     = y_real_vetor - est_param(:, 1);
+    err_ydot  = ydot_real_vetor - est_param(:, 2); % ADICIONADO: Erro de y_dot
     err_z     = z_real_vetor - est_param(:, 3);
     err_omega = omega_real_vetor - omega_est_vetor;
 
     todos_mse(:, exec) = cumsum(err_y.^2) ./ (1:length(t))';
     mse_y(:, exec)     = todos_mse(:, exec);
+    mse_ydot(:, exec)  = cumsum(err_ydot.^2) ./ (1:length(t))'; % ADICIONADO: MSE progressivo de y_dot
     mse_z(:, exec)     = cumsum(err_z.^2) ./ (1:length(t))';
     mse_omega(:, exec) = cumsum(err_omega.^2) ./ (1:length(t))';
 end
 
 % Médias das execuções
 mse_medio_geral = mean(todos_mse, 2);
+mse_medio_ydot  = mean(mse_ydot, 2); % ADICIONADO: Média do MSE de y_dot
 mse_medio_z     = mean(mse_z, 2);
 mse_medio_omega = mean(mse_omega, 2);
 
@@ -110,10 +115,10 @@ grid on;
 set(gca, 'FontSize', fSize);
 
 subplot(3,1,2);
-plot(t, z_real_vetor, 'k--', 'LineWidth', 2); hold on;
-plot(t, est_param(:,3), 'g', 'LineWidth', 2);
-title('2. Convergência de $z$ ($\omega^2$)', 'FontSize', fSize, 'Interpreter', 'latex');
-ylabel('rad$^2$/s$^2$', 'FontSize', fSize, 'Interpreter', 'latex');
+plot(t, ydot_real_vetor, 'k--', 'LineWidth', 2); hold on;
+plot(t, est_param(:,2), 'g', 'LineWidth', 2);
+title('2. Convergência de ($\dot{y}$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('Taxa', 'FontSize', fSize, 'Interpreter', 'latex');
 grid on;
 set(gca, 'FontSize', fSize);
 
@@ -122,7 +127,7 @@ plot(t, omega_real_vetor, 'k--', 'LineWidth', 2); hold on;
 plot(t, omega_est_vetor, 'm', 'LineWidth', 2);
 title('3. Frequência Recuperada ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
 ylabel('rad/s', 'FontSize', fSize);
-xlabel('Tempo (s)', 'FontSize', fSize); % Adicionado xlabel para melhor acabamento
+xlabel('Tempo (s)', 'FontSize', fSize);
 grid on;
 set(gca, 'FontSize', fSize);
 
@@ -137,16 +142,23 @@ legend({'Execuções Individuais', 'Média Geral'}, 'FontSize', fSize-2, 'Locati
 grid on;
 set(gca, 'FontSize', fSize);
 
-% Figura 3: MSE Médio por Estado
+% Figura 3: MSE Médio por Estado - ATUALIZADO PARA 3 SUBPLOTS
 figure(3);
-subplot(2,1,1);
+subplot(3,1,1); % MODIFICADO: De (2,1,1) para (3,1,1)
+plot(t, mse_medio_ydot, 'm', 'LineWidth', 2.5); % ADICIONADO: Plot de y_dot
+title('MSE Médio: Derivada do Sinal ($\dot{y}$)', 'FontSize', fSize, 'Interpreter', 'latex');
+ylabel('MSE', 'FontSize', fSize);
+grid on;
+set(gca, 'FontSize', fSize);
+
+subplot(3,1,2); % MODIFICADO: De (2,1,2) para (3,1,2)
 plot(t, mse_medio_z, 'g', 'LineWidth', 2.5);
 title('MSE Médio: Frequência ao Quadrado ($z$)', 'FontSize', fSize, 'Interpreter', 'latex');
 ylabel('MSE', 'FontSize', fSize);
 grid on;
 set(gca, 'FontSize', fSize);
 
-subplot(2,1,2);
+subplot(3,1,3); % ADICIONADO: Terceiro subplot
 plot(t, mse_medio_omega, 'r', 'LineWidth', 2.5);
 title('MSE Médio: Frequência Angular ($\omega$)', 'FontSize', fSize, 'Interpreter', 'latex');
 ylabel('MSE', 'FontSize', fSize);

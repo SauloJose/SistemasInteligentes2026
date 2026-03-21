@@ -44,7 +44,7 @@ freq_real_vetor = omega_real * ones(length(t), 1);
 
 for exec = 1:N_execucoes
     % Condições Iniciais do Filtro (Estimativa inicial com erro)
-    x_est = [0; -4]; % [fase, fre. ang]
+    x_est = [0; 1]; % [fase, fre. ang]
     P = eye(grau) * 0.1;
 
     res_real = A * sin(omega_real * t + phi0_real);
