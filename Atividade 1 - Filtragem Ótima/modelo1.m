@@ -12,8 +12,10 @@ pkg load control % Carrega o pacote de controle no Octave
 omega = 1;             % frequência da função seno
 dt = 0.01;             % intervalo de amostragem
 TMAX = 10;             % Tempo máximo da amostragem
-t = (0:dt:TMAX)';         % Vetor de tempo
+t = (0:dt:TMAX)';      % Vetor de tempo
 N_execucoes = 10;      % Quantidade de simulações para teste de robustez
+Amp = 1;               % Valor da amplitude da função
+phi = pi/4;            % Valor do ângulo inicial
 
 % Definindo o Modelo Contínuo e Discreto
 A = [0 1; -omega^2 0];
@@ -43,12 +45,14 @@ todos_mse = zeros(length(t), N_execucoes);
 
 num_sensores = length(var_lidas);
 
+
+% Valor
 % --- 3. Laço de Múltiplas Execuções (Monte Carlo) ---
 for exec = 1:N_execucoes
 
   % Resetando as condições iniciais para a nova execução
   P = eye(grau);
-  x_real = [1; 0];
+  x_real = [Amp*sin(phi); Amp*omega*cos(phi)];
   x_est  = [5; 2];
 
   res_real = zeros(length(t), grau);
