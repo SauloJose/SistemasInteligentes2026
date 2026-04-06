@@ -135,3 +135,16 @@ ylabel('MSE Progressivo');
 legend('Execuções Individuais', 'Média Geral', 'location', 'northeast');
 grid on;
 
+figure(3)
+plot(t, z_medido(:,1), 'r', 'markersize', 4); hold off;
+title('Sinal Medido');
+ylabel('Amplitude');
+legend('Medição Ruidosa', 'location', 'northeast');
+grid on;
+
+figure(4)
+plot(t, res_real(:,1), 'b', 'linewidth', 2); hold on;
+title('Sinal Real');
+ylabel('Amplitude');
+legend('Sinal Real', 'location', 'northeast');
+grid on;

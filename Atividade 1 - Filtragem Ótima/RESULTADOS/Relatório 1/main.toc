@@ -1,0 +1,49 @@
+\babel@toc {brazil}{}\relax 
+\contentsline {section}{\numberline {1}INTRODUÇÃO}{1}{section.1}%
+\contentsline {section}{\numberline {2}FUNDAMENTAÇÃO TEÓRICA}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modelos Dinâmicos de Sistemas com Modelagem dos Erros}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Discretização de Sistemas Contínuos}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Filtro de Kalman Linear (LKF)}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Filtro de Kalman Estendido (EKF)}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Discretização da Covariância do Ruído de Processo}{7}{subsection.2.5}%
+\contentsline {section}{\numberline {3}OBJETIVOS}{9}{section.3}%
+\contentsline {section}{\numberline {4}METODOLOGIA E FORMULAÇÃO DOS MODELOS}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Metodologia de Avaliação e Cenários de Teste}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Formulação Matemática dos Modelos}{10}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Modelo 1: Oscilador Harmônico Linear (LKF Padrão)}{10}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Modelo 2: Estimação Não Linear de Parâmetros via EKF}{12}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Modelo 3: EKF de 2 Estados (Amplitude Conhecida)}{13}{subsubsection.4.2.3}%
+\contentsline {subsubsection}{\numberline {4.2.4}Modelo 4: EKF Alternativo de 3 Estados (Sinal, Derivada e Frequência)}{14}{subsubsection.4.2.4}%
+\contentsline {subsubsection}{\numberline {4.2.5}Modelo 5: EKF de 3 Estados com Frequência ao Quadrado}{16}{subsubsection.4.2.5}%
+\contentsline {section}{\numberline {5}RESULTADOS E DISCUSSÕES}{17}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Análise do Modelo 1: Abordagem Linear (\textit {Baseline})}{17}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Testes 1 e 2: Desempenho em Cenário Nominal}{18}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Teste 3: Estresse de Ruído e Incerteza Inicial}{19}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Teste 4: Impacto da Não Discretização da Covariância $\mathbf {Q}$}{20}{subsubsection.5.1.3}%
+\contentsline {subsubsection}{\numberline {5.1.4}Conclusão da Parcial do Modelo 1}{21}{subsubsection.5.1.4}%
+\contentsline {subsection}{\numberline {5.2}Análise do Modelo 2: Abordagem de Três Estados ($\phi , \omega , A$)}{21}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Teste 1: Cenário Nominal e Convergência Ideal}{21}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Teste 2: Inversão de Frequência 1}{22}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Teste 3: Inversão de Frequência 2}{23}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Conclusão Parcial do Modelo 2}{24}{subsubsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.3}Análise do Modelo 3: Redução de Ordem e Estabilização ($\phi , \omega $)}{25}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Teste 1: Desempenho em Cenário Nominal}{25}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Teste 2: Robustez à Inversão de Sinais e Ambiguidade}{26}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}Teste 3: Convergência em Condições de Desajuste Acentuado}{27}{subsubsection.5.3.3}%
+\contentsline {subsubsection}{\numberline {5.3.4}Conclusão Parcial do Modelo 3}{28}{subsubsection.5.3.4}%
+\contentsline {subsection}{\numberline {5.4}Análise do Modelo 4: Estados Dinâmicos $(x, \dot {x}, \omega )$}{29}{subsection.5.4}%
+\contentsline {subsubsection}{\numberline {5.4.1}Teste 1: Desempenho em Cenário Nominal}{29}{subsubsection.5.4.1}%
+\contentsline {subsubsection}{\numberline {5.4.2}Teste 2: Resolução da Ambiguidade de Sinal}{30}{subsubsection.5.4.2}%
+\contentsline {subsubsection}{\numberline {5.4.3}Teste 3: Robustez à Estimativa Inicial e Transiente de Adaptação}{31}{subsubsection.5.4.3}%
+\contentsline {subsubsection}{\numberline {5.4.4}Conclusão da Parcial do Modelo 4}{32}{subsubsection.5.4.4}%
+\contentsline {subsection}{\numberline {5.5}Análise do Modelo 5: Resolução via Frequência ao Quadrado ($x, \dot {x}, z$)}{33}{subsection.5.5}%
+\contentsline {subsubsection}{\numberline {5.5.1}Teste 1: Desempenho em Cenário Nominal}{33}{subsubsection.5.5.1}%
+\contentsline {subsubsection}{\numberline {5.5.2}Teste 2: Resolução da Ambiguidade de Sinal}{34}{subsubsection.5.5.2}%
+\contentsline {subsubsection}{\numberline {5.5.3}Teste 3: Robustez a estimativa inicial inicial}{35}{subsubsection.5.5.3}%
+\contentsline {subsubsection}{\numberline {5.5.4}Conclusão Parcial do Modelo 5}{36}{subsubsection.5.5.4}%
+\contentsline {subsubsection}{\numberline {5.5.5}Síntese Comparativa da Evolução dos Modelos}{37}{subsubsection.5.5.5}%
+\contentsline {subsection}{\numberline {5.6}Análise Comparativa Global}{37}{subsection.5.6}%
+\contentsline {section}{\numberline {6}CONCLUSÃO}{40}{section.6}%
+\contentsline {section}{\numberline {A}Solução da equação de estados homogênea}{42}{appendix.A}%
+\contentsline {section}{\numberline {B}Solução geral de estados não-homogênea com ruído de processo}{44}{appendix.B}%
+\contentsline {section}{\numberline {C}Linearização da dinâmica do erro de estimação para o Filtro de Kalman Estendido}{45}{appendix.C}%

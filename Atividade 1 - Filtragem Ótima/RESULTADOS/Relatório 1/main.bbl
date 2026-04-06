@@ -1,0 +1,66 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[Brown e Hwang 2012]{brown2012}
+\abntrefinfo{Brown e Hwang}{BROWN; HWANG}{2012}
+{BROWN, R.~G.; HWANG, P. Y.~C. \emph{Introduction to Random Signals and Applied
+  Kalman Filtering: with MATLAB Exercises}. 4th. ed. Hoboken, New Jersey: John
+  Wiley \& Sons, 2012.
+ISBN 9780470609699.}
+
+\bibitem[Gauss 1857]{gauss1857}
+\abntrefinfo{Gauss}{GAUSS}{1857}
+{GAUSS, C.~F. \emph{Theory of the Motion of the Heavenly Bodies Moving about
+  the Sun in Conic Sections}. Boston: Little, Brown and Company, 1857.
+  Originalmente publicado em latim em 1809 como "Theoria motus corporum
+  coelestium".}
+
+\bibitem[Gelb et al. 1974]{gelb1974}
+\abntrefinfo{Gelb et al.}{GELB et al.}{1974}
+{GELB, A. et al. \emph{Applied Optimal Estimation}. Cambridge, Massachusetts:
+  MIT Press, 1974.
+ISBN 9780262570480.}
+
+\bibitem[Kalman 1960]{kalman1960}
+\abntrefinfo{Kalman}{KALMAN}{1960}
+{KALMAN, R.~E. A new approach to linear filtering and prediction problems.
+\emph{Transactions of the ASME--Journal of Basic Engineering}, v.~82, n.~1, p.
+  35--45, 1960.}
+
+\bibitem[Ogata 2010]{ogata2010}
+\abntrefinfo{Ogata}{OGATA}{2010}
+{OGATA, K. \emph{Engenharia de Controle Moderno}. 5. ed. S{\~a}o Paulo: Pearson
+  Prentice Hall, 2010.}
+
+\bibitem[Silva 2026]{Saulo2026}
+\abntrefinfo{Silva}{SILVA}{2026}
+{SILVA, S. J.~A. \emph{Atividades da Disciplinas Sistemas Inteligentes - UFCG
+  2026}. [S.l.]: GitHub, 2026.
+  \url{https://github.com/SauloJose/SistemasInteligentes2026}.
+Acesso em: 18 mar. 2026.}
+
+\bibitem[Simon 2006]{simon2006}
+\abntrefinfo{Simon}{SIMON}{2006}
+{SIMON, D. \emph{Optimal State Estimation: Kalman, H Infinity, and Nonlinear
+  Approaches}. Hoboken, New Jersey: John Wiley \& Sons, 2006.
+ISBN 9780471715429.}
+
+\bibitem[Sorenson 1970]{sorenson1970}
+\abntrefinfo{Sorenson}{SORENSON}{1970}
+{SORENSON, H.~W. Least-squares estimation: from {G}auss to {K}alman.
+\emph{IEEE Spectrum}, v.~7, n.~7, p. 63--68, 1970.}
+
+\bibitem[Zarchan e Musoff 2015]{zarchan2015}
+\abntrefinfo{Zarchan e Musoff}{ZARCHAN; MUSOFF}{2015}
+{ZARCHAN, P.; MUSOFF, H. Fundamentals of kalman filtering: A practical
+  approach.
+In:  \underline{\ \ \ \ \ \ \ \ }. 4th. ed. Reston, Virginia: American
+  Institute of Aeronautics and Astronautics (AIAA), 2015.  (Progress in
+  Astronautics and Aeronautics), cap. 10: Tracking a Sine Wave, p. 421--441.
+ISBN 9781624102707.}
+
+\end{thebibliography}

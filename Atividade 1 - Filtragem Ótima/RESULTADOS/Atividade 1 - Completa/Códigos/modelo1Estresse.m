@@ -1,4 +1,4 @@
-% Projeto de um filtro de Kalman - Modelo 1 (Linear) - Múltiplas Execuções
+% Projeto de um filtro de Kalman - Modelo 1 (Linear) - Não considerando o efeito da discretização
 % Por: Saulo José Almeida Silva
 % Instituição: Universidade Federal de Campina Grande
 % Matéria: Sistemas Inteligentes.
@@ -12,10 +12,8 @@ pkg load control % Carrega o pacote de controle no Octave
 omega = 1;             % frequência da função seno
 dt = 0.01;             % intervalo de amostragem
 TMAX = 10;             % Tempo máximo da amostragem
-t = (0:dt:TMAX)';      % Vetor de tempo
+t = (0:dt:TMAX)';         % Vetor de tempo
 N_execucoes = 10;      % Quantidade de simulações para teste de robustez
-Amp = 1;               % Valor da amplitude da função
-phi = -pi/4;            % Valor do ângulo inicial
 
 % Definindo o Modelo Contínuo e Discreto
 A = [0 1; -omega^2 0];
@@ -28,31 +26,25 @@ Ad = expm(A*dt);
 Hd = H;
 Bd = B;
 
+
 % --- 2. Parâmetros das Covariâncias ---
 % (A dedução analítica exata se mantém)
 var_w1 = 0.01;
 var_w2 = 0.1;
-Q11 = var_w1 * dt + var_w2 * (dt^3)/3;
-Q12 = (var_w2 - var_w1 * omega^2) * (dt^2)/2;
-Q21 = Q12;
-Q22 = var_w2 * dt + var_w1 * (omega^4) * (dt^3)/3;
-Qd = [ Q11, Q12 ;
-       Q21, Q22 ];
-R = 0.01;
+Qd = [ var_w1, 0; 0, var_w2]
+R = 0.1;
 
 % Matriz para armazenar todos os MSEs: linhas = tempo, colunas = execução
 todos_mse = zeros(length(t), N_execucoes);
 
 num_sensores = length(var_lidas);
 
-
-% Valor
 % --- 3. Laço de Múltiplas Execuções (Monte Carlo) ---
 for exec = 1:N_execucoes
 
   % Resetando as condições iniciais para a nova execução
   P = eye(grau);
-  x_real = [Amp*sin(phi); Amp*omega*cos(phi)];
+  x_real = [1; 0];
   x_est  = [5; 2];
 
   res_real = zeros(length(t), grau);
@@ -134,4 +126,3 @@ xlabel('Tempo (s)');
 ylabel('MSE Progressivo');
 legend('Execuções Individuais', 'Média Geral', 'location', 'northeast');
 grid on;
-
