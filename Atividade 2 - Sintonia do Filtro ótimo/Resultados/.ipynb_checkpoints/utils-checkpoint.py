@@ -4,6 +4,7 @@ from scipy.linalg import expm
 from numba import njit
 from typing import Tuple
 from numpy.linalg import inv
+import os 
 
 # Configuração de estilo para os gráficos ficarem mais legíveis
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -484,152 +485,217 @@ if __name__ == "__main__":
     
     antenas_base = bases
     gen = TrajectoryGenerator(dT_sim, antenas_base) 
-
+    
     #===========================================
     # Gerando Trajetórias
     #===========================================
-    t_sq, pva_sq = gen.generate_square(side_length=400, bottom_left=(100, 100), linear_velocity=8)
+    r = 200
+    cx,cy = 300, 300
+    lv = 25
+    t = 2*4*r/lv
+    t_sq, pva_sq = gen.generate_circle(radius=r, center=(cx, cy), linear_velocity=lv, duration=t)
     
     # Puxando valores reais 
-    # pva_sq possui 6 colunas, mas para o PV usamos apenas as 4 primeiras (px, py, vx, vy)
+    # pva_sq possui 6 colunas
     px_gt = pva_sq[:, 0]
     py_gt = pva_sq[:, 1]
     vx_gt = pva_sq[:, 2]
     vy_gt = pva_sq[:, 3]
+    ax_gt = pva_sq[:, 4]
+    ay_gt = pva_sq[:, 5]
     
     #===========================================
     # Configurações do filtro de Kalman
     #===========================================
     # Estado inicial (assumimos que começa na posição correta, mas velocidade zerada)
-    x0 = np.array([[px_gt[0]], [py_gt[0]], [vx_gt[0]], [vy_gt[0]]])
-    P0 = np.eye(4) * 10.0  # Incerteza inicial
+    x0 = np.array([[px_gt[0]], [py_gt[0]], [0.0], [0.0],[0.0], [0.0]])
+    P0 = np.eye(6) * 10.0  # Incerteza inicial
     
-    # Matriz de Transição de Estado (F) para modelo PV
-    F = np.array([
-        [1, 0, dT_sim, 0],
-        [0, 1, 0, dT_sim],
-        [0, 0, 1,      0],
-        [0, 0, 0,      1]
-    ])
+    # Definindo a Matriz Contínua A 
+    A = np.array([[0, 0, 1, 0, 0, 0],
+                  [0, 0, 0, 1, 0, 0],
+                  [0, 0, 0, 0, 1, 0],
+                  [0, 0, 0, 0, 0, 1],
+                  [0, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0]
+                 ])
     
-    # Covariância do Ruído de Processo (Q)
+    # Gerando a Matriz de Transição F (e^{A*dT})
+    F = expm(A * dT_sim)
+    
     # Variâncias do ruído contínuo
-    q1 = 1
-    q2 = 1
-    q3 = 1
-    q4 = 1
+    q1 = 4
+    q2 = 4
+    q3 = 4
+    q4 = 4
+    q5 = 4
+    q6 = 4 
     
     # Criando matriz Q discreta:
-    Q_disc = get_Q_disc_PV([q1, q2, q3, q4], dT_sim)
+    Q_disc = get_Q_disc_PVA([q1, q2, q3, q4, q5, q6], dT_sim)
+    
     
     # Covariância do Ruído de Medição (R)
-    dp = 2  # seu valor ou objeto
+    dp = 1  # seu valor ou objeto
     vetor = np.full(N, dp)
     
     # Pegando a matriz R (passando apenas os desvios)
     R = create_cov(vetor)
     
     # Instanciando o seu filtro
-    ekf_pv = EKF_PV(x0, P0, F, Q_disc, R)
+    ekf_pva = EKF_PVA(x0, P0, F, Q_disc, R)
     
     # ==============================================
     # Histórico para salvar as estimativas
     num_steps = len(t_sq)
-    estados_estimados = np.zeros((num_steps, 4))
+    estados_estimados = np.zeros((num_steps, 6))
+    
+    plt.figure(figsize=(10, 10))
+    plt.plot(px_gt, py_gt, label='Trajetória Ideal (GT)', color='green', linewidth=2)
+    plt.scatter(antenas_base[:, 0], antenas_base[:, 1], c='blue', marker='^', s=150, label='Antenas Base')
+    for i, (bx, by) in enumerate(antenas_base):
+        plt.annotate(f'B{i}', (bx, by), xytext=(5, 5), textcoords='offset points', fontsize=12, fontweight='bold')
+    
+    plt.title('Rastreamento EKF - Trajetória Circular (Modelo PVA)', fontsize=14)
+    plt.xlabel('Posição X (m)', fontsize=12)
+    plt.ylabel('Posição Y (m)', fontsize=12)
+    plt.legend()
+    plt.grid(True, linestyle='--')
+    plt.axis('equal')
+    
+    #Salvar na pasta
+    # 1. Define a pasta relativa e o nome do arquivo
+    tipo_teste = "circular"  # Mude para "circular", "aleatoria", etc., conforme o teste
+    pasta_destino = f"Figuras/trajetoria_pva_{tipo_teste}"
+    nome_arquivo = "trajetoria_circular.png"
+    
+    # 2. Garante que a pasta "Figuras" exista (se não existir, o Python cria pra você)
+    os.makedirs(pasta_destino, exist_ok=True)
+    
+    # 3. Monta o caminho final: "Figuras/trajetoria_pva.png"
+    caminho_completo = os.path.join(pasta_destino, nome_arquivo)
+    # Salva dentro da pasta Figuras ANTES do show()
+    plt.savefig(caminho_completo, dpi=300, bbox_inches='tight')
+    
+    plt.show()
 
     # ====================================================================
     # 3. LOOP DE SIMULAÇÃO E RASTREAMENTO
     # ====================================================================
     for k in range(num_steps):
         # a) Simulação da medição real (Extraímos a distância ideal e adicionamos ruído)
-        # Criamos um vetor coluna com o estado real no instante k
-        x_real_k = np.array([[px_gt[k]], [py_gt[k]], [vx_gt[k]], [vy_gt[k]]])
+        x_real_k = np.array([[px_gt[k]], [py_gt[k]], [vx_gt[k]], [vy_gt[k]],[ax_gt[k]], [ay_gt[k]]])
         pos = np.array([[px_gt[k]], [py_gt[k]]])
         
         # Usamos a sua função matemática para calcular as distâncias exatas h(x)
-        hx_real, _ = calc_h_and_H_PV(x_real_k, antenas_base)
+        hx_real, _ = calc_h_and_H_PVA(x_real_k, antenas_base)
         
         # Injetamos ruído para simular o sensor Z real
-        # Recuperando o vetor de erros aleatórios (4x1)
         v_t = get_noise_vec(R)
         
         # Medição final ruidosa (transpondo pos para broadcasting)
         z_medido = h_obs(pos.T, bases) + v_t
-        
+    
         # b) Execução do Filtro de Kalman
-        ekf_pv.predict()
-        ekf_pv.update(z_medido, antenas_base)
+        ekf_pva.predict()
+        ekf_pva.update(z_medido, antenas_base)
         
         # c) Salvando o estado estimado (achatando de (4,1) para (4,))
-        estados_estimados[k, :] = ekf_pv.x.flatten()
-
-    # Extraindo as estimativas para variáveis isoladas
-    px_est = estados_estimados[:, 0]
-    py_est = estados_estimados[:, 1]
-    vx_est = estados_estimados[:, 2]
-    vy_est = estados_estimados[:, 3]
-    
-    # ====================================================================
-    # 4. PLOTAGEM E CÁLCULO DE ERROS
-    # ====================================================================
-    # Cálculo dos erros (Ground Truth - Estimado)
-    erro_px = px_gt - px_est
-    erro_py = py_gt - py_est
-    erro_vx = vx_gt - vx_est
-    erro_vy = vy_gt - vy_est
-    
-    # Plot 1: Trajetória 2D
-    plt.figure(figsize=(10, 8))
-    plt.plot(px_gt, py_gt, label='Trajetória Ideal (GT)', color='green', linewidth=2)
-    plt.plot(px_est, py_est, label='EKF Estimativa (PV)', color='red', linestyle='dashed')
-    plt.scatter(antenas_base[:, 0], antenas_base[:, 1], c='blue', marker='^', s=150, label='Antenas Base')
-    for i, (bx, by) in enumerate(antenas_base):
-        plt.annotate(f'B{i}', (bx, by), xytext=(5, 5), textcoords='offset points', fontsize=12, fontweight='bold')
-    
-    plt.title('Rastreamento EKF - Trajetória Quadrada (Modelo PV)', fontsize=14)
-    plt.xlabel('Posição X (m)', fontsize=12)
-    plt.ylabel('Posição Y (m)', fontsize=12)
-    plt.legend()
-    plt.grid(True, linestyle='--')
-    plt.axis('equal')
-    plt.show()
-    
-    # Plot 2: Análise de Erros nos Estados
-    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-    fig.suptitle('Análise de Erro do EKF (Valor Ideal - Estimado)', fontsize=16)
-    
-    # Posição X
-    axs[0, 0].plot(t_sq, erro_px, color='red')
-    axs[0, 0].set_title('Erro em Posição X', fontsize=12)
-    axs[0, 0].set_ylabel('Metros (m)')
-    axs[0, 0].grid(True)
-    
-    # Posição Y
-    axs[0, 1].plot(t_sq, erro_py, color='red')
-    axs[0, 1].set_title('Erro em Posição Y', fontsize=12)
-    axs[0, 1].grid(True)
-    
-    # Velocidade X
-    axs[1, 0].plot(t_sq, erro_vx, color='blue')
-    axs[1, 0].set_title('Erro em Velocidade X', fontsize=12)
-    axs[1, 0].set_xlabel('Tempo (s)')
-    axs[1, 0].set_ylabel('Velocidade (m/s)')
-    axs[1, 0].grid(True)
-    
-    # Velocidade Y
-    axs[1, 1].plot(t_sq, erro_vy, color='blue')
-    axs[1, 1].set_title('Erro em Velocidade Y', fontsize=12)
-    axs[1, 1].set_xlabel('Tempo (s)')
-    axs[1, 1].grid(True)
-    
-    plt.tight_layout()
-    plt.show()
+        estados_estimados[k, :] = ekf_pva.x.flatten()
     
     
-    # RMS
-    erro = erro_px + erro_py
-    erro2 = np.square(erro)
-    rms = np.mean(erro2)
-    
-    print("Erro médio quadrático: ", rms)
-
+        # Extraindo as estimativas para variáveis isoladas
+        px_est = estados_estimados[:, 0]
+        py_est = estados_estimados[:, 1]
+        vx_est = estados_estimados[:, 2]
+        vy_est = estados_estimados[:, 3]
+        
+        # ====================================================================
+        # 4. PLOTAGEM E CÁLCULO DE ERROS COM SALVAMENTO
+        # ====================================================================
+        
+        # Defina qual é o tipo de teste atual
+        tipo_teste = "circular"  # <-- Configurado para a trajetória circular
+        pasta_destino = f"Figuras/trajetoria_pva_{tipo_teste}"
+        
+        # Cria a pasta automaticamente se ela não existir
+        os.makedirs(pasta_destino, exist_ok=True)
+        
+        # Cálculo dos erros (Ground Truth - Estimado)
+        erro_px = px_gt - px_est
+        erro_py = py_gt - py_est
+        erro_vx = vx_gt - vx_est
+        erro_vy = vy_gt - vy_est
+        
+        # ---------------------------------------------------------
+        # Plot 1: Trajetória 2D
+        # ---------------------------------------------------------
+        plt.figure(figsize=(10, 8))
+        plt.plot(px_gt, py_gt, label='Trajetória Ideal (GT)', color='green', linewidth=2)
+        plt.plot(px_est, py_est, label='EKF Estimativa (PV)', color='red', linestyle='dashed')
+        plt.scatter(antenas_base[:, 0], antenas_base[:, 1], c='blue', marker='^', s=150, label='Antenas Base')
+        for i, (bx, by) in enumerate(antenas_base):
+            plt.annotate(f'B{i}', (bx, by), xytext=(5, 5), textcoords='offset points', fontsize=12, fontweight='bold')
+        
+        # Título dinâmico
+        plt.title(f'Rastreamento EKF - Trajetória {tipo_teste.capitalize()} (Modelo PVA)', fontsize=14)
+        plt.xlabel('Posição X (m)', fontsize=12)
+        plt.ylabel('Posição Y (m)', fontsize=12)
+        plt.legend()
+        plt.grid(True, linestyle='--')
+        plt.axis('equal')
+        
+        # Salva o Gráfico de Trajetória
+        nome_arq_traj = os.path.join(pasta_destino, f"trajetoria_pva_{tipo_teste}.png")
+        plt.savefig(nome_arq_traj, dpi=300, bbox_inches='tight')
+        plt.show()
+        
+        # ---------------------------------------------------------
+        # Plot 2: Análise de Erros nos Estados
+        # ---------------------------------------------------------
+        fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+        fig.suptitle(f'Análise de Erro do EKF - Trajetória {tipo_teste.capitalize()} (Valor Ideal - Estimado)', fontsize=16)
+        
+        # Nota: Mantive a variável de tempo como 't_sq' conforme seu código original. 
+        # Se você tiver criado um vetor de tempo específico para o círculo (ex: t_circ), atualize abaixo.
+        
+        # Posição X
+        axs[0, 0].plot(t_sq, erro_px, color='red')
+        axs[0, 0].set_title('Erro em Posição X', fontsize=12)
+        axs[0, 0].set_ylabel('Metros (m)')
+        axs[0, 0].grid(True)
+        
+        # Posição Y
+        axs[0, 1].plot(t_sq, erro_py, color='red')
+        axs[0, 1].set_title('Erro em Posição Y', fontsize=12)
+        axs[0, 1].grid(True)
+        
+        # Velocidade X
+        axs[1, 0].plot(t_sq, erro_vx, color='blue')
+        axs[1, 0].set_title('Erro em Velocidade X', fontsize=12)
+        axs[1, 0].set_xlabel('Tempo (s)')
+        axs[1, 0].set_ylabel('Velocidade (m/s)')
+        axs[1, 0].grid(True)
+        
+        # Velocidade Y
+        axs[1, 1].plot(t_sq, erro_vy, color='blue')
+        axs[1, 1].set_title('Erro em Velocidade Y', fontsize=12)
+        axs[1, 1].set_xlabel('Tempo (s)')
+        axs[1, 1].grid(True)
+        
+        plt.tight_layout()
+        
+        # Salva o Gráfico de Erros
+        nome_arq_erros = os.path.join(pasta_destino, f"erros_estados_pva_{tipo_teste}.png")
+        plt.savefig(nome_arq_erros, dpi=300, bbox_inches='tight')
+        plt.show()
+        
+        # ---------------------------------------------------------
+        # Cálculo Final: RMS
+        # ---------------------------------------------------------
+        erro = erro_px + erro_py
+        erro2 = np.square(erro)
+        rms = np.mean(erro2)
+        
+        print(f"\nResultados salvos na pasta: '{pasta_destino}'")
+        print(f"Erro médio quadrático (RMS) do teste {tipo_teste}: {rms:.6f}")

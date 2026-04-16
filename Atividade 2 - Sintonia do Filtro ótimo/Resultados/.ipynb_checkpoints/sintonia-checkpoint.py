@@ -1,10 +1,39 @@
-#============================================================
+# ==============================================================================
+# FILTRO DE KALMAN ADAPTATIVO (AKF) - IDENTIFICAÇÃO DE COVARIÂNCIAS DE RUÍDO
+# ==============================================================================
 #
+# Este script é uma tentativa de implementação computacional dos algoritmos e 
+# metodologias propostos no seguinte artigo científico:
 #
+# Referência Base:
+# Zhang, et al. (2020). "On the Identification of Noise Covariances and Adaptive 
+# Kalman Filtering: A New Look at a 50 Year-Old Problem."
+# DOI: 10.1109/ACCESS.2020.2982407
 #
+# Descrição Geral:
+# O código busca reproduzir a estrutura matemática para a estimação iterativa
+# do ganho de Kalman estacionário ótimo (W) e, consequentemente, das matrizes
+# de covariância de ruído de processo (Q) e de medição (R) a partir de dados 
+# observados, utilizando sequências de inovações e resíduos.
 #
-#
-#============================================================
+# Por: Saulo José Almeida Silva
+# Data: 11 / 04 /2026
+# Universidade Federal de Campina Grande (UFCG)
+# ==============================================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import expm,solve_discrete_are, eigvals,sqrtm, inv, solve_discrete_lyapunov, pinv
+from numba import njit
+from typing import Tuple
+from numpy.linalg import inv
+import os 
+
+# Importando todas as funções do filtro de Kalman
+from utils import *
+
+# Configuração de estilo para os gráficos ficarem mais legíveis
+plt.style.use('seaborn-v0_8-whitegrid')
 
 #Geração da matriz de Identicabilidade:
 def minimal_polynomial_coeffs(A, tol=1e-8):
@@ -138,32 +167,108 @@ def build_identifiability_matrix(B_list, G_list, m, n_v, n_z):
     return I_mat
 
 #UTILS
-def check_identifiability(F, H, Gamma, W=None, diagonal_Q=False, verbose=True):
-    """Verifica identificabilidade de Q e R. W=None → usa W=0."""
-    nx, nz, nv = F.shape[0], H.shape[0], Gamma.shape[1]
+def check_noise_identifiability(F, H, Gamma, W=None, verbose=True):
+    """
+    Verifica a identificabilidade das matrizes de covariância Q e R
+    para um sistema linear no espaço de estados.
+    
+    Parâmetros:
+    -----------
+    F : ndarray
+        Matriz de transição de estados.
+    H : ndarray
+        Matriz de observação.
+    Gamma : ndarray
+        Matriz de acoplamento do ruído de processo.
+    W : ndarray, opcional
+        Ganho cruzado. Se None, será inicializado com zeros.
+    verbose : bool
+        Se True, imprime o relatório detalhado da análise no console.
+        
+    Retornos:
+    ---------
+    is_identifiable_full : bool
+        True se o sistema for identificável considerando Q e R totalmente simétricas.
+    is_identifiable_diag : bool
+        True se o sistema for identificável considerando Q diagonal e R simétrica.
+    I_mat : ndarray
+        A matriz de identificabilidade construída.
+    """
+    # Inferir dimensões a partir das matrizes
+    n_x = F.shape[0]
+    n_z = H.shape[0]
+    n_v = Gamma.shape[1]
+    
+    # Se W não for fornecido, assume 0 para análise de identificabilidade
     if W is None:
-        W = np.zeros((nx, nz))
- 
-    B, G, a, m = compute_B_G_matrices(F, H, Gamma, W)
-    I_mat = build_identifiability_matrix(B, G, m, nv, nz)
-    rank  = np.linalg.matrix_rank(I_mat)
-    n_Q   = nv if diagonal_Q else nv * (nv + 1) // 2
-    n_R   = nz * (nz + 1) // 2
- 
+        W = np.zeros((n_x, n_z))
+        
     if verbose:
-        print(f"Grau do polinômio mínimo m = {m}")
-        print(f"Coeficientes a_i = {np.round(a, 4)}")
-        print(f"Dimensão de I: {I_mat.shape}, rank = {rank}")
-        print(f"Incógnitas: n_Q={n_Q}, n_R={n_R}, total={n_Q+n_R}")
-        print(f"Identificável: {'SIM' if rank >= n_Q+n_R else 'NÃO'}")
- 
-    return rank >= n_Q + n_R, rank, I_mat
- 
- 
+        print("=== Análise de Identificabilidade das Matrizes de Ruído ===")
+        
+    # Cálculo de B e G (assume-se que a função já está definida no escopo global)
+    B_list, G_list, a_coeffs, m = compute_B_G_matrices(F, H, Gamma, W)
+    
+    if verbose:
+        print(f"\nGrau do polinômio mínimo (m): {m}")
+        print(f"Coeficientes a_i: {np.round(a_coeffs, 4)}")
+        
+    # Construção da matriz de identificabilidade I
+    I_mat = build_identifiability_matrix(B_list, G_list, m, n_v, n_z)
+    rank_I = np.linalg.matrix_rank(I_mat)
+    
+    if verbose:
+        print(f"\nDimensão da matriz I: {I_mat.shape}")
+        print(f"Posto de I: {rank_I}")
+        
+    # Número de incógnitas (Matrizes Simétricas completas)
+    n_Q_full = n_v * (n_v + 1) // 2   # Q simétrica
+    n_R_full = n_z * (n_z + 1) // 2   # R simétrica
+    n_total = n_Q_full + n_R_full
+    
+    # Verificação da condição para Q e R simétricas
+    is_identifiable_full = bool(rank_I >= n_total)
+    
+    if verbose:
+        print(f"\nParâmetros livres em Q (simétrica): {n_Q_full}")
+        print(f"Parâmetros livres em R (simétrica): {n_R_full}")
+        print(f"Total de incógnitas: {n_total}")
+        if not is_identifiable_full:
+            print("Conclusão: Q e R NÃO são identificáveis (posto < número de incógnitas).")
+        else:
+            print("Conclusão: Q e R SÃO identificáveis.")
+            
+    # -----------------------------------------------------------------
+    # Análise supondo Q diagonal e R simétrica
+    n_Q_diag = n_v
+    n_R_sym = n_R_full
+    n_total_diag = n_Q_diag + n_R_sym
+    
+    # Colunas correspondentes (assume que as primeiras n_v colunas são a diagonal de Q)
+    cols_to_keep = list(range(n_v)) 
+    cols_to_keep.extend(range(n_Q_full, n_Q_full + n_R_sym)) 
+    
+    I_diag = I_mat[:, cols_to_keep]
+    rank_diag = np.linalg.matrix_rank(I_diag)
+    
+    is_identifiable_diag = bool(rank_diag >= n_total_diag)
+    
+    if verbose:
+        print("\n--- Considerando Q diagonal ---")
+        print(f"Posto de I reduzida: {rank_diag}")
+        print(f"Total de incógnitas (Q diag + R sim): {n_total_diag}")
+        if is_identifiable_diag:
+            print("Conclusão: Com Q diagonal, o sistema É identificável.")
+        else:
+            print("Conclusão: Mesmo com Q diagonal, o sistema NÃO é identificável.")
+            
+    return is_identifiable_full, is_identifiable_diag, I_mat
+
 def normalized_innovation_squared(nu, S):
     """NIS médio: E[ν(k)^T S^{-1} ν(k)]  (Eq. 191)."""
     S_inv = inv(S)
     return float(np.mean([n @ S_inv @ n for n in nu]))
+
 
 def init_gain_W(F,H,Gamma, Q0=None, R0=None):
     """
@@ -246,90 +351,178 @@ def compute_autocovariance(nu, M):
 #Definindo função objetivo
 def objective_J(W, F, H, C):
     """
-    Calcula a função objetivo J(W) conforme a Equação (54):
-    J = ½ tr( Σ_{i=1}^{M-1} Θ(i) · X · E² · X^T )
-    Θ(i) = Φ(i)^T E² Φ(i),  Φ(i) = H F̄^{i-1} F,  E² = diag(Ĉ(0))^{-1}
+    Calcula a função objetivo J(W) para o problema de identificação do ganho
+    ótimo de Kalman, conforme a Equação (54) do artigo.
+
+    J(W) = 1/2 * tr{ Σ_{i=1}^{M-1} Θ(i) · X · Θ² · Xᵀ }
+
+    onde:
+      - Θ(i) = Φ(i)ᵀ Θ² Φ(i)
+      - Φ(i) = H · F̄^{i-1} · F
+      - E² = [diag(Ĉ(0))]^{-1}  (normalização das covariâncias)
+      - X é a solução do sistema linear dado por (62)
+
+    Esta função quantifica a correlação residual das inovações; o valor ótimo
+    de W é aquele que minimiza J(W), idealmente tendendo a zero para N → ∞.
 
     Parâmetros
     ----------
-    W : ndarray (nx, nz)
-        Ganho do filtro de Kalman.
-    F : ndarray (nx, nx)
-        Matriz de transição de estado.
-    H : ndarray (nz, nx)
-        Matriz de observação.
-    C : list de ndarray (M, nz, nz)
-        Autocovariâncias amostrais das inovações.
+    W : ndarray, shape (nx, nz)
+        Ganho estacionário do filtro de Kalman (variável de otimização).
+    F : ndarray, shape (nx, nx)
+        Matriz de transição de estado do sistema.
+    H : ndarray, shape (nz, nx)
+        Matriz de observação do sistema.
+    C : list of ndarray, length M
+        Lista das autocovariâncias amostrais das inovações.
+        C[0] é a covariância contemporânea Ĉ(0), C[i] = Ĉ(i), i = 0,...,M-1.
 
     Retorna
     -------
     J : float
-        Valor da função objetivo.
+        Valor da função objetivo avaliada em W.
     """
-    M       = len(C)
-    nz, nx  = H.shape
-    I_nx    = np.eye(nx)
-    C0      = C[0]
-    E2      = np.diag(1.0 / np.maximum(np.diag(C0), 1e-12))
-    F_bar   = F @ (I_nx - W @ H)
-    X       = compute_X(F_bar, F, H, C, M)
- 
+    M = len(C)
+    nz, nx = H.shape
+    I_nx = np.eye(nx)
+    C0 = C[0]
+    E2 = np.diag(1.0 / np.maximum(np.diag(C0), 1e-12))
+    F_bar = F @ (I_nx - W @ H)
+    X = compute_X(F_bar, F, H, C, M)
+
     J = 0.0
     for i in range(1, M):
-        Phi_i   = H @ np.linalg.matrix_power(F_bar, i-1) @ F
+        Phi_i = H @ np.linalg.matrix_power(F_bar, i - 1) @ F
         Theta_i = Phi_i.T @ E2 @ Phi_i
-        J      += np.trace(Theta_i @ X @ E2 @ X.T)
+        J += np.trace(Theta_i @ X @ E2 @ X.T)
     return 0.5 * J
 
 
 def lstsq_reg(A, B, reg=1e-6):
-    """Mínimos quadrados com regularização de Tikhonov."""
+    """
+    Resolve o problema de mínimos quadrados linear com regularização de
+    Tikhonov (ridge regression):
+
+        min ||A X - B||_F^2 + reg * ||X||_F^2
+
+    cuja solução é X = (Aᵀ A + reg·I)^{-1} Aᵀ B.
+
+    Pode ser utilizada como alternativa à pseudoinversa para melhorar o
+    condicionamento numérico quando A é mal condicionada.
+
+    Parâmetros
+    ----------
+    A : ndarray, shape (m, n)
+        Matriz de coeficientes.
+    B : ndarray, shape (m, k)
+        Matriz de termos independentes.
+    reg : float, opcional (padrão=1e-6)
+        Parâmetro de regularização.
+
+    Retorna
+    -------
+    X : ndarray, shape (n, k)
+        Solução regularizada de mínimos quadrados.
+    """
     return np.linalg.solve(A.T @ A + reg * np.eye(A.shape[1]), A.T @ B)
 
 # Cálculo do X via pseudo-inversa
 def compute_X(F_bar, F, H, C, M):
-    A = np.vstack([H @ np.linalg.matrix_power(F_bar, i-1) @ F for i in range(1, M)])
-    B = np.vstack([C[i] for i in range(1, M)])
-    X, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    return X
-
-# Calculo de Z via Lyapunov
-def compute_Z(F_bar, Phi, E2, H, C, start, M):
     """
-    Calcula Z para um dado índice inicial 'start', conforme a equação:
-    Z = F_bar^T Z F_bar + Q_Z
-    onde Q_Z = 1/2 * Σ_{j=start}^{M-1} [ (Phi(j)^T E^2 C(j) E^2 H) + (Phi(j)^T E^2 C(j) E^2 H)^T ]
+    Estima a matriz X = P̄ Hᵀ - W C(0) resolvendo o sistema linear (62) do artigo.
+
+    A partir das inovações de um filtro subótimo, a matriz X satisfaz a relação:
+        [ H F ]           [ Ĉ(1)   ]
+        [ H F̄ F ]         [ Ĉ(2)   ]
+        [   ...   ] · X = [   ...  ]
+        [ H F̄^{M-1} F ]   [ Ĉ(M-1) ]
+
+    O sistema é resolvido via mínimos quadrados (pseudoinversa), pois tipicamente
+    é sobredeterminado (M ≥ nx).
 
     Parâmetros
     ----------
-    F_bar : ndarray (nx, nx)
-        Matriz de malha fechada.
-    Phi : list de ndarray (M-1 elementos, cada (nz, nx))
-        Lista pré-calculada de Phi(i) = H * F_bar^{i-1} * F.
-    E2 : ndarray (nz, nz)
-        Matriz de normalização E^2.
-    H : ndarray (nz, nx)
+    F_bar : ndarray, shape (nx, nx)
+        Matriz de transição de malha fechada: F̄ = F (I - W H).
+    F : ndarray, shape (nx, nx)
+        Matriz de transição de estado do sistema.
+    H : ndarray, shape (nz, nx)
         Matriz de observação.
-    C : list de ndarray (M, nz, nz)
-        Autocovariâncias amostrais.
-    start : int
-        Índice inicial do somatório (1 ≤ start ≤ M-1).
+    C : list of ndarray, length M
+        Autocovariâncias amostrais das inovações.
     M : int
-        Número total de lags (len(C)).
+        Número total de defasagens (lags) utilizadas.
 
     Retorna
     -------
-    Z : ndarray (nx, nx)
-        Solução da equação de Lyapunov.
+    X : ndarray, shape (nx, nz)
+        Matriz estimada que combina a covariância de predição e o ganho.
+    """
+    nz, nx = H.shape
+    A_blocks = [H @ np.linalg.matrix_power(F_bar, i-1) @ F for i in range(1, M)]
+    A = np.vstack(A_blocks)                     # ((M-1)*nz, nx)
+    b = np.vstack([C[i] for i in range(1, M)])  # ((M-1)*nz, nz)
+
+    # Resolver com regularização (ridge regression)
+    X = lstsq_reg(A, b, reg=1e-6)                # usa (AᵀA + reg·I)⁻¹ Aᵀ b
+    return X.reshape(nx, nz)
+
+# Calculo de Z via Lyapunov
+def compute_Z(F_bar, Phi, E2, H, C, M):
+    """
+    Resolve a equação de Lyapunov discreta (61) para obter a matriz Z,
+    necessária no cálculo do gradiente da função objetivo.
+
+    A matriz Z satisfaz:
+        Z = F̄ᵀ Z F̄ + Q_Z
+
+    onde o termo constante Q_Z é dado por:
+        Q_Z = 1/2 Σ_{i=1}^{M-1} [ Φ(i)ᵀ Θ² Ĉ(i) Θ² H + (Φ(i)ᵀ Θ² Ĉ(i) Θ² H)ᵀ ]
+
+    com Θ² = diag(Ĉ(0))^{-1} e Φ(i) = H F̄^{i-1} F.
+
+    Parâmetros
+    ----------
+    F_bar : ndarray, shape (nx, nx)
+        Matriz de transição de malha fechada.
+    Phi : list of ndarray, length M-1
+        Lista pré‑calculada das matrizes Φ(i), i=1,...,M-1.
+    E2 : ndarray, shape (nz, nz)
+        Matriz de normalização Θ² = diag(Ĉ(0))^{-1}.
+    H : ndarray, shape (nz, nx)
+        Matriz de observação.
+    C : list of ndarray, length M
+        Autocovariâncias amostrais das inovações.
+    M : int
+        Número total de defasagens.
+
+    Retorna
+    -------
+    Z : ndarray, shape (nx, nx)
+        Solução da equação de Lyapunov discreta.
     """
     nx = F_bar.shape[0]
     Q_Z = np.zeros((nx, nx))
-    for j in range(start, M):          # j = start, ..., M-1
-        term = Phi[j-1].T @ E2 @ C[j] @ E2 @ H   # (nx, nx)
+    for i in range(1, M):
+        # Phi[i-1] corresponde a Φ(i)
+        term = Phi[i-1].T @ E2 @ C[i] @ E2 @ H
         Q_Z += 0.5 * (term + term.T)
     Z = solve_discrete_lyapunov(F_bar.T, Q_Z)
     return Z
 
+def gradient_fd(W, F, H, C, eps=1e-7):
+    """
+    ∂J/∂W calculado por diferenças finitas centradas.
+    """
+    nx, nz = F.shape[0], H.shape[0]
+    grad   = np.zeros((nx, nz))
+    for a in range(nx):
+        for b in range(nz):
+            Wp = W.copy(); Wp[a, b] += eps
+            Wm = W.copy(); Wm[a, b] -= eps
+            grad[a, b] = (objective_J(Wp, F, H, C) - objective_J(Wm, F, H, C)) / (2 * eps)
+    return grad
+    
 # Implementando função gradiente da função objetivo
 def gradient_J(W, F, H, C):
     """
@@ -378,15 +571,12 @@ def gradient_J(W, F, H, C):
 
     # Calcular X e Z
     X = compute_X(F_bar, F, H, C, M)
-
+    Z = compute_Z(F_bar, Phi, E2, H, C, M=M)
     # Inicializar gradiente (nx, nz)
     grad = np.zeros((nx, nz))
 
     # Somatório principal
     for i in range(1, M):
-        # Q_Z = 1/2 * Σ_{j=i}^{M-1} [ Φ(j)^T E^2 C(j) E^2 H + (Φ(j)^T E^2 C(j) E^2 H)^T ]
-        Z_i = compute_Z(F_bar, Phi, E2, H, C, start=i, M=M)
-        
         # Primeiro termo: Phi(i)^T * E^2 * C(i) * E^2 * C(0)
         term1 = Phi[i-1].T @ E2 @ C[i] @ E2 @ C0
         grad -= term1
@@ -403,43 +593,39 @@ def gradient_J(W, F, H, C):
 
         # ---------- Terceiro termo: - F^T Z_i F X (dentro do colchete) ----------
         # - ( - F^T Z_i F X ) = + F^T Z_i F X
-        grad -= F.T @ Z_i @ F @ X
+        grad -= F.T @ Z @ F @ X
 
-    return grad
-
-
-def gradient_fd(W, F, H, C, eps=1e-5):
-    """
-    ∂J/∂W calculado por diferenças finitas centradas.
- 
-    BUG-3 (raiz): a Eq. 60 do artigo deriva ∇J assumindo X = Ψ − W·Ĉ(0)
-    (Eq. 57), mas o código estima X via lstsq (Eq. 63). Essas duas
-    parametrizações de X são diferentes: o X do lstsq depende implicitamente
-    de W através de F̄ e Φ, gerando um gradiente total diferente da Eq. 60.
-    O resultado era uma direção de descida incorreta que impedia a convergência.
- 
-    A solução é calcular ∂J/∂W numericamente, pois o FD captura a dependência
-    completa de J em W (inclusive via X recalculado a cada avaliação).
-    """
-    nx, nz = F.shape[0], H.shape[0]
-    grad   = np.zeros((nx, nz))
-    for a in range(nx):
-        for b in range(nz):
-            Wp = W.copy(); Wp[a, b] += eps
-            Wm = W.copy(); Wm[a, b] -= eps
-            grad[a, b] = (objective_J(Wp, F, H, C) - objective_J(Wm, F, H, C)) / (2 * eps)
     return grad
     
 # Método para garantir que F_bar é estável (F de malha fechada)
 def is_stable(F_bar):
-    """Retorna True se todos autovalores têm magnitude < 1."""
+    """
+    Verifica se a matriz de transição de malha fechada F̄ = F (I - W H)
+    é assintoticamente estável (todos os autovalores têm magnitude estritamente
+    menor que 1).
+
+    A estabilidade de F̄ é uma condição necessária para a convergência do
+    filtro de Kalman e para a validade das expressões de correlação utilizadas
+    no método de identificação.
+
+    Parâmetros
+    ----------
+    F_bar : ndarray, shape (nx, nx)
+        Matriz de transição de malha fechada.
+
+    Retorna
+    -------
+    stable : bool
+        True se max|λ(F̄)| < 1, False caso contrário.
+    """
     return np.max(np.abs(np.linalg.eigvals(F_bar))) < 1.0
+
 
 
 
 def update_gain_W(F, H, C, W_init, N, N_s=None, beta=2.0,
                   max_iter=100, tol_W=1e-6, tol_grad=1e-6, tol_J=1e-6,
-                  patience=5, c=0.01, c_max=0.2, grad_eps=1e-5):
+                  patience=5, c=0.01, c_max=0.2, grad_eps=1e-5, approx=True):
     """
     Otimiza o ganho W via gradiente descendente com passo adaptativo (bold driver).
 
@@ -483,13 +669,15 @@ def update_gain_W(F, H, C, W_init, N, N_s=None, beta=2.0,
  
     W       = W_init.copy()
     best_W  = W.copy()
-    best_J  = objective_J(W, F, H, C)         # BUG-8: era objective_function
+    best_J  = objective_J(W, F, H, C)         
     J_prev  = best_J
     no_improve = 0
  
     for it in range(max_iter):
-        grad = gradient_fd(W, F, H, C, eps=grad_eps)   # BUG-3: FD correto
-        #grad = gradient_J(W,F,H,C)
+        if approx:
+            grad = gradient_fd(W, F, H, C, eps=grad_eps)   
+        else:
+            grad = gradient_J(W,F,H,C)
         W_new   = W - alpha * grad
         F_bar_n = F @ (I_nx - W_new @ H)
  
@@ -500,7 +688,7 @@ def update_gain_W(F, H, C, W_init, N, N_s=None, beta=2.0,
                 break
             continue
  
-        J_new = objective_J(W_new, F, H, C)    # BUG-8
+        J_new = objective_J(W_new, F, H, C)    
  
         # Bold driver (Eq. 137)
         alpha = 0.5 * alpha if J_new > J_prev else min(1.1 * alpha, c_bar)
@@ -526,7 +714,7 @@ def update_gain_W(F, H, C, W_init, N, N_s=None, beta=2.0,
     return best_W, best_J
 
 
-def step3_update_W(v, F, H, W_current, M_lags, max_iter=100, tol=1e-6,
+def step3_update_W(v, F, H, W_current, M_lags, max_iter=100, tol=1e-12,
                    N_s=None, beta=2.0):
     """
     Executa o passo 3 completo:
@@ -537,11 +725,10 @@ def step3_update_W(v, F, H, W_current, M_lags, max_iter=100, tol=1e-6,
     ---------------------
     N_s, beta : parâmetros para inicialização do passo alpha (Eq. 136)
     """
-    N = v.shape[0]          # número de amostras observadas
+    N = v.shape[0]
     C = compute_autocovariance(v, M_lags)
-    W_opt, J_opt = update_gain_adaptative(F, H, C, W_current, N=N,
-                                          N_s=N_s, beta=beta,
-                                          max_iter=max_iter, tol=tol)
+    W_opt, J_opt = update_gain_W(F, H, C, W_current, N=N, N_s=N_s, beta=beta,
+                                 max_iter=max_iter, tol_W=tol, tol_grad=tol, tol_J=tol)
     return W_opt, J_opt
 
 # Definindo função para estimar R
@@ -600,8 +787,7 @@ def estimate_R(nu=None, mu=None, S=None, G=None, H=None, W=None, method='R3'):
     R = 0.5 * (R + R.T)
     vals, vecs = np.linalg.eigh(R)
     return np.real(vecs @ np.diag(np.maximum(vals, 1e-12)) @ vecs.T)
-
-
+    
 # Definição da função do Passo 5
 def estimate_Q_and_P(F, H, Gamma, W, R, S, max_iter=100, tol=1e-6, lambda_Q=0.0, mask=None):
     """
@@ -678,14 +864,14 @@ def estimate_Q_and_P(F, H, Gamma, W, R, S, max_iter=100, tol=1e-6, lambda_Q=0.0,
         Q, P, GQGt = Q_new, P_new, GQGt_n
  
     return Q, P
-
+    
 def adaptive_kalman_filter(Z, F, H, Gamma,
                            M_lags=None, max_outer=20, max_inner=100,
                            tol_J=1e-12, tol_W=1e-12, tol_grad=1e-12,
                            lambda_Q=0.0, mask_Q=None,
                            method_R='R3', N_s=None, beta=2.0,
                            patience=5, c=0.01, c_max=0.2,
-                           grad_eps=1e-5, verbose=False):
+                           grad_eps=1e-5, verbose=False,approx=True):
     """
     Executa o algoritmo completo de 6 etapas para estimar W, R, Q e P.
 
@@ -757,7 +943,7 @@ def adaptive_kalman_filter(Z, F, H, Gamma,
             F, H, C, W, N=N, N_s=N_s, beta=beta,
             max_iter=max_inner,
             tol_W=tol_W, tol_grad=tol_grad, tol_J=tol_J,
-            patience=patience, c=c, c_max=c_max, grad_eps=grad_eps
+            patience=patience, c=c, c_max=c_max, grad_eps=grad_eps,approx=True
         )
  
         if J_new < best_J:
@@ -802,3 +988,140 @@ def adaptive_kalman_filter(Z, F, H, Gamma,
  
     return best_W, R_est, Q_est, P_est, history
  
+def run_adaptive_kalman_experiment(F, H, Gamma, Q_true, R_true, 
+                                   N=10000, seed=42, 
+                                   M_lags=10, max_outer=50, max_inner=50, 
+                                   tol_J=1e-12, tol_W=1e-12, tol_grad=1e-12,
+                                   c=0.01, c_max=0.2, grad_eps=1e-5, patience=5,
+                                   beta=2.0, method_R='R3', diagonal_Q=False, 
+                                   exp_name="Experimento"):
+    """
+    Método blindado com formatação de fontes específica para publicações.
+    """
+    print(f"\n{'='*30}\n INICIANDO: {exp_name}\n{'='*30}")
+    
+    # --- CRIAÇÃO AUTOMÁTICA DE PASTAS ---
+    nome_pasta_seguro = exp_name.replace(" ", "_")
+    pasta_destino = os.path.join("Figuras", "Algoritmo", nome_pasta_seguro)
+    os.makedirs(pasta_destino, exist_ok=True)
+    
+    # 0. Geração dos Dados Interna
+    np.random.seed(seed)
+    nx, nz, nv = F.shape[0], H.shape[0], Gamma.shape[1]
+    x, z = np.zeros((N, nx)), np.zeros((N, nz))
+
+    for k in range(1, N):
+        v_k = np.random.multivariate_normal(np.zeros(nv), Q_true)
+        w_k = np.random.multivariate_normal(np.zeros(nz), R_true)
+        x[k] = F @ x[k-1] + (Gamma @ v_k).flatten()
+        z[k] = H @ x[k] + w_k
+        
+    print(f"Dados gerados com sucesso: N={N} amostras.")
+
+    # Verifica Identificabilidade do sistema
+    _, _, Imat = check_noise_identifiability(F, H, Gamma, verbose=True)
+    
+    # 1. Execução do Algoritmo Adaptativo
+    print("\n--- Executando Algoritmo Adaptativo ---")
+    W_est, R_est, Q_est, P_est, history = adaptive_kalman_filter(
+        Z=z, F=F, H=H, Gamma=Gamma,
+        M_lags=M_lags,
+        max_outer=max_outer,
+        max_inner=max_inner,
+        tol_J=tol_J, tol_W=tol_W, tol_grad=tol_grad,
+        c=c, c_max=c_max, grad_eps=grad_eps, patience=patience,
+        method_R=method_R,
+        N_s=N,
+        beta=beta,
+        approx=True,
+        verbose=False
+    )
+
+    # 2. Cálculo do Ganho Verdadeiro (Ótimo via DARE)
+    P_true = solve_discrete_are(F.T, H.T, Gamma @ Q_true @ Gamma.T, R_true)
+    S_true = H @ P_true @ H.T + R_true
+    W_true = P_true @ H.T @ np.linalg.inv(S_true)
+
+    # 3. Exibição dos Resultados no Console
+    print("\n" + "="*20 + " RESULTADOS FINAIS " + "="*20)
+    best_J = min(history['J'])
+    print(f"\nMelhor Custo J(W) encontrado: {best_J:.8f}")
+    print("\n--- GANHO DE KALMAN (W) ---\n", np.round(W_est, 6))
+    print("\n--- MATRIZ Q (Processo) ---\n", np.round(Q_est, 6))
+    print("\n--- MATRIZ R (Medição) ---\n", np.round(R_est, 6))
+
+    # 4. Evolução da Função Objetivo
+    plt.figure(figsize=(10, 6))
+    plt.plot(history['J'], 'o-', color='tab:blue', linewidth=2)
+    
+    # Ajuste de Fontes (Título 24, Labels 16)
+    plt.title(f'Convergência $J(W)$ - {exp_name}', fontsize=24)
+    plt.xlabel('Iteração Externa', fontsize=16)
+    plt.ylabel('$J(W)$', fontsize=16)
+    plt.grid(True, linestyle='--')
+
+    caminho_J = os.path.join(pasta_destino, f"convergencia_J_{nome_pasta_seguro}.png")
+    plt.savefig(caminho_J, dpi=300, bbox_inches='tight')
+    plt.show()
+
+# 5. Análise de NIS (Inovação Normalizada)
+    nu_est, _ = generate_residuals(z, F, H, W_est)
+    S_est_emp = (nu_est.T @ nu_est) / len(nu_est)
+    S_inv = np.linalg.inv(S_est_emp)
+    nis = np.array([n @ S_inv @ n for n in nu_est])
+    
+    # --- CÁLCULO DOS LIMITES QUI-QUADRADO (95% CONFIDENCE INTERVAL) ---
+    alpha = 0.05
+    # Limite inferior (2.5%) e Superior (97.5%) para df = nz
+    limite_inferior = chi2.ppf(alpha / 2, df=nz)
+    limite_superior = chi2.ppf(1 - alpha / 2, df=nz)
+    
+    # Validação quantitativa: quantos pontos realmente caíram no intervalo?
+    dentro_limites = np.sum((nis >= limite_inferior) & (nis <= limite_superior))
+    pct_dentro = (dentro_limites / len(nis)) * 100
+    print(f"Teste NIS: {pct_dentro:.2f}% dos pontos estão dentro do intervalo de 95% de confiança.")
+
+    plt.figure(figsize=(12, 5))
+    
+    # Plotagem principal dos pontos
+    plt.plot(nis, 'b.', alpha=0.3, label='NIS Empírico')
+    
+    # Linhas de expectativa (Média)
+    plt.axhline(y=nz, color='r', linestyle='--', label=f'Média Teórica ($n_z$={nz})')
+    plt.axhline(y=np.mean(nis), color='g', linewidth=2, label=f'Média Real={np.mean(nis):.2f}')
+    
+    # Linhas dos limites de 95%
+    plt.axhline(y=limite_superior, color='orange', linestyle='-', linewidth=2, label=f'Lim Sup 95% ({limite_superior:.2f})')
+    plt.axhline(y=limite_inferior, color='orange', linestyle='-', linewidth=2, label=f'Lim Inf 95% ({limite_inferior:.2f})')
+    
+    # Ajuste visual das áreas fora dos limites para facilitar a interpretação
+    plt.fill_between(range(len(nis)), limite_superior, max(nis)+5, color='red', alpha=0.05)
+    plt.fill_between(range(len(nis)), 0, limite_inferior, color='red', alpha=0.05)
+
+    # Ajuste de Fontes (Título 24, Labels 16)
+    # Coloquei a porcentagem de acerto no próprio título para o seu artigo
+    plt.title(f'Teste NIS - {exp_name} ({pct_dentro:.1f}% no intervalo)', fontsize=24)
+    plt.xlabel('Amostra $k$', fontsize=16)
+    plt.ylabel('Magnitude NIS', fontsize=16)
+    
+    # Posiciona a legenda fora do gráfico para não cobrir os dados
+    plt.legend(fontsize=12, bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True, alpha=0.3)
+    
+    # Ajuste automático do layout devido à legenda externa
+    plt.tight_layout()
+    
+    caminho_nis = os.path.join(pasta_destino, f"nis_{nome_pasta_seguro}.png")
+    plt.savefig(caminho_nis, dpi=300, bbox_inches='tight')
+    plt.show()
+
+    # 6. Comparação das Covariâncias
+    nu_opt, _ = generate_residuals(z, F, H, W_true) 
+    S_opt_emp = (nu_opt.T @ nu_opt) / len(nu_opt)
+    
+    print("\n--- ANÁLISE DE COVARIÂNCIA DA INOVAÇÃO (S) ---")
+    print("S Estimado Empírico:\n", np.round(S_est_emp, 6))
+    print("S Ótimo Empírico:\n", np.round(S_opt_emp, 6))
+    print("S Teórico (DARE):\n", np.round(S_true, 6))
+
+    return W_est, R_est, Q_est, P_est, history, Imat
