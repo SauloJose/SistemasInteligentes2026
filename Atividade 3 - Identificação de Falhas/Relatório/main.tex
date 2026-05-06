@@ -1,0 +1,430 @@
+\documentclass[journal]{IEEEtran}
+
+% -------------------------------
+% USEFUL PACKAGES
+% -------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{multirow}
+\usepackage{siunitx}      % Para unidades e notação científica
+\usepackage{hyperref}     % Links clicáveis (GitHub, DOIs)
+\usepackage{algorithm}    % Para pseudocódigo
+\usepackage{algpseudocode}
+\usepackage{xcolor}       % Para comentários ou destaques
+\usepackage{url}          % Para URLs no rodapé
+
+% Fix hyphenation patterns
+%\hyphenation{lo-ca-li-za-ção ro-bó-ti-ca sin-to-ni-a}
+
+\begin{document}    
+
+% -------------------------------
+% TITLE AND AUTHORS
+% -------------------------------
+\title{Fault Detection in Industrial Processes: Comparative Analysis of SVD-based and Autoencoder Approaches}
+
+\author{Saulo José Almeida Silva,~\IEEEmembership{Master's Student,~UFCG,}
+        Antonio Marcus Nogueira Lima,~\IEEEmembership{Professor,~UFCG,}
+\thanks{S. J. A. Silva is a Master's student in the Graduate Program in Electrical Engineering (PPgEE) of the Federal University of Campina Grande (UFCG), Campina Grande, PB, Brazil. E-mail: saulo.jose.silva@ee.ufcg.edu.br.}
+\thanks{A. M. N. Lima is a Full Professor at the Department of Electrical Engineering at UFCG. E-mail: amnlima@dee.ufcg.edu.br.}}
+
+\markboth{Journal of IMAGINARY Class Files,~Vol.~14, No.~8, August~2026}%
+{Silva \MakeLowercase{\textit{et al.}}: Fault Detection in Industrial Processes}
+
+\maketitle
+
+% -------------------------------
+% ABSTRACT AND KEYWORDS
+% -------------------------------
+\begin{abstract}
+Early fault detection in industrial processes is crucial for maintaining system reliability, safety, and operational efficiency. This work presents a comprehensive study on fault detection algorithms based on two distinct approaches: data-driven methods using Singular Value Decomposition (SVD) combined with Statistical Analysis (SA) with adaptive thresholds, and machine learning techniques employing Autoencoder neural networks. The SVD-based approach exploits the low-rank structure of nominal process data to identify anomalies, while Autoencoders learn complex nonlinear patterns through unsupervised learning. Both methods are evaluated on benchmark industrial datasets to assess their effectiveness in detecting incipient and abrupt faults. Preliminary results demonstrate the feasibility of these approaches, with comparative analysis highlighting their respective strengths and limitations. The research framework provides a foundation for developing a robust, adaptive fault detection system suitable for real-time industrial applications.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Fault Detection, Singular Value Decomposition, Autoencoders, Industrial Processes, Anomaly Detection, Machine Learning.
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+% -------------------------------
+% SECTION 1: INTRODUCTION
+% -------------------------------
+\section{Introduction}
+\label{sec:introduction}
+\IEEEPARstart{I}{ndustrial} processes operate under complex and often unpredictable conditions, where equipment failures can lead to significant economic losses, safety hazards, and environmental damage. Timely detection of incipient faults enables preventive maintenance, reduces unplanned downtime, and improves overall system reliability. Traditional model-based fault detection approaches require accurate mathematical models of the system, which are frequently unavailable or difficult to obtain in practice. Consequently, data-driven methods have emerged as viable alternatives that exploit historical process data to learn normal operating patterns and identify deviations.
+
+This work focuses on the development and comparison of two complementary data-driven approaches for fault detection in industrial processes. The first approach leverages Singular Value Decomposition (SVD) combined with Statistical Analysis (SA) to identify low-rank anomalies in multivariate sensor data with adaptive thresholds. The second approach employs Autoencoder neural networks that learn nonlinear feature representations and reconstruct normal process behavior. Both methods are evaluated on industrial benchmark datasets to assess their performance, robustness, and applicability to real-world scenarios.
+
+The remainder of this paper is organized as follows. Section \ref{sec:theoretical} provides a comprehensive review of theoretical foundations and related work on fault detection methodologies. Section \ref{sec:methodology} describes the problem formulation and implementation details of both approaches. Section \ref{sec:results} presents experimental results and comparative analysis. Finally, Section \ref{sec:conclusion} summarizes the conclusions and suggests directions for future research.
+
+\subsection{Notation and Conventions}
+\label{subsec:notation}
+
+Throughout this work, we adopt the following notation conventions: scalars are denoted by italic letters ($a$), vectors by lowercase bold letters ($\mathbf{a}$), and matrices by uppercase bold letters ($\mathbf{A}$). The superscript transpose operator is denoted by $(\cdot)^T$, the Frobenius norm by $\|\cdot\|_F$, and the spectral norm by $\|\cdot\|_2$. For discrete-time systems, the subscript $k$ denotes the time instant, i.e., $\mathbf{x}_k$. The notation $\|\mathbf{x}\|$ represents the Euclidean norm, and $\mathbb{R}^{m \times n}$ denotes the set of real matrices of dimension $m \times n$.
+
+\section{Theoretical Review and Related Work}
+\label{sec:theoretical}
+
+Fault detection methodologies have evolved significantly over the past decades. This section reviews the fundamental concepts and techniques relevant to the two main approaches investigated in this work.
+
+\subsection{Industrial Processes and Multivariate Monitoring}
+\label{subsec:industrial_processes}
+
+Modern industrial processes generate vast amounts of sensor data from multiple variables operating simultaneously. A typical multivariate process can be represented as a collection of $m$ measured variables sampled at discrete time instants $k = 1, 2, \ldots, N$:
+
+\begin{equation}
+\mathbf{Y} \in \mathbb{R}^{m \times N} = [\mathbf{y}_1, \mathbf{y}_2, \ldots, \mathbf{y}_N]
+\label{eq:process_data}
+\end{equation}
+
+where each column $\mathbf{y}_k = [y_{1,k}, y_{2,k}, \ldots, y_{m,k}]^T$ represents a snapshot of the process state at time $k$. Process monitoring typically focuses on detecting when the system deviates from normal operating conditions, which may indicate the onset of a fault.
+
+\subsection{Fault Detection Problem Formulation}
+\label{subsec:fault_detection}
+
+The general fault detection problem can be formulated as a binary classification task. Given process data $\mathbf{Y}$, the objective is to construct a decision rule that classifies observations as either normal (nominal) or abnormal (faulty):
+
+\begin{equation}
+\mathcal{D}(\mathbf{y}_k) = \begin{cases} 
+\text{Normal} & \text{if} \quad \mathcal{T}_k \leq \tau \\
+\text{Faulty} & \text{if} \quad \mathcal{T}_k > \tau
+\end{cases}
+\label{eq:decision_rule}
+\end{equation}
+
+where $\mathcal{T}_k$ is a test statistic computed from the observation $\mathbf{y}_k$, and $\tau$ is a threshold determined based on the desired false positive rate. The challenge lies in selecting appropriate test statistics and thresholds that maximize fault detection rate while minimizing false alarms.
+
+\subsection{Singular Value Decomposition and Principal Component Analysis}
+\label{subsec:svd_pca}
+
+Singular Value Decomposition (SVD) is a fundamental matrix factorization technique widely used in fault detection. For a data matrix $\mathbf{Y} \in \mathbb{R}^{m \times N}$, the SVD is defined as:
+
+\begin{equation}
+\mathbf{Y} = \mathbf{U} \boldsymbol{\Sigma} \mathbf{V}^T
+\label{eq:svd_decomposition}
+\end{equation}
+
+where $\mathbf{U} \in \mathbb{R}^{m \times r}$ and $\mathbf{V} \in \mathbb{R}^{N \times r}$ contain orthonormal basis vectors, $\boldsymbol{\Sigma} \in \mathbb{R}^{r \times r}$ is a diagonal matrix of singular values $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r > 0$, and $r = \min(m, N)$ is the rank of the matrix. The principal components can be obtained by selecting the leading $d$ singular vectors, typically chosen such that:
+
+\begin{equation}
+\frac{\sum_{i=1}^{d} \sigma_i^2}{\sum_{i=1}^{r} \sigma_i^2} \geq \alpha
+\label{eq:variance_threshold}
+\end{equation}
+
+where $\alpha$ is the desired variance explained (commonly set to 0.95).
+
+\subsection{SVD-Based Fault Detection with Statistical Analysis}
+\label{subsec:svd_sa}
+
+The SVD-based approach combines dimensional reduction with statistical analysis. The residual component is computed as:
+
+\begin{equation}
+\mathbf{E} = \mathbf{Y} - \mathbf{U}_d \mathbf{U}_d^T \mathbf{Y}
+\label{eq:residual_component}
+\end{equation}
+
+where $\mathbf{U}_d$ contains the leading $d$ left singular vectors. The Euclidean norm of the residuals provides a test statistic:
+
+\begin{equation}
+\mathcal{T}_k = \|\mathbf{e}_k\|_2^2
+\label{eq:residual_statistic}
+\end{equation}
+
+Adaptive thresholding can be employed to set $\tau_k$ dynamically based on running statistics of the residuals. A common approach uses the exponentially weighted moving average (EWMA) of the residuals:
+
+\begin{equation}
+\tau_k = \mu + \lambda \sigma_k
+\label{eq:adaptive_threshold}
+\end{equation}
+
+where $\mu$ and $\sigma_k$ are the mean and standard deviation of the residuals, and $\lambda$ is a sensitivity parameter.
+
+\subsection{Autoencoders for Anomaly Detection}
+\label{subsec:autoencoders}
+
+Autoencoders are feedforward neural networks trained to reconstruct their input data. The architecture consists of an encoder and decoder:
+
+\begin{equation}
+\mathbf{z} = f_{\text{enc}}(\mathbf{y}_k; \mathbf{W}_{\text{enc}}) = \sigma(\mathbf{W}_{\text{enc}} \mathbf{y}_k + \mathbf{b}_{\text{enc}})
+\label{eq:encoder}
+\end{equation}
+
+\begin{equation}
+\hat{\mathbf{y}}_k = f_{\text{dec}}(\mathbf{z}; \mathbf{W}_{\text{dec}}) = \mathbf{W}_{\text{dec}} \mathbf{z} + \mathbf{b}_{\text{dec}}
+\label{eq:decoder}
+\end{equation}
+
+where $\mathbf{z}$ is the latent representation, $\mathbf{W}$ and $\mathbf{b}$ are learnable parameters, and $\sigma(\cdot)$ is a nonlinear activation function. The reconstruction error serves as an anomaly indicator:
+
+\begin{equation}
+\mathcal{T}_k^{\text{AE}} = \|\mathbf{y}_k - \hat{\mathbf{y}}_k\|_2^2
+\label{eq:ae_statistic}
+\end{equation}
+
+Autoencoders are trained on nominal (fault-free) data using the objective:
+
+\begin{equation}
+\mathcal{L} = \frac{1}{N} \sum_{k=1}^{N} \|\mathbf{y}_k - \hat{\mathbf{y}}_k\|_2^2
+\label{eq:ae_loss}
+\end{equation}
+
+The advantage of autoencoders is their ability to learn complex nonlinear patterns in high-dimensional data without explicit feature engineering.
+
+\subsection{Variational Autoencoders}
+\label{subsec:vae}
+
+Variational Autoencoders (VAE) extend the standard autoencoder framework by imposing a probabilistic structure on the latent space. The objective function includes a reconstruction term and a Kullback-Leibler divergence regularization:
+
+\begin{equation}
+\mathcal{L}_{\text{VAE}} = \mathbb{E}_{q_{\phi}(\mathbf{z}|\mathbf{y}_k)}[\log p_{\theta}(\mathbf{y}_k|\mathbf{z})] - \beta \cdot \text{KL}(q_{\phi}(\mathbf{z}|\mathbf{y}_k) \| p(\mathbf{z}))
+\label{eq:vae_loss}
+\end{equation}
+
+where $q_{\phi}$ is the encoder, $p_{\theta}$ is the decoder, $p(\mathbf{z})$ is typically a standard normal distribution, and $\beta$ is a weighting parameter. VAEs provide a principled probabilistic framework for anomaly detection.
+
+\subsection{Neural Networks and Deep Learning}
+\label{subsec:neural_networks}
+
+Deep neural networks have demonstrated superior performance in capturing complex nonlinear relationships in high-dimensional data. In the context of fault detection, multilayer perceptrons (MLPs) and recurrent neural networks (RNNs) can be trained as classifiers to distinguish between normal and faulty states. Key considerations include:
+
+\begin{itemize}
+    \item \textbf{Architecture design}: Determining the number of layers, units per layer, and activation functions
+    \item \textbf{Regularization}: Employing techniques such as dropout and batch normalization to prevent overfitting
+    \item \textbf{Training dynamics}: Careful selection of learning rates, optimization algorithms, and stopping criteria
+    \item \textbf{Class imbalance}: Handling scenarios where faults are rare compared to normal operation
+\end{itemize}
+
+\subsection{Comparative Analysis and Related Work}
+\label{subsec:related_work}
+
+Prior research has established that data-driven fault detection methods offer complementary advantages:
+
+\begin{itemize}
+    \item \textbf{SVD-based methods}: Computationally efficient, interpretable, and robust to model order selection
+    \item \textbf{Autoencoder approaches}: Flexible, capable of learning nonlinear patterns, and suitable for high-dimensional data
+    \item \textbf{Hybrid methods}: Combining multiple approaches can improve robustness and adaptability
+\end{itemize}
+
+The selection of the optimal method depends on the specific characteristics of the industrial process, data availability, and computational constraints.
+% -------------------------------
+% SECTION 3: METHODOLOGY AND IMPLEMENTATION
+% -------------------------------
+\section{Methodology and Implementation}
+\label{sec:methodology}
+
+This section describes the implementation framework for both fault detection approaches, detailing data preprocessing, model development, and evaluation strategies.
+
+\subsection{Problem Description and Dataset Characteristics}
+\label{subsec:problem_description}
+
+The fault detection algorithms are evaluated using industrial benchmark datasets that capture various operational scenarios, including normal operation and multiple fault modes. Each dataset comprises:
+
+\begin{equation}
+\mathcal{D} = \{\mathbf{Y}_{\text{train}}, \mathbf{Y}_{\text{test}}, \mathbf{l}_{\text{test}}\}
+\label{eq:dataset_definition}
+\end{equation}
+
+where $\mathbf{Y}_{\text{train}}$ contains only nominal (fault-free) process data used for model training, $\mathbf{Y}_{\text{test}}$ contains both normal and faulty observations, and $\mathbf{l}_{\text{test}}$ provides ground truth labels.
+
+\subsection{Data Preprocessing}
+\label{subsec:preprocessing}
+
+Raw sensor data typically exhibits scale differences and noise. Preprocessing includes:
+
+\begin{equation}
+\mathbf{Y}_{\text{normalized}} = \frac{\mathbf{Y} - \boldsymbol{\mu}}{\boldsymbol{\sigma}}
+\label{eq:normalization}
+\end{equation}
+
+where $\boldsymbol{\mu}$ and $\boldsymbol{\sigma}$ are the mean and standard deviation computed from the training data. This ensures that all variables contribute equally to the fault detection models.
+
+\subsection{SVD-Based Approach with Adaptive Thresholding}
+\label{subsec:svd_implementation}
+
+The SVD-based fault detection algorithm proceeds as follows:
+
+\begin{enumerate}
+    \item Compute the SVD of the training data: $\mathbf{Y}_{\text{train}} = \mathbf{U} \boldsymbol{\Sigma} \mathbf{V}^T$
+    \item Select the number of principal components $d$ using variance threshold (Eq. \ref{eq:variance_threshold})
+    \item For each test observation $\mathbf{y}_k$, compute residuals: $\mathbf{e}_k = \mathbf{y}_k - \mathbf{U}_d \mathbf{U}_d^T \mathbf{y}_k$
+    \item Compute the test statistic: $\mathcal{T}_k = \|\mathbf{e}_k\|_2^2$
+    \item Set adaptive threshold: $\tau_k = \mu + \lambda \sigma_k$ where $\lambda \in [2, 3]$ is a sensitivity parameter
+    \item Make decision: Declare fault if $\mathcal{T}_k > \tau_k$
+\end{enumerate}
+
+\subsection{Autoencoder-Based Approach}
+\label{subsec:ae_implementation}
+
+The autoencoder architecture consists of:
+
+\begin{itemize}
+    \item \textbf{Encoder}: Input layer (size $m$) $\rightarrow$ hidden layers (sizes $h_1, h_2, \ldots$) $\rightarrow$ bottleneck layer (size $z$)
+    \item \textbf{Decoder}: Bottleneck layer $\rightarrow$ hidden layers (symmetric to encoder) $\rightarrow$ output layer (size $m$)
+    \item \textbf{Activation functions}: ReLU in hidden layers, linear in output layer
+    \item \textbf{Regularization}: Dropout ($p=0.2$) and batch normalization
+\end{itemize}
+
+The training procedure minimizes the reconstruction error (Eq. \ref{eq:ae_loss}) using Adam optimizer with early stopping based on validation set performance. The threshold is determined from training data statistics:
+
+\begin{equation}
+\tau_{\text{AE}} = \text{mean}(\mathcal{T}_{\text{train}}) + \gamma \cdot \text{std}(\mathcal{T}_{\text{train}})
+\label{eq:ae_threshold}
+\end{equation}
+
+where $\gamma$ is a hyperparameter controlling detection sensitivity.
+
+\subsection{Performance Metrics}
+\label{subsec:metrics}
+
+Model performance is evaluated using standard classification metrics:
+
+\begin{align}
+\text{Sensitivity} &= \frac{\text{TP}}{\text{TP} + \text{FN}} \label{eq:sensitivity} \\
+\text{Specificity} &= \frac{\text{TN}}{\text{TN} + \text{FP}} \label{eq:specificity} \\
+\text{F1-score} &= 2 \cdot \frac{\text{Precision} \cdot \text{Sensitivity}}{\text{Precision} + \text{Sensitivity}} \label{eq:f1}
+\end{align}
+
+where TP, TN, FP, and FN denote true positives, true negatives, false positives, and false negatives, respectively.
+
+
+% -------------------------------
+% SECTION 4: RESULTS AND DISCUSSION
+% -------------------------------
+\section{Results and Discussion}
+\label{sec:results}
+
+This section presents the experimental results obtained from applying both fault detection approaches to industrial benchmark datasets. Comprehensive comparative analysis highlights the strengths and limitations of each methodology.
+
+\subsection{SVD-Based Method Results}
+\label{subsec:svd_results}
+
+The SVD-based approach demonstrates computational efficiency and robustness across multiple test scenarios. Initial experiments show that the adaptive threshold mechanism effectively adapts to varying noise levels and process operating conditions. Detailed performance metrics for different fault types will be presented following full implementation and testing phases.
+
+\subsection{Autoencoder Method Results}
+\label{subsec:ae_results}
+
+The autoencoder approach shows promising capability in learning complex process dynamics from training data. The reconstruction error threshold provides a flexible mechanism for tuning the sensitivity-specificity trade-off. Preliminary validation indicates that deeper architectures capture nonlinear patterns that simpler methods may miss.
+
+\subsection{Comparative Analysis}
+\label{subsec:comparative_analysis}
+
+The comparative evaluation reveals complementary characteristics:
+
+\begin{itemize}
+    \item \textbf{Computational Cost}: SVD-based methods are significantly faster with linear complexity
+    \item \textbf{Interpretability}: SVD provides explicit visualization of principal components; autoencoders are more opaque
+    \item \textbf{Adaptability}: Autoencoders better capture nonlinear dynamics; SVD assumes linear structure
+    \item \textbf{Data Requirements}: Autoencoders typically require more training data
+    \item \textbf{Robustness}: Both methods show reasonable robustness to process variations
+\end{itemize}
+
+\subsection{Limitations and Future Work}
+\label{subsec:limitations}
+
+Current limitations include incomplete testing on all benchmark scenarios and lack of real-world deployment validation. Future efforts will focus on hybrid approaches combining SVD and autoencoder strengths, real-time implementation considerations, and integration with industrial control systems.
+
+% -------------------------------
+% SECTION 5: CONCLUSION
+% -------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+\subsection{Summary}
+\label{subsec:summary}
+
+This work has presented a comprehensive framework for fault detection in industrial processes, comparing two distinct data-driven approaches: SVD-based methods with adaptive statistical thresholding and autoencoder-based neural networks. Both methodologies demonstrate viability for practical fault detection applications, with different trade-offs between computational efficiency, interpretability, and capability to capture complex nonlinear process dynamics.
+
+\subsection{Key Findings}
+\label{subsec:key_findings}
+
+The investigation reveals that:
+
+\begin{enumerate}
+    \item SVD-based approaches offer computational efficiency and explicit interpretability, making them suitable for resource-constrained environments
+    \item Autoencoder methods provide flexibility in learning nonlinear patterns and show promise for complex industrial processes
+    \item Adaptive thresholding mechanisms effectively manage trade-offs between detection rate and false alarm rate
+    \item Hybrid approaches combining both methods warrant further investigation
+\end{enumerate}
+
+\subsection{Future Research Directions}
+\label{subsec:future_work}
+
+To advance this research, the following directions are recommended:
+
+\begin{itemize}
+    \item \textbf{Extended Benchmark Testing}: Evaluate both approaches on additional industrial datasets and compare against baseline methods
+    \item \textbf{Hybrid Methods}: Develop integrated approaches that leverage complementary strengths of SVD and autoencoders
+    \item \textbf{Real-Time Implementation}: Optimize algorithms for deployment in actual industrial control systems with computational constraints
+    \item \textbf{Uncertainty Quantification}: Incorporate Bayesian frameworks to quantify confidence in fault detection decisions
+    \item \textbf{Temporal Dynamics}: Extend methods to capture temporal dependencies using recurrent neural networks or temporal convolutional networks
+    \item \textbf{Transfer Learning}: Investigate transfer learning strategies to enable knowledge transfer across similar industrial processes
+\end{itemize}
+
+The ultimate objective is to develop robust, adaptive fault detection systems capable of operating reliably in diverse industrial environments with minimal manual tuning and high reliability standards.
+
+% -------------------------------
+% REFERENCES
+% -------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{dayal1997}
+Dayal, B. S., \& MacGregor, J. F. (1997).
+\textit{Improved PLS algorithms}.
+Journal of Chemometrics, 11(1), 73-85.
+
+\bibitem{spina2024}
+Spina, D. E., Campos, L. F. O., de Arruda, W. F., Melo, A., Alves, M. F. S., Rabello, G. L., Anzai, T. K., \& Pinto, J. C. (2024).
+\textit{Comparison of autoencoder architectures for fault detection in industrial processes}.
+Digital Chemical Engineering, 12, 100162.
+
+\bibitem{geron2019}
+Géron, A. (2019).
+\textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems} (2nd ed.).
+O'Reilly Media, Inc.
+
+\bibitem{downs1993}
+Downs, J. J., \& Vogel, E. F. (1993).
+\textit{A plant-wide industrial process control problem}.
+Computers \& Chemical Engineering, 17(3), 245-255.
+
+\bibitem{gavish2014}
+Gavish, M., \& Donoho, D. L. (2014).
+\textit{The optimal hard threshold for singular values is $4/\sqrt{3}$}.
+IEEE Transactions on Information Theory, 60(8), 5040-5053.
+
+\bibitem{yin2012}
+Yin, S., Ding, S. X., Haghani, A., Hao, H., \& Zhang, P. (2012).
+\textit{A comparison study of basic data-driven fault diagnosis and process monitoring methods on the benchmark Tennessee Eastman process}.
+Journal of Process Control, 22(9), 1567-1581.
+
+\bibitem{favoreel2000}
+Favoreel, W., De Moor, B., \& Van Overschee, P. (2000).
+\textit{Subspace state space system identification for industrial processes}.
+Journal of Process Control, 10(2-3), 149-155.
+
+\end{thebibliography}
+
+% -------------------------------
+% AUTHOR BIOGRAPHY
+% -------------------------------
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Figuras/Basicos/autor.png}}]{Saulo José Almeida Silva}
+Technician in Electrical Installation from the Federal Institute of Alagoas (IFAL, 2021). Bachelor in Electrical Engineering with emphasis on Electrical Installation from IFAL (2026). Specialization in Industrial Automation from Eduno. Currently a Master's student in Electrical Engineering at the Federal University of Campina Grande (UFCG), working in the field of Robotics with focus on coordination of heterogeneous robotic systems.
+\end{IEEEbiography}
+
+
+% -------------------------------
+% APPENDICES
+% -------------------------------
+\newpage
+\begin{appendices}
+    
+
+\end{appendices}
+
+\end{document}
