@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento de Processos - PLS (T² e Q)</title>
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .chart-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 45%; min-width: 400px; }
+        h2 { text-align: center; color: #333; }
+        .status { text-align: center; font-weight: bold; margin-top: 10px; }
+        .normal { color: green; }
+        .alerta { color: red; }
+    </style>
+</head>
+<body>
+
+    <h2>Monitoramento Estatístico Multivariado (MSPC)</h2>
+    
+    <div class="container">
+        <!-- Gráfico T² -->
+        <div class="chart-box">
+            <canvas id="chartT2"></canvas>
+            <div id="statusT2" class="status normal">Status T²: Operação Normal</div>
+        </div>
+
+        <!-- Gráfico Q -->
+        <div class="chart-box">
+            <canvas id="chartQ"></canvas>
+            <div id="statusQ" class="status normal">Status Q: Operação Normal</div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações Iniciais (Limites calculados no Python)
+        const LIMIT_T2 = 15.5;
+        const LIMIT_Q = 5.2;
+
+        function createChart(ctx, label, limit, color) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: label,
+                            data: [],
+                            borderColor: color,
+                            borderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: 'Limite Crítico (95%)',
+                            data: [],
+                            borderColor: 'red',
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        const ctxT2 = document.getElementById('chartT2').getContext('2d');
+        const ctxQ = document.getElementById('chartQ').getContext('2d');
+        
+        const chartT2 = createChart(ctxT2, 'Estatística T²', LIMIT_T2, 'blue');
+        const chartQ = createChart(ctxQ, 'Estatística Q (Resíduos)', LIMIT_Q, 'orange');
+
+        // Simulação de recebimento de dados do backend Python
+        let step = 0;
+        setInterval(() => {
+            step++;
+            
+            // Simula valores (Em um caso real, viriam de uma API Flask/FastAPI)
+            const newT2 = (Math.random() * 10 + (step > 15 ? 10 : 0)).toFixed(2);
+            const newQ = (Math.random() * 4 + (step > 20 ? 5 : 0)).toFixed(2);
+
+            // Atualiza T2
+            updateData(chartT2, step, newT2, LIMIT_T2, 'statusT2');
+            // Atualiza Q
+            updateData(chartQ, step, newQ, LIMIT_Q, 'statusQ');
+
+        }, 1000);
+
+        function updateData(chart, label, value, limit, statusId) {
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+                chart.data.datasets[1].data.shift();
+            }
+
+            chart.data.labels.push(label);
+            chart.data.datasets[0].data.push(value);
+            chart.data.datasets[1].data.push(limit);
+            chart.update();
+
+            const statusEl = document.getElementById(statusId);
+            if (value > limit) {
+                statusEl.innerText = `ALERTA: Fora de Controle! (${value})`;
+                statusEl.className = 'status alerta';
+            } else {
+                statusEl.innerText = `Status OK: (${value})`;
+                statusEl.className = 'status normal';
+            }
+        }
+    </script>
+</body>
+</html>

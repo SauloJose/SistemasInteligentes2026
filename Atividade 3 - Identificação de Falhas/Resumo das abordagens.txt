@@ -1,0 +1,19 @@
+1) Encontrar as entradas X e Saídas Y do processo completo
+2) Analisar um ponto em que a operação é normal
+3) Avaliar um PLS: X->Y
+4) Calcular os limites para o T² nos scores de X
+5) Calcular Qx, Qy e os limites de operação
+
+
+IDEIAS:
+	- Avaliar um PLS em lote?
+	- Avaliar as malhas de controle e as relações
+
+NECESSIDADES:
+	- X e Y devem estar centrados em suas médias
+	- PLS usa o SVD com operações a mais.
+	- PCA é para analisar X unicamente.
+
+
+OBRIGATÓRIEDADES:
+	- Encontrar a operação normal de controle

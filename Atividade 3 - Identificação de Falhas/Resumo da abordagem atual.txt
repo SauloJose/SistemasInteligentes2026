@@ -1,0 +1,7 @@
+=> 1. Procurar o modelo normal de atuação
+=> 2. Treinar um PLS encima desse resultado
+=> 3. Implementar código do teste T² e Q
+=> 4. Definir limites de aplicação para T² e Q
+=> 5. Fazer testes com os valores do banco de dados
+
+=> Extrair resultados e anotar.
