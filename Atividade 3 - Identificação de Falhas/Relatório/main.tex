@@ -16,6 +16,7 @@
 \usepackage{hyperref}     % Links clicáveis (GitHub, DOIs)
 \usepackage{algorithm}    % Pseudocódigo
 \usepackage{algpseudocode}
+\usepackage[table]{xcolor} % no preâmbulo
 \usepackage{xcolor}       % Comentários ou destaques
 \usepackage{url}          % URLs no rodapé
 
@@ -92,92 +93,75 @@ O processo Tennessee Eastman (TE) é um simulador realista e complexo de um proc
 
 O processo TE compõe-se das seguintes unidades principais:
 
-\begin{table}[h]
+\begin{table*}
 \centering
 \caption{Unidades Principais do Processo Tennessee Eastman}
 \label{tab:tee_units}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{|l|l|p{6cm}|}
-\hline
+\small
+\begin{tabular}{llp{5.5cm}}
+\toprule
+\rowcolor{gray!20}
 \textbf{Unidade} & \textbf{Função} & \textbf{Descrição} \\
-\hline
+\midrule
 Reator & Vaso de reação primária & Polimerização catalítica das matérias-primas A, D e E \\
-\hline
 Separador & Separação líquido-vapor & Separa os produtos da alimentação não reagida \\
-\hline
 Coluna de destilação & Destilação & Remove componentes leves e recupera o produto \\
-\hline
 Condensador & Troca térmica & Condensa vapores no separador \\
-\hline
 Laço de reciclo & Circulação de material & Recicla materiais não reagidos para o reator \\
-\hline
-\end{tabular}%
-}
-\end{table}
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \subsubsection{Variáveis Medidas e Entradas Manipuladas}
 
 O processo TE fornece 41 variáveis continuamente medidas (XMEAS 1--41) e 12 entradas manipuladas (XMV 1--12), permitindo um monitoramento multivariável abrangente:
 
-\begin{table}[h]
+\begin{table*}
 \centering
 \caption{Categorias de Variáveis Medidas no Processo TE}
 \label{tab:tee_variables}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{|l|l|c|}
-\hline
+\small
+\begin{tabular}{lp{4.5cm}c}
+\toprule
+\rowcolor{gray!20}
 \textbf{Tipo de Variável} & \textbf{Categoria} & \textbf{Quantidade} \\
-\hline
+\midrule
 Vazões & Alimentação do reator, purga, separador, coluna & 6 \\
-\hline
 Pressões & Reator, separador, coluna & 3 \\
-\hline
 Temperaturas & Reator, separador, coluna, água de resfriamento & 7 \\
-\hline
 Níveis de líquido & Reator, separador, coluna & 3 \\
-\hline
 Água de resfriamento do reator/condensador & Temperaturas de entrada de água & 2 \\
-\hline
 Trabalho do compressor & Consumo de energia & 1 \\
-\hline
 Análise de composição & Frações de alimentação e produto (A, B, C, D, E, F, G, H) & 11 \\
-\hline
 Sinais adicionais de processo & Temperatura do reator, várias vazões & 7 \\
-\hline
-\end{tabular}%
-}
-\end{table}
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \subsubsection{Cenários de Falha}
 
 O benchmark inclui 21 modos de falha (IDV 1--21) que representam diferentes cenários de falha:
 
-\begin{table}[H]
+\begin{table*}
 \centering
 \caption{Cenários de Falha do Processo TE}
 \label{tab:tee_faults}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{|c|l|c|c|}
-\hline
+\footnotesize
+\begin{tabular}{cllp{3.2cm}}
+\toprule
+\rowcolor{gray!20}
 \textbf{IDV} & \textbf{Descrição} & \textbf{Tipo} & \textbf{Ocorrência} \\
-\hline
+\midrule
 1--2 & Mudanças na composição dos reagentes & Degrau & 500 segundos \\
-\hline
 3--4 & Variações na temperatura de alimentação & Degrau & 500 segundos \\
-\hline
 5--7 & Alterações na temperatura/pressão do fluido de arrefecimento & Degrau & 500 segundos \\
-\hline
 8--12 & Variações aleatórias na composição da alimentação, temperatura & Aleatório & 500 segundos \\
-\hline
 13--15 & Deriva lenta na cinética / agarramento de válvula & Deriva/Travamento & 500 segundos \\
-\hline
 16--20 & Falhas desconhecidas (cenários ocultos) & Desconhecido & 500 segundos \\
-\hline
 21 & Válvula fixa na posição de regime estacionário & Constante & 500 segundos \\
-\hline
-\end{tabular}%
-}
-\end{table}
+\bottomrule
+\end{tabular}
+\end{table*}
 
 Os dados são normalizados para média zero e variância unitária, a fim de garantir que todas as variáveis contribuam igualmente para os algoritmos de detecção.
 
@@ -414,26 +398,21 @@ A taxa de alarmes falsos mede a porcentagem de amostras de operação normal inc
 \centering
 \caption{Comparação das Taxas de Alarmes Falsos (FAR) entre Todos os Métodos}
 \label{tab:far_comparison}
-\begin{tabular}{|c|l|c|}
-\hline
+\small
+\begin{tabular}{clc}
+\toprule
+\rowcolor{gray!20}
 \textbf{Posição} & \textbf{Método} & \textbf{FAR (\%)} \\
-\hline
+\midrule
 1 & MICA & 0,52\% \\
-\hline
-2 & FDA & 1,15\% \\
-\hline
-3 & PCA & 5,62\% \\
-\hline
+2 & FDA  & 1,15\% \\
+3 & PCA  & 5,62\% \\
 4 & DPCA & 6,56\% \\
-\hline
-5 & ICA & 6,98\% \\
-\hline
+5 & ICA  & 6,98\% \\
 6 & TPLS & 10,42\% \\
-\hline
 7 & MPLS & 10,31\% \\
-\hline
-8 & PLS & 12,19\% \\
-\hline
+8 & PLS  & 12,19\% \\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -455,52 +434,33 @@ A taxa de detecção de falhas (sensibilidade) mede a porcentagem de amostras co
 \caption{Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}
 \label{tab:fdr_all_faults}
 \footnotesize
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-\hline
+\begin{tabular}{ccccccccc}
+\toprule
+\rowcolor{gray!20}
 \textbf{Falha} & \textbf{PCA} & \textbf{DPCA} & \textbf{PLS} & \textbf{TPLS} & \textbf{MPLS} & \textbf{ICA} & \textbf{MICA} & \textbf{FDA} \\
-\hline
+\midrule
 IDV(01) & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,8\% & 98,9\% \\
-\hline
 IDV(02) & 98,8\% & 98,9\% & 98,9\% & 98,9\% & 98,8\% & 98,9\% & 97,9\% & 96,9\% \\
-\hline
-IDV(03) & 12,9\% & 12,1\% & 12,1\% & 17,6\% & 13,6\% & 14,9\% & 3,4\% & 1,5\% \\
-\hline
-IDV(04) & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 97,5\% & 100,0\% \\
-\hline
+IDV(03) & 12,9\% & 12,1\% & 12,1\% & 17,6\% & 13,6\% & 14,9\% & 3,4\%  & 1,5\% \\
+IDV(04) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 97,5\% & 100,0\%\\
 IDV(05) & 33,6\% & 37,1\% & 37,1\% & 37,4\% & 36,5\% & 35,9\% & 26,2\% & 99,9\% \\
-\hline
-IDV(06) & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% \\
-\hline
-IDV(07) & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 21,8\% \\
-\hline
+IDV(06) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%\\
+IDV(07) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 21,8\% \\
 IDV(08) & 98,0\% & 98,0\% & 98,0\% & 98,4\% & 98,5\% & 98,1\% & 97,1\% & 57,6\% \\
-\hline
-IDV(09) & 8,4\% & 10,1\% & 10,1\% & 16,1\% & 13,5\% & 10,6\% & 1,6\% & 1,2\% \\
-\hline
+IDV(09) & 8,4\%  & 10,1\% & 10,1\% & 16,1\% & 13,5\% & 10,6\% & 1,6\%  & 1,2\% \\
 IDV(10) & 60,5\% & 63,0\% & 63,0\% & 77,2\% & 90,0\% & 63,1\% & 41,1\% & 65,6\% \\
-\hline
 IDV(11) & 78,9\% & 84,2\% & 84,2\% & 81,9\% & 81,0\% & 81,1\% & 64,2\% & 65,9\% \\
-\hline
 IDV(12) & 99,1\% & 99,1\% & 99,1\% & 99,4\% & 99,5\% & 99,2\% & 99,0\% & 81,9\% \\
-\hline
 IDV(13) & 95,4\% & 95,4\% & 95,4\% & 95,2\% & 95,2\% & 95,4\% & 94,4\% & 58,8\% \\
-\hline
-IDV(14) & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 100,0\% & 92,6\% \\
-\hline
-IDV(15) & 14,1\% & 16,9\% & 16,9\% & 24,6\% & 21,1\% & 18,0\% & 5,5\% & 1,5\% \\
-\hline
+IDV(14) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 92,6\% \\
+IDV(15) & 14,1\% & 16,9\% & 16,9\% & 24,6\% & 21,1\% & 18,0\% & 5,5\%  & 1,5\% \\
 IDV(16) & 55,2\% & 58,0\% & 58,0\% & 65,5\% & 80,4\% & 58,9\% & 29,0\% & 6,9\% \\
-\hline
 IDV(17) & 95,2\% & 96,2\% & 96,2\% & 95,9\% & 95,2\% & 96,0\% & 90,4\% & 81,4\% \\
-\hline
 IDV(18) & 90,5\% & 90,5\% & 90,5\% & 91,6\% & 90,9\% & 90,6\% & 89,6\% & 85,9\% \\
-\hline
 IDV(19) & 42,1\% & 53,9\% & 53,9\% & 43,6\% & 33,9\% & 51,4\% & 22,9\% & 2,0\% \\
-\hline
 IDV(20) & 63,4\% & 66,4\% & 66,4\% & 68,9\% & 65,9\% & 65,5\% & 49,6\% & 54,9\% \\
-\hline
 IDV(21) & 52,1\% & 52,2\% & 52,2\% & 61,1\% & 59,8\% & 55,0\% & 45,5\% & 1,8\% \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table*}
 
@@ -539,26 +499,21 @@ A FDA exibe a maior variância de desempenho: excelente para algumas falhas (IDV
 \centering
 \caption{Resumo de Desempenho: FDR Média em Todas as Falhas}
 \label{tab:average_fdr}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Método} & \textbf{FDR} & \textbf{FAR (\%)} \\
-\hline
+\small
+\begin{tabular}{lcc}
+\toprule
+\rowcolor{gray!20}
+\textbf{Método} & \textbf{FDR Média} & \textbf{FAR (\%)} \\
+\midrule
 DPCA & 72,6\% & 6,56\% \\
-\hline
 TPLS & 71,8\% & 10,42\% \\
-\hline
-PCA & 71,3\% & 5,62\% \\
-\hline
-ICA & 70,9\% & 6,98\% \\
-\hline
+PCA  & 71,3\% & 5,62\% \\
+ICA  & 70,9\% & 6,98\% \\
 MPLS & 70,7\% & 10,31\% \\
-\hline
-PLS & 70,1\% & 12,19\% \\
-\hline
+PLS  & 70,1\% & 12,19\% \\
 MICA & 62,3\% & 0,52\% \\
-\hline
-FDA & 66,7\% & 1,15\% \\
-\hline
+FDA  & 66,7\% & 1,15\% \\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -595,33 +550,27 @@ Este trabalho apresenta uma comparação abrangente de benchmark de oito metodol
 
 A Tabela~\ref{tab:conclusion_summary} consolida as principais métricas de desempenho, facilitando a comparação direta entre os métodos e servindo como guia para a seleção de acordo com as prioridades do sistema de monitoramento.
 
-\begin{table}[H]
+\begin{table*}[H]
 \centering
 \caption{Tabela-Resumo dos Resultados -- Desempenho Geral}
 \label{tab:conclusion_summary}
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Método} & \textbf{FDR
-(\%)} & \textbf{FAR (\%)} & \textbf{Destaque} \\
-\hline
-DPCA & 72,6 & 6,56 & Melhor equilíbrio FDR $\times$ FAR \\
-\hline
+\small
+\begin{tabular}{lccc}
+\toprule
+\rowcolor{gray!20}
+\textbf{Método} & \textbf{FDR Média (\%)} & \textbf{FAR (\%)} & \textbf{Destaque} \\
+\midrule
+DPCA & 72,6 & 6,56  & Melhor equilíbrio FDR $\times$ FAR \\
 TPLS & 71,8 & 10,42 & Bom desempenho em falhas sutis \\
-\hline
-PCA & 71,3 & 5,62 & Linha de base confiável \\
-\hline
-ICA & 70,9 & 6,98 & Detecta direções independentes \\
-\hline
+PCA  & 71,3 & 5,62  & Linha de base confiável \\
+ICA  & 70,9 & 6,98  & Detecta direções independentes \\
 MPLS & 70,7 & 10,31 & Maior FDR para IDV(10) \\
-\hline
-PLS & 70,1 & 12,19 & Simples e supervisionado \\
-\hline
-FDA & 66,7 & 1,15 & Excelente em falhas selecionadas \\
-\hline
-MICA & 62,3 & 0,52 & Menor FAR, alta especificidade \\
-\hline
+PLS  & 70,1 & 12,19 & Simples e supervisionado \\
+FDA  & 66,7 & 1,15  & Excelente em falhas selecionadas \\
+MICA & 62,3 & 0,52  & Menor FAR, alta especificidade \\
+\bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Recomendações para a Prática}
 \label{subsec:recommendations}
