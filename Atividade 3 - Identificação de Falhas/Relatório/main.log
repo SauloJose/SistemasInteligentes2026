@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  17 MAY 2026 16:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  17 MAY 2026 17:12
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -132,17 +132,14 @@ Package babel Info: Configuration files are deprecated, as
 *
 (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of babel
-) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/en\babel-english.tex)
-Package babel Info: Importing font and identification data for english
-(babel)             from babel-en.ini. Reported on input line 4320.
- (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.ldf
-Language: english 2017/06/06 v3.3r English support from the babel system
-Package babel Info: Hyphen rules for 'canadian' set to \l@english
-(babel)             (\language0). Reported on input line 102.
-Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
-(babel)             (\language73). Reported on input line 105.
-Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
-(babel)             (\language73). Reported on input line 108.
+) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/pt\babel-brazilian.tex)
+Package babel Info: Importing font and identification data for brazilian
+(babel)             from babel-pt-BR.ini. Reported on input line 4320.
+ (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/babel-portuges\brazilian.ldf
+Language: portuges 2021/07/09 v1.2t Portuguese support from the babel system
+Package babel Info: Hyphen rules for 'brazilian' set to \l@portuguese
+(babel)             (\language56). Reported on input line 111.
+Package babel Info: Making " an active character on input line 143.
 )) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip52
@@ -458,7 +455,10 @@ Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 ) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count344
-) (main.aux)
+) (main.aux
+Package babel Info: 'brazilian' activates 'portuges' shorthands.
+(babel)             Reported on input line 8.
+)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
@@ -499,109 +499,109 @@ Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
-)) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\translations-basic-dictionary-english.trsl
-File: translations-basic-dictionary-english.trsl (english translation file `translations-basic-dictionary')
+)) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\translations-basic-dictionary-brazil.trsl
+File: translations-basic-dictionary-brazil.trsl (brazil translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 25.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `brazil'. on input line 25.
 Package hyperref Info: Link coloring OFF on input line 25.
  (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 69.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 64.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 69.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 64.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 69.
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 64.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/jknappen\ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
-) [1{C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
+)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[1{C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-Overfull \hbox (79.34772pt too wide) in paragraph at lines 101--116
- [][] 
+Underfull \hbox (badness 7344) in paragraph at lines 188--189
+[]\OT1/ptm/m/n/10 O pro-cesso opera con-ti-nu-a-mente sob con-trole por
  []
 
-
-Underfull \hbox (badness 2556) in paragraph at lines 120--121
- \OT1/ptm/m/it/10 2) Mea-sured Vari-ables and Ma-nip-u-lated In-puts: [][][] \OT1/ptm/m/n/10 The
- []
-
-
-Overfull \hbox (65.11047pt too wide) in paragraph at lines 126--147
- [][] 
- []
-
-
-Overfull \hbox (99.89333pt too wide) in paragraph at lines 158--177
- [][] 
- []
-
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 196.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 214.
 (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \hbox (badness 5359) in paragraph at lines 210--211
-[]\OT1/ptm/m/n/10 where $\OT1/cmr/bx/n/10 t[]$ \OT1/ptm/m/n/10 are the scores (pro-jec-tions) and $[] \OT1/cmr/m/n/10 =
+Underfull \hbox (badness 10000) in paragraph at lines 228--229
+[]\OT1/ptm/m/n/10 onde $\OT1/cmr/bx/n/10 t[]$ \OT1/ptm/m/n/10 s[]ao os es-co-res (proje[][]oes) e $[] \OT1/cmr/m/n/10 =
  []
 
 [2]
-Underfull \hbox (badness 1762) in paragraph at lines 257--258
- \OT1/ptm/m/it/10 2) Dy-namic Prin-ci-pal Com-po-nent Anal-y-sis (DPCA): [][][]
+Underfull \hbox (badness 10000) in paragraph at lines 373--374
+ \OT1/ptm/m/it/10 1) PCA e DPCA: [][][] \OT1/ptm/m/n/10 A PCA []e im-ple-men-tada via
+ []
+
+
+Underfull \hbox (badness 3977) in paragraph at lines 373--374
+\OT1/ptm/m/n/10 decomposi[][]ao em va-lo-res sin-gu-la-res (SVD) da ma-triz
  []
 
 [3]
-Underfull \hbox (badness 1565) in paragraph at lines 409--410
-[]\OT1/ptm/b/n/10 Data Re-quire-ments\OT1/ptm/m/n/10 : Au-toen-coders typ-i-cally re-quire
+Underfull \hbox (badness 2635) in paragraph at lines 442--443
+[]\OT1/ptm/m/n/10 O MICA atinge a me-nor taxa de alar-mes fal-sos
  []
 
-
-Underfull \hbox (badness 2875) in paragraph at lines 447--448
-[]\OT1/ptm/b/n/10 Extended Bench-mark Test-ing\OT1/ptm/m/n/10 : Eval-u-ate both ap-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 450--451
-[]\OT1/ptm/b/n/10 Uncertainty Quan-tifi-ca-tion\OT1/ptm/m/n/10 : In-cor-po-rate Bayesian
- []
-
-[4]
-<Figuras/Basicos/autor.png, id=235, 269.50688pt x 365.86688pt>
+[4] [5]
+<Figuras/Basicos/autor.png, id=276, 269.50688pt x 365.86688pt>
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 502.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 696.
 (pdftex.def)             Requested size: 66.54585pt x 90.33879pt.
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 502.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 696.
 (pdftex.def)             Requested size: 66.54585pt x 90.33879pt.
- [5
 
- <./Figuras/Basicos/autor.png>] (main.aux)
+Underfull \hbox (badness 4686) in paragraph at lines 696--698
+\OT1/ptm/m/n/8 2021). Ba-cha-rel em En-ge-nha-ria El[]etrica com
+ []
+
+
+Underfull \hbox (badness 7468) in paragraph at lines 696--698
+\OT1/ptm/m/n/8 Especializa[][]ao em Automa[][]ao In-dus-trial pela
+ []
+
+
+Underfull \hbox (badness 2735) in paragraph at lines 696--698
+\OT1/ptm/m/n/8 Eduno. Atu-al-mente []e mes-trando em En-ge-nha-
+ []
+
+[6 <./Figuras/Basicos/autor.png>] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: FD1FD35E08DEE8263B7C2DB4736B2DDA;8806.
+(rerunfilecheck)             Checksum: 08AC46987C21D78C94663A146D991591;11479.
  ) 
 Here is how much of TeX's memory you used:
- 17117 strings out of 467871
- 333190 string characters out of 5418375
- 748094 words of memory out of 5000000
- 45689 multiletter control sequences out of 15000+600000
- 678951 words of font info for 144 fonts, out of 8000000 for 9000
+ 17277 strings out of 467871
+ 338835 string characters out of 5418375
+ 772345 words of memory out of 5000000
+ 45842 multiletter control sequences out of 15000+600000
+ 675855 words of font info for 135 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,80p,1177b,1175s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,15n,80p,1152b,1152s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 563723 bytes).
+Output written on main.pdf (6 pages, 594023 bytes).
 PDF statistics:
- 354 PDF objects out of 1000 (max. 8388607)
- 83 named destinations out of 1000 (max. 500000)
- 354 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 399 PDF objects out of 1000 (max. 8388607)
+ 96 named destinations out of 1000 (max. 500000)
+ 418 words of extra memory for PDF output out of 10000 (max. 10000000)
 
