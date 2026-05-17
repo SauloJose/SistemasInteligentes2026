@@ -239,87 +239,103 @@ onde $\theta_k = \sum_{i=a+1}^p \lambda_i^k$ e $h_0 = 1 - \frac{2\theta_1 \theta
 \subsection{Visão Geral Comparativa dos Métodos de Detecção de Falhas}
 \label{subsec:methods_overview}
 
-Este trabalho compara oito metodologias diferentes de detecção de falhas aplicadas ao processo TE. Cada método emprega estratégias de transformação e fundamentos estatísticos distintos:
+Este trabalho compara oito metodologias distintas de detecção de falhas aplicadas ao processo TE. Cada método emprega estratégias de transformação e fundamentos estatísticos próprios. A seguir, descrevemos a essência de cada um, destacando suas equações‑chave.
 
 \subsubsection{Análise de Componentes Principais (PCA)}
 
-A PCA é o método estatístico multivariado básico que decompõe os dados do processo em componentes principais não correlacionados, ordenados por contribuição de variância. O método:
+A PCA decompõe a matriz de dados $\mathbf{X}$ (com $m$ variáveis e $N$ observações) em componentes não correlacionados que capturam a máxima variância.  
+O primeiro passo é centralizar os dados e calcular a matriz de covariância $\mathbf{S} = \frac{1}{N-1}\mathbf{X}^\top\mathbf{X}$. A decomposição em autovalores e autovetores fornece:
 
-\begin{enumerate}
-    \item Calcula a matriz de covariância a partir dos dados de treinamento;
-    \item Extrai os autovetores (loadings) e os autovalores;
-    \item Monitora as estatísticas $T^2$ e SPE nos dados de teste;
-    \item Declara falha quando qualquer uma das estatísticas excede seu limite de controle.
-\end{enumerate}
+\begin{equation}
+\mathbf{S} = \mathbf{P} \boldsymbol{\Lambda} \mathbf{P}^\top,
+\label{eq:pca_decomposition}
+\end{equation}
+onde $\mathbf{P}$ contém os autovetores (loadings) e $\boldsymbol{\Lambda} = \text{diag}(\lambda_1, \lambda_2, \ldots, \lambda_m)$ os autovalores em ordem decrescente.  
 
-Vantagens: eficiência computacional, interpretabilidade e reconstrução explícita. Desvantagens: assume relações lineares e requer seleção cuidadosa do número de componentes.
+Retendo os $a$ primeiros componentes, uma nova observação $\mathbf{x}$ é projetada no subespaço principal:
+\begin{equation}
+\mathbf{t} = \mathbf{P}_a^\top \mathbf{x}, \qquad \hat{\mathbf{x}} = \mathbf{P}_a \mathbf{t}.
+\label{eq:pca_projection}
+\end{equation}
+
+O monitoramento utiliza duas estatísticas complementares:  
+- $T^2 = \mathbf{t}^\top \boldsymbol{\Lambda}_a^{-1} \mathbf{t}$ (variação no subespaço do modelo),  
+- $Q = \|\mathbf{x} - \hat{\mathbf{x}}\|^2$ (erro no subespaço residual).  
+
+Uma falha é declarada se $T^2 > T^2_{\text{lim}}$ ou $Q > Q_{\text{lim}}$, onde os limites são obtidos da distribuição $F$ e da aproximação de Jackson–Mudholkar (Equações~\eqref{eq:t2_limit} e~\eqref{eq:spe_limit}).
+
+Vantagens: eficiência computacional, interpretabilidade. Desvantagens: assume relações lineares e exige escolha adequada de $a$.
 
 \subsubsection{Análise de Componentes Principais Dinâmica (DPCA)}
 
-A DPCA estende a PCA incorporando a dinâmica temporal por meio de variáveis defasadas. Em vez de utilizar apenas a observação atual $\mathbf{x}_k$, a DPCA constrói um vetor aumentado:
+A DPCA incorpora a dinâmica temporal sem alterar a essência da PCA. Para cada instante $k$, constrói-se um vetor aumentado com $\ell$ defasagens:
 
 \begin{equation}
-\mathbf{x}^{\text{aug}}_k = [\mathbf{x}_k^\top, \mathbf{x}_{k-1}^\top, \ldots, \mathbf{x}_{k-\ell}^\top]^\top
+\mathbf{x}^{\text{aug}}_k = \begin{bmatrix}
+\mathbf{x}_k \\ \mathbf{x}_{k-1} \\ \vdots \\ \mathbf{x}_{k-\ell}
+\end{bmatrix} \in \mathbb{R}^{m(\ell+1)}.
 \label{eq:dpca_augmented}
 \end{equation}
 
-onde $\ell$ é o número de amostras defasadas. Isso captura a dinâmica do processo e melhora a detecção de falhas de evolução lenta. O modelo PCA é então aplicado a esse espaço aumentado.
+Aplica‑se a PCA padrão a essa matriz aumentada. As estatísticas $T^2$ e $Q$ são então calculadas no espaço aumentado, capturando correlações temporais e melhorando a detecção de falhas lentas.
 
 \subsubsection{Mínimos Quadrados Parciais (PLS)}
 
-O PLS combina a capacidade de redução de dimensionalidade da PCA com o aprendizado supervisionado, relacionando as variáveis de processo (X) com uma saída de qualidade (y):
+O PLS relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ (no nosso caso, a concentração do componente G, XMEAS 35). O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
 
-\begin{equation}
-\mathbf{X} = \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \quad \mathbf{y} = \mathbf{T} \mathbf{q} + \mathbf{f}
-\label{eq:pls_model}
-\end{equation}
+\begin{align}
+\mathbf{X} &= \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \label{eq:pls_x}\\
+\mathbf{y} &= \mathbf{T} \mathbf{q} + \mathbf{f}, \label{eq:pls_y}
+\end{align}
+onde $\mathbf{T} = [\mathbf{t}_1, \ldots, \mathbf{t}_a]$ são os escores, $\mathbf{P}$ as cargas (loadings) de $\mathbf{X}$, $\mathbf{q}$ os pesos de $\mathbf{y}$, e $\mathbf{E}, \mathbf{f}$ os resíduos.  
 
-O PLS extrai variáveis latentes que são simultaneamente preditivas da saída e representativas da variação das entradas. Para o processo TE, a qualidade do produto (XMEAS 35, componente G) serve como saída de qualidade. O monitoramento prossegue utilizando as estatísticas $T^2$ e SPE de forma análoga à PCA.
+Na fase de monitoramento, calculam‑se $T^2$ e $Q$ a partir dos escores, de forma idêntica à PCA. Assim, o PLS supervisiona a redução de dimensionalidade, mantendo a sensibilidade a variações que afetam a qualidade.
 
 \subsubsection{Mínimos Quadrados Parciais com Informação Temporal (TPLS)}
 
-O TPLS estende o PLS aumentando as variáveis de processo com defasagens temporais, de forma similar à DPCA:
-
+O TPLS simplesmente aplica o PLS ao conjunto de dados aumentado com defasagens temporais, análogo à DPCA:
 \begin{equation}
-\mathbf{X}^{\text{aug}} = [\mathbf{X}_k, \mathbf{X}_{k-1}, \ldots, \mathbf{X}_{k-\ell}]
+\mathbf{X}^{\text{aug}} = \begin{bmatrix}
+\mathbf{X}_k & \mathbf{X}_{k-1} & \cdots & \mathbf{X}_{k-\ell}
+\end{bmatrix}.
 \label{eq:tpls_augmented}
 \end{equation}
-
-Essa abordagem híbrida combina a natureza supervisionada do PLS com a captura de informações dinâmicas.
+Com isso, o modelo captura simultaneamente a correlação temporal e a relação supervisionada com a qualidade.
 
 \subsubsection{Mínimos Quadrados Parciais Multivariados (MPLS)}
 
-O MPLS estende ainda mais o PLS ao considerar múltiplas saídas simultaneamente ou através do refinamento iterativo da estrutura de variáveis latentes, aumentando o poder preditivo para relações de qualidade complexas.
+O MPLS estende o PLS para múltiplas saídas de qualidade $\mathbf{Y}$ (por exemplo, várias concentrações). A decomposição torna‑se:
+\begin{equation}
+\mathbf{X} = \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \qquad \mathbf{Y} = \mathbf{U} \mathbf{Q}^\top + \mathbf{F},
+\label{eq:mpls_model}
+\end{equation}
+e busca‑se maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$. Isso permite modelar relações mais complexas entre processo e qualidade, mantendo a estrutura de monitoramento baseada em $T^2$ e $Q$.
 
 \subsubsection{Análise de Componentes Independentes (ICA)}
 
-A ICA busca decompor os dados do processo em componentes estatisticamente independentes, em vez de descorrelacionados:
-
+Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes. Assume‑se que as medições $\mathbf{x}$ são uma mistura linear de fontes independentes $\mathbf{s}$:
 \begin{equation}
-\mathbf{X} = \mathbf{A} \mathbf{S}
+\mathbf{x} = \mathbf{A} \mathbf{s},
 \label{eq:ica_model}
 \end{equation}
+com $\mathbf{A}$ a matriz de mistura. O algoritmo FastICA estima uma matriz de separação $\mathbf{W} \approx \mathbf{A}^{-1}$ tal que $\hat{\mathbf{s}} = \mathbf{W} \mathbf{x}$ tenham máxima não‑gaussianidade.  
 
-onde $\mathbf{S}$ contém os componentes independentes e $\mathbf{A}$ é a matriz de mistura. A ICA baseia-se na suposição de que as falhas se manifestam como “sinais fonte” independentes. O método pode detectar falhas que se situam em direções não capturadas pela PCA.
+Para monitoramento, calcula‑se a estatística $I^2 = \hat{\mathbf{s}}^\top \hat{\mathbf{s}}$ (energia dos componentes independentes) e o erro de reconstrução $Q_{\text{ICA}} = \|\mathbf{x} - \mathbf{A}\hat{\mathbf{s}}\|^2$. Falhas são sinalizadas quando esses valores excedem limites obtidos por densidade de kernel.
 
 \subsubsection{Análise de Componentes Independentes Multivariada (MICA)}
 
-O MICA combina a ICA com o aumento temporal, de forma semelhante à relação entre DPCA e PCA. Isso captura tanto a independência quanto a dinâmica temporal, proporcionando maior sensibilidade na detecção.
+O MICA combina a ICA com a mesma estratégia de aumento temporal da DPCA. Aplica‑se a ICA ao vetor aumentado $\mathbf{x}^{\text{aug}}_k$, capturando independência e dinâmica. As estatísticas $I^2$ e $Q_{\text{ICA}}$ são calculadas no espaço aumentado, proporcionando sensibilidade adicional a falhas que evoluem lentamente.
 
 \subsubsection{Análise Discriminante de Fisher (FDA)}
 
-A FDA é um método supervisionado de redução de dimensionalidade que busca direções que maximizam a razão entre a variância entre classes e a variância intraclasse:
+A FDA é um método supervisionado que busca direções $\mathbf{w}$ que maximizem a separação entre classes (normal vs. com falha). Define‑se a matriz de dispersão entre classes $\mathbf{S}_B$ e a matriz de dispersão intraclasse $\mathbf{S}_W$:
+\begin{align}
+\mathbf{S}_B &= \sum_{c=1}^{C} n_c (\boldsymbol{\mu}_c - \boldsymbol{\mu})(\boldsymbol{\mu}_c - \boldsymbol{\mu})^\top, \label{eq:s_b}\\
+\mathbf{S}_W &= \sum_{c=1}^{C} \sum_{i \in c} (\mathbf{x}_i - \boldsymbol{\mu}_c)(\mathbf{x}_i - \boldsymbol{\mu}_c)^\top, \label{eq:s_w}
+\end{align}
+onde $C=2$, $n_c$ é o número de amostras da classe $c$, $\boldsymbol{\mu}_c$ a média da classe e $\boldsymbol{\mu}$ a média global.  
 
-\begin{equation}
-\mathbf{w} = \arg\max_{\mathbf{w}} \frac{\mathbf{w}^\top \mathbf{S}_B \mathbf{w}}{\mathbf{w}^\top \mathbf{S}_W \mathbf{w}}
-\label{eq:fda_criterion}
-\end{equation}
-
-onde $\mathbf{S}_B$ é a matriz de dispersão entre classes e $\mathbf{S}_W$ é a matriz de dispersão intraclasse. Para a FDA aplicada ao processo TE, as duas classes são “normal” e “com falha”, permitindo uma discriminação direcionada.
-
-% -------------------------------
-% SEÇÃO 3: METODOLOGIA E IMPLEMENTAÇÃO
-% -------------------------------
+A direção ótima $\mathbf{w}$ é o autovetor associado ao maior autovalor de $\mathbf{S}_W^{-1}\mathbf{S}_B$. Projetando os dados nessas direções, obtém‑se uma estatística de monitoramento $D = \|\mathbf{W}^\top (\mathbf{x} - \boldsymbol{\mu}_{\text{normal}})\|^2$, com limite derivado da distribuição qui‑quadrado.
 \section{Metodologia e Implementação}
 \label{sec:methodology}
 
