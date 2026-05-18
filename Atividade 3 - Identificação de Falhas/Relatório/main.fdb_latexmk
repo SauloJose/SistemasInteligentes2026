@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1779119936.8078 "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" "main.pdf" "main" 1779119938.97844 0
+["pdflatex"] 1779125541.38671 "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" "main.pdf" "main" 1779125543.38585 0
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1776212945 279613 fe62a258ff6d99cc2243c3a2d16aa767 ""
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs10.tfm" 1766664564 688 37338d6ab346c2f1466b29e195316aa4 ""
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs5.tfm" 1776212946 684 3a51bd4fd9600428d5264cf25f04bb9a ""
@@ -156,10 +156,10 @@
   "Figuras/Basicos/TAETOTAL.png" 1779117624 142897 1a0d87580333cb1878120aef85e238ba ""
   "Figuras/Basicos/TEP.png" 1779106291 316706 34a2055573f11d1891892f87586bec6f ""
   "Figuras/Basicos/autor.png" 1777555358 186198 1f9313eb9cebeff9df45970d3b8ac7ce ""
-  "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" 1779119935 55817 2c1f03708037cf88615618efb545ad67 ""
-  "main.aux" 1779119938 19042 c35143e341241a897e53a8d92eac2547 "pdflatex"
-  "main.out" 1779119938 13018 e95e5fd177d80f99904523d460693230 "pdflatex"
-  "main.tex" 1779119935 55817 2c1f03708037cf88615618efb545ad67 ""
+  "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" 1779125538 52618 30ac7cf54378c89b36af5c74ac4dd8fd ""
+  "main.aux" 1779125543 18748 0e6e8c35f47185f9d091103cf37c777b "pdflatex"
+  "main.out" 1779125543 13018 e95e5fd177d80f99904523d460693230 "pdflatex"
+  "main.tex" 1779125538 52618 30ac7cf54378c89b36af5c74ac4dd8fd ""
   (generated)
   "main.aux"
   "main.log"

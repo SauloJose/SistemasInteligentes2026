@@ -322,57 +322,36 @@ Um estudo abrangente de benchmark \cite{yin2012, germano2016} é essencial para 
 
 \subsubsection{Análise de Componentes Principais (PCA)}
 
-A PCA é um método clássico de redução de dimensionalidade que decompõe a matriz de dados $\mathbf{X}$ (com $m$ variáveis e $N$ observações) em componentes não correlacionados que capturam a máxima variância \cite{yin2012}.  
-O primeiro passo é centralizar os dados e calcular a matriz de covariância $\mathbf{S} = \frac{1}{N-1}\mathbf{X}^\top\mathbf{X}$. A decomposição em autovalores e autovetores fornece:
-
+A PCA é um método de redução de dimensionalidade que decompõe a matriz de dados $\mathbf{X}$ em componentes não correlacionados \cite{yin2012}. A partir da matriz de covariância centralizada $\mathbf{S} = \frac{1}{N-1}\mathbf{X}^\top\mathbf{X}$, a decomposição em autovalores e autovetores fornece:
 \begin{equation}
 \mathbf{S} = \mathbf{P} \boldsymbol{\Lambda} \mathbf{P}^\top,
 \label{eq:pca_decomposition}
 \end{equation}
-onde $\mathbf{P}$ contém os autovetores (loadings) e $\boldsymbol{\Lambda} = \text{diag}(\lambda_1, \lambda_2, \ldots, \lambda_m)$ os autovalores em ordem decrescente.  
-
-Retendo os $a$ primeiros componentes, uma nova observação $\mathbf{x}$ é projetada no subespaço principal:
-\begin{equation}
-\mathbf{t} = \mathbf{P}_a^\top \mathbf{x}, \qquad \hat{\mathbf{x}} = \mathbf{P}_a \mathbf{t}.
-\label{eq:pca_projection}
-\end{equation}
-
-O monitoramento utiliza duas estatísticas complementares:  
-- $T^2 = \mathbf{t}^\top \boldsymbol{\Lambda}_a^{-1} \mathbf{t}$ (variação no subespaço do modelo),  
-- $Q = \|\mathbf{x} - \hat{\mathbf{x}}\|^2$ (erro no subespaço residual).  
-
-Uma falha é declarada se $T^2 > T^2_{\text{lim}}$ ou $Q > Q_{\text{lim}}$, onde os limites são obtidos da distribuição $F$ e da aproximação de Jackson–Mudholkar (Equações~\eqref{eq:t2_limit} e~\eqref{eq:spe_limit}).
-
-Vantagens: eficiência computacional, interpretabilidade e ampla aceitação na indústria. Desvantagens: assume relações lineares e exige escolha adequada de $a$ \cite{yin2012}.
+onde $\mathbf{P}$ contém as cargas (\textit{loadings}) e $\boldsymbol{\Lambda}$ os autovalores. Retendo os $a$ primeiros componentes, projeta-se uma nova observação $\mathbf{x}$ no subespaço principal ($\mathbf{t} = \mathbf{P}_a^\top \mathbf{x}$) e obtém-se sua reconstrução ($\hat{\mathbf{x}} = \mathbf{P}_a \mathbf{t}$). O monitoramento de falhas é realizado aplicando-se as estatísticas clássicas $T^2$ e $Q$ sobre as variáveis latentes retidas e sobre o erro residual da reconstrução, respectivamente.
 
 \subsubsection{Análise de Componentes Principais Dinâmica (DPCA)}
 
-A DPCA incorpora a dinâmica temporal, melhorando a capacidade de detecção de falhas lentas \cite{favoreel2000}, sem alterar significativamente a essência da PCA. Para cada instante $k$, constrói-se um vetor aumentado com $\ell$ defasagens:
-
+A DPCA incorpora a dinâmica temporal ao modelo para melhorar a detecção de falhas lentas \cite{favoreel2000}. Para cada instante $k$, constrói-se um vetor aumentado com $\ell$ defasagens:
 \begin{equation}
 \mathbf{x}^{\text{aug}}_k = \begin{bmatrix}
 \mathbf{x}_k \\ \mathbf{x}_{k-1} \\ \vdots \\ \mathbf{x}_{k-\ell}
 \end{bmatrix} \in \mathbb{R}^{m(\ell+1)}.
 \label{eq:dpca_augmented}
 \end{equation}
-
-Aplica‑se a PCA padrão a essa matriz aumentada. As estatísticas $T^2$ e $Q$ são então calculadas no espaço aumentado, capturando correlações temporais e melhorando a detecção de falhas lentas.
+As projeções no subespaço principal e o cálculo das estatísticas de monitoramento procedem de forma idêntica à PCA, porém aplicadas a este espaço aumentado.
 
 \subsubsection{Mínimos Quadrados Parciais (PLS)}
 
-O PLS é um método supervisionado que relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ (no nosso caso, a concentração do componente G, XMEAS 35) \cite{dayal1997}. O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
-
+O PLS é um método supervisionado que relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ \cite{dayal1997}. O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
 \begin{align}
 \mathbf{X} &= \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \label{eq:pls_x}\\
 \mathbf{y} &= \mathbf{T} \mathbf{q} + \mathbf{f}, \label{eq:pls_y}
 \end{align}
-onde $\mathbf{T} = [\mathbf{t}_1, \ldots, \mathbf{t}_a]$ são os escores, $\mathbf{P}$ as cargas (loadings) de $\mathbf{X}$, $\mathbf{q}$ os pesos de $\mathbf{y}$, e $\mathbf{E}, \mathbf{f}$ os resíduos.  
-
-Na fase de monitoramento, calculam‑se $T^2$ e $Q$ a partir dos escores, de forma idêntica à PCA. Assim, o PLS supervisiona a redução de dimensionalidade, mantendo a sensibilidade a variações que afetam a qualidade.
+A matriz de escores $\mathbf{T}$ e os resíduos $\mathbf{E}$ resultantes dessa extração supervisionada são então utilizados diretamente para o cálculo das estatísticas $T^2$ e $Q$.
 
 \subsubsection{Mínimos Quadrados Parciais com Informação Temporal (TPLS)}
 
-O TPLS aplica o PLS ao conjunto de dados aumentado com defasagens temporais, análogo à DPCA, capturando simultaneamente a correlação temporal e a relação supervisionada com a qualidade \cite{dayal1997}:
+O TPLS estende o modelo PLS para um conjunto de dados com defasagens temporais, unindo a modelagem supervisionada da qualidade à captura da dinâmica do processo \cite{dayal1997}:
 \begin{equation}
 \mathbf{X}^{\text{aug}} = \begin{bmatrix}
 \mathbf{X}_k & \mathbf{X}_{k-1} & \cdots & \mathbf{X}_{k-\ell}
@@ -382,55 +361,43 @@ O TPLS aplica o PLS ao conjunto de dados aumentado com defasagens temporais, an�
 
 \subsubsection{Mínimos Quadrados Parciais Multivariados (MPLS)}
 
-O MPLS estende o PLS para múltiplas saídas de qualidade $\mathbf{Y}$ (por exemplo, várias concentrações), permitindo modelar relações mais complexas entre processo e qualidade \cite{dayal1997}. A decomposição torna-se:
+O MPLS amplia o PLS para lidar com múltiplas saídas de qualidade $\mathbf{Y}$ \cite{dayal1997}. A decomposição busca maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$:
 \begin{equation}
 \mathbf{X} = \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \qquad \mathbf{Y} = \mathbf{U} \mathbf{Q}^\top + \mathbf{F},
 \label{eq:mpls_model}
 \end{equation}
-e busca‑se maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$. Isso permite manter a estrutura de monitoramento baseada em $T^2$ e $Q$.
+preservando a mesma estrutura de monitoramento baseada nos índices globais aplicados a $\mathbf{T}$ e $\mathbf{E}$.
 
 \subsubsection{Análise de Componentes Independentes (ICA)}
 
-Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes, oferecendo uma perspectiva complementar para identificação de padrões ocultos. Assume-se que as medições $\mathbf{x}$ são uma mistura linear de fontes independentes $\mathbf{s}$, proporcionando um modelo generativo para desacoplamento de sinais \cite{yin2012}:
+Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes, modelando as medições $\mathbf{x}$ como uma mistura linear de fontes $\mathbf{s}$ \cite{yin2012}:
 \begin{equation}
-\mathbf{x} = \mathbf{A} \mathbf{s},
+\mathbf{x} = \mathbf{A} \mathbf{s}.
 \label{eq:ica_model}
 \end{equation}
-com $\mathbf{A}$ a matriz de mistura. O algoritmo FastICA estima uma matriz de separação $\mathbf{W} \approx \mathbf{A}^{-1}$ tal que $\hat{\mathbf{s}} = \mathbf{W} \mathbf{x}$ tenham máxima não‑gaussianidade.  
-
-Para monitoramento, calcula‑se a estatística $I^2 = \hat{\mathbf{s}}^\top \hat{\mathbf{s}}$ (energia dos componentes independentes) e o erro de reconstrução $Q_{\text{ICA}} = \|\mathbf{x} - \mathbf{A}\hat{\mathbf{s}}\|^2$. Falhas são sinalizadas quando esses valores excedem limites obtidos por densidade de kernel.
+O algoritmo estima a matriz de separação $\mathbf{W} \approx \mathbf{A}^{-1}$ garantindo que os sinais estimados $\hat{\mathbf{s}} = \mathbf{W} \mathbf{x}$ possuam máxima não‑gaussianidade. O monitoramento adapta a lógica clássica substituindo o índice $T^2$ pela estatística $I^2 = \hat{\mathbf{s}}^\top \hat{\mathbf{s}}$ (energia dos componentes independentes), operando em conjunto com o erro $Q_{\text{ICA}} = \|\mathbf{x} - \mathbf{A}\hat{\mathbf{s}}\|^2$.
 
 \subsubsection{Análise de Componentes Independentes Multivariada (MICA)}
 
-O MICA combina a ICA com a mesma estratégia de aumento temporal da DPCA, proporcionando sensibilidade melhorada a falhas que evoluem lentamente \cite{yin2012}. Aplica-se a ICA ao vetor aumentado $\mathbf{x}^{\text{aug}}_k$, capturando independência e dinâmica. As estatísticas $I^2$ e $Q_{\text{ICA}}$ são calculadas no espaço aumentado, proporcionando sensibilidade adicional a falhas que evoluem lentamente.
+O MICA aplica a premissa de independência estatística da ICA ao vetor aumentado $\mathbf{x}^{\text{aug}}_k$, conferindo sensibilidade combinada para padrões ocultos e anomalias que evoluem de forma lenta ou gradativa \cite{yin2012}.
 
 \subsubsection{Análise Discriminante de Fisher (FDA)}
 
-A FDA é um método supervisionado clássico de classificação que busca direções $\mathbf{w}$ que maximizem a separação entre classes (normal vs. com falha), fornecendo uma fronteira de decisão ótima para detecção. Define‑se a matriz de dispersão entre classes $\mathbf{S}_B$ e a matriz de dispersão intraclasse $\mathbf{S}_W$:
+A FDA é um método supervisionado de classificação que encontra direções $\mathbf{w}$ para maximizar a separação entre as classes de operação normal e operação com falha. Utilizando as matrizes de dispersão entre classes ($\mathbf{S}_B$) e intraclasse ($\mathbf{S}_W$):
 \begin{align}
 \mathbf{S}_B &= \sum_{c=1}^{C} n_c (\boldsymbol{\mu}_c - \boldsymbol{\mu})(\boldsymbol{\mu}_c - \boldsymbol{\mu})^\top, \label{eq:s_b}\\
 \mathbf{S}_W &= \sum_{c=1}^{C} \sum_{i \in c} (\mathbf{x}_i - \boldsymbol{\mu}_c)(\mathbf{x}_i - \boldsymbol{\mu}_c)^\top, \label{eq:s_w}
 \end{align}
-onde $C=2$, $n_c$ é o número de amostras da classe $c$, $\boldsymbol{\mu}_c$ a média da classe e $\boldsymbol{\mu}$ a média global.  
-
-A direção ótima $\mathbf{w}$ é o autovetor associado ao maior autovalor de $\mathbf{S}_W^{-1}\mathbf{S}_B$. Projetando os dados nessas direções, obtém‑se uma estatística de monitoramento $D = \|\mathbf{W}^\top (\mathbf{x} - \boldsymbol{\mu}_{\text{normal}})\|^2$, com limite derivado da distribuição qui‑quadrado.
+a direção ótima de projeção é dada pelo autovetor associado ao maior autovalor de $\mathbf{S}_W^{-1}\mathbf{S}_B$. O monitoramento foge do par tradicional e utiliza a estatística discriminante baseada em distância $D = \|\mathbf{W}^\top (\mathbf{x} - \boldsymbol{\mu}_{\text{normal}})\|^2$.
 
 \subsubsection{Autoencoder Probabilístico (PAE)}
 
-O PAE é um método não-supervisionado baseado em aprendizado profundo (frequentemente instanciado como um \textit{Variational Autoencoder} - VAE) que modela a distribuição de probabilidade dos dados normais em um espaço latente de baixa dimensão $\mathbf{z} \in \mathbb{R}^l$. Diferente de abordagens determinísticas, o codificador $q_\phi(\mathbf{z}|\mathbf{x})$ estima os parâmetros de uma distribuição Gaussiana, fornecendo um vetor de médias $\boldsymbol{\mu}_z$ e um vetor de log-variâncias $\log \boldsymbol{\sigma}_z^2$. Para viabilizar o fluxo de gradientes via retropropagação durante o treinamento, aplica-se o truque da reparametrização, e a função de perda total $\mathcal{L}_{\text{PAE}}$ é formulada como:
+Instanciado como um \textit{Variational Autoencoder} (VAE), o PAE é uma abordagem profunda que modela a distribuição dos dados em um espaço latente $\mathbf{z}$. O codificador $q_\phi(\mathbf{z}|\mathbf{x})$ estima parâmetros de uma Gaussiana (médias $\boldsymbol{\mu}_z$ e log-variâncias $\log \boldsymbol{\sigma}_z^2$). Aplicando o truque da reparametrização para permitir a retropropagação, a função de perda $\mathcal{L}_{\text{PAE}}$ otimiza o erro de reconstrução e a Divergência de Kullback-Leibler simultaneamente:
 \begin{align}
 \mathbf{z} &= \boldsymbol{\mu}_z + \boldsymbol{\sigma}_z \odot \boldsymbol{\epsilon}, \quad \text{com } \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \label{eq:pae_reparam}\\
-\mathcal{L}_{\text{PAE}} &= \|\mathbf{x} - \hat{\mathbf{x}}\|^2 - \frac{1}{2} \sum_{j=1}^{l} \left( 1 + \log\sigma_{zj}^2 - \mu_{zj}^2 - e^{\log\sigma_{zj}^2} \right), \label{eq:pae_loss}
+\mathcal{L}_{\text{PAE}} &= \|\mathbf{x} - \hat{\mathbf{x}}\|^2 - \frac{1}{2} \sum_{j=1}^{l} \left( 1 + \log\sigma_{zj}^2 - \mu_{zj}^2 - e^{\log\sigma_{zj}^2} \right). \label{eq:pae_loss}
 \end{align}
-onde $\odot$ denota o produto de Hadamard, $\hat{\mathbf{x}} = p_\theta(\mathbf{x}|\mathbf{z})$ é a reconstrução gerada pelo decodificador, e $l$ é a dimensão do espaço latente. O primeiro termo de \eqref{eq:pae_loss} minimiza o erro de reconstrução, enquanto o segundo termo penaliza o desvio da distribuição latente em relação a uma priori gaussiana padrão via Divergência de Kullback-Leibler ($D_{\text{KL}}$).
-
-No monitoramento online, o modelo projeta as novas observações de teste e calcula de forma complementar as estatísticas $T^2$ latente e $Q$ residual:
-\begin{align}
-T^2 &= \sum_{j=1}^{l} \frac{\mu_{zj}^2}{s_{zj}^2}, \label{eq:t2_pae}\\
-Q &= \sum_{i=1}^{m} (x_i - \hat{x}_i)^2, \label{eq:q_pae}
-\end{align}
-onde $s_{zj}^2$ representa a variância amostral do escore latente $j$ obtida exclusivamente no conjunto de treinamento normal e $m$ é o número total de variáveis do processo. Os limites de controle para a detecção de anomalias são derivados da distribuição $F$ de Snedecor para o espaço latente ($T^2$) e da aproximação de Box via distribuição qui-quadrado para o espaço residual ($Q$).
-
+No monitoramento online, os parâmetros inferidos no espaço latente ($\mu_{zj}$) e as reconstruções geradas alimentam as métricas estatísticas globais para a sinalização das falhas.
 \section{Metodologia e Implementação}
 \label{sec:methodology}
 
@@ -521,21 +488,25 @@ A FDA é treinada com dados rotulados (amostras normais vs. com falha) para enco
 
 \subsubsection{Autoencoder Probabilístico (PAE)}
 
-O PAE é implementado por meio de uma arquitetura de Autoencoder Variacional (VAE) não-linear, estruturada com redes neurais multicamadas (\textit{encoder} e \textit{decoder}). O treinamento é realizado de forma estritamente não-supervisionada, utilizando apenas a base de dados sob condições normais de operação. O \textit{encoder} mapeia as variáveis de processo para os parâmetros estatísticos (média $\mu_z$ e log-variância $\log \sigma_z^2$) de uma distribuição Gaussiana no espaço latente de dimensão reduzida, utilizando o truque da reparametrização para permitir a retropropagação do erro. O \textit{decoder} recebe o vetor latente amostrado e realiza a reconstrução das variáveis originais de processo. O modelo é otimizado via algoritmo Adam, minimizando uma função de perda composta pelo erro quadrático médio de reconstrução e pela regularização via divergência de Kullback-Leibler ($D_{KL}$). A detecção de falhas prossegue em tempo real através de duas métricas complementares: a estatística $T^2$ Latente, que quantifica a distância de Mahalanobis dos escores médios projetados sob limiar derivado da distribuição $F$, e a estatística $Q$ (SPE), que avalia a magnitude dos resíduos de reconstrução utilizando limites de controle estabelecidos pela aproximação de Box e pela distribuição Qui-quadrado ($\chi^2$).
+O PAE é implementado através de uma arquitetura de Autoencoder Variacional (VAE) não-linear, treinada de forma não-supervisionada apenas com dados de operação normal. O \textit{encoder} mapeia as variáveis de processo para os parâmetros de uma distribuição Gaussiana no espaço latente reduzido — utilizando o truque da reparametrização —, enquanto o \textit{decoder} reconstrói o sinal original a partir desse espaço. O modelo é otimizado via algoritmo Adam minimizando o erro quadrático de reconstrução e a divergência de Kullback-Leibler. A detecção de falhas é realizada em tempo real por meio das estatísticas $T^2$ Latente (baseada na distância de Mahalanobis dos escores) e $Q$ (focada nos resíduos de reconstrução).
 
 \subsection{Métricas de Desempenho}
 \label{subsec:metrics}
 
-O desempenho dos modelos é avaliado utilizando métricas de classificação padrão:
+O desempenho dos modelos de detecção de falhas é avaliado utilizando métricas baseadas na matriz de confusão, com foco na Taxa de Detecção de Falhas (FDR - \textit{Fault Detection Rate}) e na Taxa de Alarmes Falsos (FAR - \textit{False Alarm Rate}), definidas como:
 
-\begin{align}
-\text{Sensibilidade} &= \frac{\text{VP}}{\text{VP} + \text{FN}} \label{eq:sensitivity} \\
-\text{Especificidade} &= \frac{\text{VN}}{\text{VN} + \text{FP}} \label{eq:specificity} \\
-\text{F1-score} &= 2 \cdot \frac{\text{Precisão} \cdot \text{Sensibilidade}}{\text{Precisão} + \text{Sensibilidade}} \label{eq:f1}
-\end{align}
+\begin{equation}
+    FDR = \text{Sensibilidade} = \frac{\text{VP}}{\text{VP} + \text{FN}} \label{eq:fdr} \\
+\end{equation}
+\begin{equation}
+    FAR = 1 - \text{Especificidade} = \frac{\text{FP}}{\text{VN} + \text{FP}} \label{eq:far}
+\end{equation}
+\begin{equation}
+    \label{eq:f1}
+    \text{F1-score} = 2 \cdot \frac{\text{Precisão} \cdot \text{Sensibilidade}}{\text{Precisão} + \text{Sensibilidade}}
+\end{equation}
 
-onde VP, VN, FP e FN denotam verdadeiros positivos, verdadeiros negativos, falsos positivos e falsos negativos, respectivamente.
-
+onde VP, VN, FP e FN denotam verdadeiros positivos, verdadeiros negativos, falsos positivos e falsos negativos, respectivamente. No contexto de monitoramento de processos, a Precisão utilizada no cálculo do F1-score é dada por $\text{VP} / (\text{VP} + \text{FP})$.
 % -------------------------------
 % SEÇÃO 4: RESULTADOS E DISCUSSÃO
 % -------------------------------

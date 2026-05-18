@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  18 MAY 2026 12:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  18 MAY 2026 14:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -594,103 +594,100 @@ LaTeX Warning: Citation `lee2004' on page 4 undefined on input line 279.
 
 LaTeX Warning: Citation `yue2001' on page 4 undefined on input line 298.
 
-[4]
-Underfull \hbox (badness 6157) in paragraph at lines 331--333
-\OT1/ptm/m/n/10 onde $\OT1/cmr/bx/n/10 P$ \OT1/ptm/m/n/10 cont[]em os au-to-ve-to-res (lo-a-dings) e $[] \OT1/cmr/m/n/10 =
- []
-
-[5]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 469.
+[4] [5]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 436.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 470--471
+Underfull \hbox (badness 10000) in paragraph at lines 437--438
 []\OT1/ptm/b/n/10 Pr[]e-processamento e Tra-ta-mento: \OT1/ptm/m/n/10 Centraliza[][]ao
  []
 
 
-Underfull \hbox (badness 3219) in paragraph at lines 470--471
+Underfull \hbox (badness 3219) in paragraph at lines 437--438
 \OT1/ptm/m/n/10 na m[]edia e es-ca-lo-na-mento por vari[]ancia unit[]aria
  []
 
 
-Overfull \hbox (15.64041pt too wide) in paragraph at lines 481--499
+Overfull \hbox (15.64041pt too wide) in paragraph at lines 448--466
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 507--508
+Underfull \hbox (badness 10000) in paragraph at lines 474--475
  \OT1/ptm/m/it/10 1) PCA e DPCA: [][][] \OT1/ptm/m/n/10 A PCA []e im-ple-men-tada via
  []
 
-[6] [7]
-Underfull \hbox (badness 2635) in paragraph at lines 577--578
+[6]
+Underfull \hbox (badness 2635) in paragraph at lines 548--549
 []\OT1/ptm/m/n/10 O MICA atinge a me-nor taxa de alar-mes fal-sos
  []
 
-<Figuras/Basicos/TAETOTAL.png, id=392, 806.26219pt x 478.78876pt>
+<Figuras/Basicos/TAETOTAL.png, id=378, 806.26219pt x 478.78876pt>
 File: Figuras/Basicos/TAETOTAL.png Graphic file (type png)
 <use Figuras/Basicos/TAETOTAL.png>
-Package pdftex.def Info: Figuras/Basicos/TAETOTAL.png  used on input line 593.
+Package pdftex.def Info: Figuras/Basicos/TAETOTAL.png  used on input line 564.
 (pdftex.def)             Requested size: 464.39685pt x 275.77626pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 609--610
+Underfull \hbox (badness 10000) in paragraph at lines 580--581
 []|\OT1/ptm/b/n/9 Caracter[]^^Psticas
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 611--612
+Underfull \hbox (badness 10000) in paragraph at lines 582--583
 []|\OT1/ptm/m/n/9 Dist[]urbios abrup-tos com
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 611--612
+Underfull \hbox (badness 10000) in paragraph at lines 582--583
 \OT1/ptm/m/n/9 im-pacto sig-ni-fi-ca-tivo nas
  []
 
 
-Underfull \hbox (badness 2096) in paragraph at lines 615--616
+Underfull \hbox (badness 2096) in paragraph at lines 586--587
 []|\OT1/ptm/m/n/9 Impacto di-reto m[]^^Pnimo ou
  []
 
-[8]
+[7]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9 <./Figuras/Basicos/TAETOTAL.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 767--768
+ [8 <./Figuras/Basicos/TAETOTAL.png>] [9]
+Underfull \hbox (badness 10000) in paragraph at lines 738--739
 \OT1/ptm/m/n/8 em: []$https : / / github . com / SauloJose / SistemasInteligentes2026 / tree / main /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 767--768
+Underfull \hbox (badness 10000) in paragraph at lines 738--739
 \OT1/ptm/m/n/8 Atividade % 203 % 20-[] % 20Identi^^Lca % C3 % A7 % C3 % A3o % 20de %
  []
 
-<Figuras/Basicos/autor.png, id=418, 1027.84pt x 1027.84pt>
+<Figuras/Basicos/autor.png, id=413, 1027.84pt x 1027.84pt>
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 789.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 760.
 (pdftex.def)             Requested size: 72.26982pt x 72.26982pt.
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 789.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 760.
 (pdftex.def)             Requested size: 72.26982pt x 72.26982pt.
 
-Underfull \hbox (badness 4686) in paragraph at lines 789--791
+Underfull \hbox (badness 4686) in paragraph at lines 760--762
 \OT1/ptm/m/n/8 2021). Ba-cha-rel em En-ge-nha-ria El[]etrica com
  []
 
 
-Underfull \hbox (badness 7468) in paragraph at lines 789--791
+Underfull \hbox (badness 7468) in paragraph at lines 760--762
 \OT1/ptm/m/n/8 Especializa[][]ao em Automa[][]ao In-dus-trial pela
  []
 
 
-Underfull \hbox (badness 2735) in paragraph at lines 789--791
+Underfull \hbox (badness 2735) in paragraph at lines 760--762
 \OT1/ptm/m/n/8 Eduno. Atu-al-mente []e mes-trando em En-ge-nha-
  []
 
-[10 <./Figuras/Basicos/autor.png>] (main.aux)
+[10
+
+ <./Figuras/Basicos/autor.png>] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -703,17 +700,17 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: E95E5FD177D80F99904523D460693230;13018.
  ) 
 Here is how much of TeX's memory you used:
- 17514 strings out of 467871
- 342728 string characters out of 5418375
- 779194 words of memory out of 5000000
- 46029 multiletter control sequences out of 15000+600000
+ 17509 strings out of 467871
+ 342657 string characters out of 5418375
+ 777979 words of memory out of 5000000
+ 46026 multiletter control sequences out of 15000+600000
  681109 words of font info for 148 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,83p,1541b,1152s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1394b,1179s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 944798 bytes).
+Output written on main.pdf (10 pages, 939113 bytes).
 PDF statistics:
- 567 PDF objects out of 1000 (max. 8388607)
- 130 named destinations out of 1000 (max. 500000)
+ 561 PDF objects out of 1000 (max. 8388607)
+ 128 named destinations out of 1000 (max. 500000)
  476 words of extra memory for PDF output out of 10000 (max. 10000000)
 
