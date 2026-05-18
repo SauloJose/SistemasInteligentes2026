@@ -25,7 +25,7 @@
 % TÍTULO E AUTORES
 % -------------------------------
 \begin{document}
-\title{Detecção de Falhas em Processos Industriais: Análise Comparativa de Abordagens baseadas em SVD e Redes Autoencodificadoras}
+\title{Detecção de Falhas em Processos Industriais: Análise Comparativa de Métodos Multivariados e Aprendizado Profundo}
 
 \author{Saulo José Almeida Silva,~\IEEEmembership{Mestrando,~UFCG,}
         % Marcus Nogueira Lima,~\IEEEmembership{Professor Titular,~UFCG,}
@@ -42,7 +42,7 @@
 % RESUMO E PALAVRAS-CHAVE
 % -------------------------------
 \begin{abstract}
-A detecção precoce de falhas em processos industriais é crucial para manter a confiabilidade do sistema, a segurança e a eficiência operacional. Este trabalho apresenta um estudo abrangente de algoritmos de detecção de falhas baseados em oito metodologias distintas: métodos estatísticos multivariados (PCA, DPCA), abordagens supervisionadas (PLS, TPLS, MPLS, FDA), técnicas baseadas em independência estatística (ICA, MICA) e um autoencoder probabilístico (PAE). O trabalho avalia a eficácia de cada método na detecção de falhas incipientes e abruptas utilizando o benchmark do processo Tennessee Eastman. Os resultados demonstram trade-offs significativos entre a taxa de detecção (sensibilidade) e a taxa de alarmes falsos (especificidade). O PAE alcança a maior sensibilidade geral (75,5\% de FDR), porém com a maior taxa de alarmes falsos (17,08\%). O DPCA oferece o melhor equilíbrio entre sensibilidade e especificidade (72,95\% de FDR e 6,56\% de FAR), enquanto o MICA obtém a menor taxa de alarmes falsos (0,52\%), ideal para aplicações que priorizam a especificidade. A análise comparativa fornece uma base robusta para a seleção de métodos adequados conforme os requisitos específicos de cada aplicação industrial.
+A detecção precoce de falhas em processos industriais é crucial para manter a confiabilidade do sistema, a segurança e a eficiência operacional. Este trabalho apresenta um estudo abrangente de algoritmos de detecção de falhas baseados em nove metodologias distintas: métodos estatísticos multivariados (PCA, DPCA), abordagens supervisionadas (PLS, TPLS, MPLS, FDA), técnicas baseadas em independência estatística (ICA, MICA) e um autoencoder probabilístico (PAE). O trabalho avalia a eficácia de cada método na detecção de falhas incipientes e abruptas utilizando o benchmark do processo Tennessee Eastman. Os resultados demonstram trade-offs significativos entre a taxa de detecção (sensibilidade) e a taxa de alarmes falsos (especificidade). O PAE alcança a maior sensibilidade geral (75,5\% de FDR), porém com a maior taxa de alarmes falsos (17,08\%). O DPCA oferece o melhor equilíbrio entre sensibilidade e especificidade (72,95\% de FDR e 6,56\% de FAR), enquanto o MICA obtém a menor taxa de alarmes falsos (0,52\%), ideal para aplicações que priorizam a especificidade. A análise comparativa fornece uma base robusta para a seleção de métodos adequados conforme os requisitos específicos de cada aplicação industrial.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -318,7 +318,7 @@ g = \frac{\sigma^2_D}{2\mu_D}, \quad h = \frac{2\mu_D^2}{\sigma^2_D}
 \subsection{Visão Geral Comparativa dos Métodos de Detecção de Falhas}
 \label{subsec:methods_overview}
 
-Um estudo abrangente de benchmark \cite{yin2012, germano2016} é essencial para entender os pontos fortes e fracos de diferentes metodologias. Este trabalho compara oito metodologias distintas de detecção de falhas aplicadas ao processo TE, seguindo protocolos estabelecidos \cite{venkatasubramanian2003}. Cada método emprega estratégias de transformação e fundamentos estatísticos próprios. A seguir, descrevemos a essência de cada um, destacando suas equações-chave.
+Um estudo abrangente de benchmark \cite{yin2012, germano2016} é essencial para entender os pontos fortes e fracos de diferentes metodologias. Este trabalho compara nove metodologias distintas de detecção de falhas aplicadas ao processo TE, seguindo protocolos estabelecidos \cite{venkatasubramanian2003}. Cada método emprega estratégias de transformação e fundamentos estatísticos próprios. A seguir, descrevemos a essência de cada um, destacando suas equações-chave.
 
 \subsubsection{Análise de Componentes Principais (PCA)}
 
@@ -392,7 +392,7 @@ a direção ótima de projeção é dada pelo autovetor associado ao maior autov
 
 \subsubsection{Autoencoder Probabilístico (PAE)}
 
-Instanciado como um \textit{Variational Autoencoder} (VAE), o PAE é uma abordagem profunda que modela a distribuição dos dados em um espaço latente $\mathbf{z}$. O codificador $q_\phi(\mathbf{z}|\mathbf{x})$ estima parâmetros de uma Gaussiana (médias $\boldsymbol{\mu}_z$ e log-variâncias $\log \boldsymbol{\sigma}_z^2$). Aplicando o truque da reparametrização para permitir a retropropagação, a função de perda $\mathcal{L}_{\text{PAE}}$ otimiza o erro de reconstrução e a Divergência de Kullback-Leibler simultaneamente:
+Instanciado como um \textit{Variational Autoencoder} (VAE), o PAE é uma abordagem profunda que modela a distribuição dos dados em um espaço latente $\mathbf{z}$. O codificador $q_\phi(\mathbf{z}|\mathbf{x})$ estima parâmetros de uma Gaussiana (médias $\boldsymbol{\mu}_z$ e log-variâncias $\log \boldsymbol{\sigma}_z^2$) \cite{spina2024,geron2019}. Aplicando o truque da reparametrização para permitir a retropropagação, a função de perda $\mathcal{L}_{\text{PAE}}$ otimiza o erro de reconstrução e a Divergência de Kullback-Leibler simultaneamente:
 \begin{align}
 \mathbf{z} &= \boldsymbol{\mu}_z + \boldsymbol{\sigma}_z \odot \boldsymbol{\epsilon}, \quad \text{com } \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \label{eq:pae_reparam}\\
 \mathcal{L}_{\text{PAE}} &= \|\mathbf{x} - \hat{\mathbf{x}}\|^2 - \frac{1}{2} \sum_{j=1}^{l} \left( 1 + \log\sigma_{zj}^2 - \mu_{zj}^2 - e^{\log\sigma_{zj}^2} \right). \label{eq:pae_loss}
@@ -577,13 +577,13 @@ A sensibilidade dos métodos varia significativamente conforme a natureza e a ma
 \begin{tabular}{llp{5.8cm}p{3.8cm}}
 \toprule
 \rowcolor{gray!20}
-\textbf{Categoria} & \textbf{FDR Operacional} & \textbf{Cenários Associados (IDV)} & \textbf{Características Operacionais} \\
+\textbf{Categoria} & \textbf{FDR Operacional} & \textbf{Características Operacionais} \\
 \midrule
-Forte Detecção (Verde) & $\text{FDR} > 95\%$ & 1, 2, 4, 6, 7, 12, 14 & Distúrbios abruptos com impacto significativo nas medições. \\
+Forte Detecção (Verde) & $\text{FDR} > 95\%$  & Distúrbios abruptos com impacto significativo nas medições. \\
 \midrule
-Detecção Moderada (Amarelo) & $50\% < \text{FDR} < 95\%$ & 11, 13, 17, 18 & Falhas sutis de evolução gradual ou impacto limitado. \\
+Detecção Moderada (Amarelo) & $50\% < \text{FDR} < 95\%$  & Falhas sutis de evolução gradual ou impacto limitado. \\
 \midrule
-Difícil Detecção (Vermelho) & $\text{FDR} < 50\%$ & 3, 5, 9, 15, 16, 19, 20, 21 & Impacto direto mínimo ou fraca interação dinâmica com as variáveis. \\
+Difícil Detecção (Vermelho) & $\text{FDR} < 50\%$ & Impacto direto mínimo ou fraca interação dinâmica com as variáveis. \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -604,6 +604,10 @@ O PLS, o TPLS e o MPLS apresentam FAR mais elevada (10--12\%), mas melhoram a FD
 \subsubsection{ICA e MICA}
 
 A ICA mantém uma FAR moderada (7,0\%) e tem bom desempenho em falhas abruptas (FDR $>$ 90\%). O MICA atinge uma FAR excepcionalmente baixa (0,52\%), a melhor entre todos os métodos, mas à custa de uma FDR reduzida para falhas difíceis (ex.: IDV(03): 3,4\%, IDV(09): 1,6\%). Isso reflete uma estratégia de detecção conservadora.
+
+\subsubsection{PAE}
+
+O PAE exibe conseguiu um FDR  superio a 90\% em 11 das 21 falhas (IDV(1),IDV(2),IDV(4),IDV(6)-(8), IDV(12)-(14), IDV(17) e IDV(18)) e sua menor FDR foi de 27,1\% na IDV(9), tendo um resultado em média superior a todas as outras (75,5\%).
 
 \subsubsection{FDA}
 
@@ -651,7 +655,7 @@ O PAE e o MPLS despontam como os melhores em FDR geral (74,9--75,5\%), enquanto 
 \subsection{Resumo}
 \label{subsec:summary}
 
-Este trabalho apresenta uma comparação abrangente de benchmark de oito metodologias distintas de detecção de falhas baseadas em dados aplicadas ao processo Tennessee Eastman \cite{downs_and_vogel_1993, germano2016, yin2012}. O estudo avaliou tanto métodos estatísticos multivariados clássicos (PCA, DPCA) \cite{favoreel2000} quanto técnicas avançadas que incorporam dinâmica temporal (ICA, MICA) e objetivos de aprendizado supervisionado (variantes do PLS, FDA).
+Este trabalho apresenta uma comparação abrangente de benchmark de nove metodologias distintas de detecção de falhas baseadas em dados aplicadas ao processo Tennessee Eastman \cite{downs_and_vogel_1993, germano2016, yin2012}. O estudo avaliou tanto métodos estatísticos multivariados clássicos (PCA, DPCA) \cite{favoreel2000} quanto técnicas avançadas que incorporam dinâmica temporal (ICA, MICA) e objetivos de aprendizado supervisionado (variantes do PLS, FDA).
 
 \subsection{Principais Constatações}
 \label{subsec:key_findings}
@@ -751,6 +755,16 @@ Computers \& Chemical Engineering, 27(3), 293-311.
 Yin, S., Ding, S. X., Haghani, A., Hao, H., \& Zhang, P. (2012).
 \textit{A comparison study of basic data-driven fault diagnosis and process monitoring methods on the benchmark Tennessee Eastman process}.
 Journal of Process Control, 22(9), 1567-1581.
+
+\bibitem{lee2004}
+Lee, J.-M., Yoo, C., \& Lee, I.-B. (2004).
+\textit{Statistical monitoring of dynamic processes based on dynamic independent component analysis}.
+Chemical Engineering Science, 59(14), 2995--3006.
+
+\bibitem{yue2001}
+Yue, H. H., \& Qin, S. J. (2001).
+\textit{Reconstruction-based fault identification using a combined index}.
+Industrial \& Engineering Chemistry Research, 40(20), 4403--4414.
 
 \end{thebibliography}
 
