@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  17 MAY 2026 17:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.12.28)  18 MAY 2026 12:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -462,28 +462,28 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count345
 ) (main.aux
 Package babel Info: 'brazilian' activates 'portuges' shorthands.
-(babel)             Reported on input line 8.
+(babel)             Reported on input line 18.
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
 
 -- Lines per column: 58 (exact).
 (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
@@ -507,109 +507,188 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 )) (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\translations-basic-dictionary-brazil.trsl
 File: translations-basic-dictionary-brazil.trsl (brazil translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `brazil'. on input line 26.
-Package hyperref Info: Link coloring OFF on input line 26.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `brazil'. on input line 27.
+Package hyperref Info: Link coloring OFF on input line 27.
  (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 65.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 66.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 65.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 66.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 65.
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 66.
  (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/jknappen\ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
-)
-Underfull \hbox (badness 8170) in paragraph at lines 106--107
-[]|\OT1/ptm/m/n/9 Polimeriza[][]ao ca-tal[]^^Ptica das mat[]erias-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 136--136
-[]|\OT1/ptm/m/n/9 Temperatura do re-a-tor, v[]arias
- []
-
-[1{C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
+) [1{C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-Underfull \hbox (badness 7344) in paragraph at lines 172--173
-[]\OT1/ptm/m/n/10 O pro-cesso opera con-ti-nu-a-mente sob con-trole por
+<Figuras/Basicos/TEP.png, id=266, 907.13907pt x 551.05875pt>
+File: Figuras/Basicos/TEP.png Graphic file (type png)
+<use Figuras/Basicos/TEP.png>
+Package pdftex.def Info: Figuras/Basicos/TEP.png  used on input line 116.
+(pdftex.def)             Requested size: 464.39685pt x 282.10411pt.
+
+Underfull \hbox (badness 2932) in paragraph at lines 146--147
+ \OT1/ptm/m/it/10 2) Vari[]aveis Me-di-das e En-tra-das Ma-ni-pu-la-das: [][][] \OT1/ptm/m/n/10 Para
  []
 
-[2]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 198.
- (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
+
+Underfull \hbox (badness 1558) in paragraph at lines 146--147
+\OT1/ptm/m/n/10 se em 22 medi[][]oes de pro-cesso ($\OML/cmm/m/it/10 XMEAS[]$\OT1/ptm/m/n/10 ) e 19
+ []
+
+
+Underfull \hbox (badness 2158) in paragraph at lines 186--186
+[]|\OT1/ptm/m/n/9 Atuadores, po-si-ci-o-na-do-res de v[]alvula e set-po-ints de vaz[]ao
+ []
+
+
+Overfull \hbox (30.12386pt too wide) in paragraph at lines 200--214
+ [][] 
+ []
+
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 242.
+(C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 212--213
+Underfull \hbox (badness 10000) in paragraph at lines 249--250
 []\OT1/ptm/m/n/10 onde $\OT1/cmr/bx/n/10 t[]$ \OT1/ptm/m/n/10 s[]ao os es-co-res (proje[][]oes) e $[] \OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 1975) in paragraph at lines 242--243
-[]\OT1/ptm/m/n/10 Este tra-ba-lho com-para oito me-to-do-lo-gias dis-tin-tas de
- []
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 279.
 
 
-Underfull \hbox (badness 6157) in paragraph at lines 252--254
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 279.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 279.
+
+
+LaTeX Warning: Citation `lee2004' on page 2 undefined on input line 279.
+
+[2]
+
+LaTeX Warning: Text page 3 contains only floats.
+
+
+Overfull \vbox (5.22487pt too high) has occurred while \output is active []
+
+
+
+LaTeX Warning: Text page 3 contains only floats.
+
+
+Overfull \vbox (5.22487pt too high) has occurred while \output is active []
+
+ [3 <./Figuras/Basicos/TEP.png>]
+
+LaTeX Warning: Citation `yue2001' on page 4 undefined on input line 298.
+
+
+Underfull \hbox (badness 6157) in paragraph at lines 331--333
 \OT1/ptm/m/n/10 onde $\OT1/cmr/bx/n/10 P$ \OT1/ptm/m/n/10 cont[]em os au-to-ve-to-res (lo-a-dings) e $[] \OT1/cmr/m/n/10 =
  []
 
-
-Underfull \hbox (badness 3612) in paragraph at lines 267--268
-[]\OT1/ptm/m/n/10 Vantagens: efici[]encia com-pu-ta-ci-o-nal, in-ter-pre-ta-bi-li-dade.
+[4] [5]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 469.
+ (C:\Users\saulo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+Underfull \hbox (badness 10000) in paragraph at lines 470--471
+[]\OT1/ptm/b/n/10 Pr[]e-processamento e Tra-ta-mento: \OT1/ptm/m/n/10 Centraliza[][]ao
  []
 
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 373--374
+
+Underfull \hbox (badness 3219) in paragraph at lines 470--471
+\OT1/ptm/m/n/10 na m[]edia e es-ca-lo-na-mento por vari[]ancia unit[]aria
+ []
+
+
+LaTeX Warning: Reference `tab:metodos_variaveis' on page 6 undefined on input line 471.
+
+
+Overfull \hbox (15.64041pt too wide) in paragraph at lines 481--499
+ [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 507--508
  \OT1/ptm/m/it/10 1) PCA e DPCA: [][][] \OT1/ptm/m/n/10 A PCA []e im-ple-men-tada via
  []
 
-
-Underfull \hbox (badness 3977) in paragraph at lines 373--374
-\OT1/ptm/m/n/10 decomposi[][]ao em va-lo-res sin-gu-la-res (SVD) da ma-triz
- []
-
-[4]
-Underfull \hbox (badness 2635) in paragraph at lines 437--438
+[6] [7]
+Underfull \hbox (badness 2635) in paragraph at lines 577--578
 []\OT1/ptm/m/n/10 O MICA atinge a me-nor taxa de alar-mes fal-sos
  []
 
-[5] [6]
 
-LaTeX Warning: Reference `tab:conclusion_summary' on page 7 undefined on input line 567.
+Underfull \hbox (badness 10000) in paragraph at lines 636--637
+[]|\OT1/ptm/b/n/9 Caracter[]^^Psticas
+ []
 
-<Figuras/Basicos/autor.png, id=283, 1027.84pt x 1027.84pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 638--639
+[]|\OT1/ptm/m/n/9 Dist[]urbios abrup-tos com
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 638--639
+\OT1/ptm/m/n/9 im-pacto sig-ni-fi-ca-tivo nas
+ []
+
+
+Underfull \hbox (badness 2096) in paragraph at lines 642--643
+[]|\OT1/ptm/m/n/9 Impacto di-reto m[]^^Pnimo ou
+ []
+
+[8]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9]
+Underfull \hbox (badness 10000) in paragraph at lines 801--802
+\OT1/ptm/m/n/8 em: []$https : / / github . com / SauloJose / SistemasInteligentes2026 / tree / main /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 801--802
+\OT1/ptm/m/n/8 Atividade % 203 % 20-[] % 20Identi^^Lca % C3 % A7 % C3 % A3o % 20de %
+ []
+
+<Figuras/Basicos/autor.png, id=416, 1027.84pt x 1027.84pt>
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 661.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 823.
 (pdftex.def)             Requested size: 72.26982pt x 72.26982pt.
 File: Figuras/Basicos/autor.png Graphic file (type png)
 <use Figuras/Basicos/autor.png>
-Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 661.
+Package pdftex.def Info: Figuras/Basicos/autor.png  used on input line 823.
 (pdftex.def)             Requested size: 72.26982pt x 72.26982pt.
 
-Underfull \hbox (badness 4686) in paragraph at lines 661--663
+Underfull \hbox (badness 4686) in paragraph at lines 823--825
 \OT1/ptm/m/n/8 2021). Ba-cha-rel em En-ge-nha-ria El[]etrica com
  []
 
 
-Underfull \hbox (badness 7468) in paragraph at lines 661--663
+Underfull \hbox (badness 7468) in paragraph at lines 823--825
 \OT1/ptm/m/n/8 Especializa[][]ao em Automa[][]ao In-dus-trial pela
  []
 
 
-Underfull \hbox (badness 2735) in paragraph at lines 661--663
+Underfull \hbox (badness 2735) in paragraph at lines 823--825
 \OT1/ptm/m/n/8 Eduno. Atu-al-mente []e mes-trando em En-ge-nha-
  []
 
-[7 <./Figuras/Basicos/autor.png>] (main.aux)
+[10 <./Figuras/Basicos/autor.png>] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -619,20 +698,20 @@ L3 programming layer <2025-12-24>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 08AC46987C21D78C94663A146D991591;11479.
+(rerunfilecheck)             Checksum: 340D6D4AB3989163D058047B5ABDAE41;13151.
  ) 
 Here is how much of TeX's memory you used:
- 17392 strings out of 467871
- 340626 string characters out of 5418375
- 783187 words of memory out of 5000000
- 45946 multiletter control sequences out of 15000+600000
- 678951 words of font info for 144 fonts, out of 8000000 for 9000
+ 17509 strings out of 467871
+ 342521 string characters out of 5418375
+ 779920 words of memory out of 5000000
+ 46024 multiletter control sequences out of 15000+600000
+ 681109 words of font info for 148 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,15n,83p,1152b,1152s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (7 pages, 499949 bytes).
+ 75i,17n,83p,1541b,1148s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/saulo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (10 pages, 836693 bytes).
 PDF statistics:
- 401 PDF objects out of 1000 (max. 8388607)
- 97 named destinations out of 1000 (max. 500000)
- 418 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 564 PDF objects out of 1000 (max. 8388607)
+ 130 named destinations out of 1000 (max. 500000)
+ 471 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -20,6 +20,7 @@
 \usepackage{xcolor}       % Comentários ou destaques
 \usepackage{url}          % URLs no rodapé
 
+
 % -------------------------------
 % TÍTULO E AUTORES
 % -------------------------------
@@ -27,7 +28,7 @@
 \title{Detecção de Falhas em Processos Industriais: Análise Comparativa de Abordagens baseadas em SVD e Redes Autoencodificadoras}
 
 \author{Saulo José Almeida Silva,~\IEEEmembership{Mestrando,~UFCG,}
-        Antonio Marcus Nogueira Lima,~\IEEEmembership{Professor Titular,~UFCG,}
+        % Marcus Nogueira Lima,~\IEEEmembership{Professor Titular,~UFCG,}
 \thanks{S. J. A. Silva é mestrando no Programa de Pós-Graduação em Engenharia Elétrica (PPgEE) da Universidade Federal de Campina Grande (UFCG), Campina Grande, PB, Brasil. E-mail: saulo.jose.silva@ee.ufcg.edu.br.}
 \thanks{A. M. N. Lima é Professor Titular do Departamento de Engenharia Elétrica da UFCG. E-mail: amnlima@dee.ufcg.edu.br.}}
 
@@ -55,9 +56,9 @@ Detecção de Falhas, Análise de Componentes Principais, Processos Industriais,
 % ----------------------------------
 \section{Introdução}
 \label{sec:introduction}
-\IEEEPARstart{P}{rocessos} industriais operam em condições complexas e frequentemente imprevisíveis, nas quais falhas de equipamentos podem levar a perdas econômicas significativas, riscos à segurança e danos ambientais. A detecção oportuna de falhas incipientes permite a manutenção preventiva, reduz o tempo de parada não planejado e melhora a confiabilidade geral do sistema. Abordagens tradicionais de detecção de falhas baseadas em modelos requerem modelos matemáticos precisos do sistema, os quais frequentemente não estão disponíveis ou são difíceis de obter na prática. Consequentemente, métodos baseados em dados emergiram como alternativas viáveis que exploram dados históricos do processo para aprender padrões normais de operação e identificar desvios.
+\IEEEPARstart{P}{rocessos} industriais operam em condições complexas e frequentemente imprevisíveis \cite{isermann2011}, nas quais falhas de equipamentos podem levar a perdas econômicas significativas, riscos à segurança e danos ambientais. A detecção oportuna de falhas incipientes permite a manutenção preventiva \cite{venkatasubramanian2003}, reduz o tempo de parada não planejado e melhora a confiabilidade geral do sistema. Abordagens tradicionais de detecção de falhas baseadas em modelos requerem modelos matemáticos precisos do sistema \cite{gertler1998}, os quais frequentemente não estão disponíveis ou são difíceis de obter na prática. Consequentemente, métodos baseados em dados emergiram como alternativas viáveis \cite{venkatasubramanian2003} que exploram dados históricos do processo para aprender padrões normais de operação e identificar desvios.
 
-Este trabalho enfoca o desenvolvimento e a comparação de oito abordagens distintas de detecção de falhas baseadas em dados em processos industriais. A Seção~\ref{sec:theoretical} fornece uma revisão abrangente dos fundamentos teóricos e dos trabalhos relacionados. A Seção~\ref{sec:methodology} descreve a formulação do problema e os detalhes de implementação. A Seção~\ref{sec:results} apresenta os resultados experimentais e a análise comparativa. Finalmente, a Seção~\ref{sec:conclusion} resume as conclusões e sugere direções para pesquisas futuras.
+Este trabalho enfoca o desenvolvimento e a comparação de oito abordagens distintas de detecção de falhas baseadas em dados em processos industriais. A Seção~\ref{sec:theoretical} fornece uma revisão abrangente dos fundamentos teóricos e dos trabalhos relacionados, incluindo métodos multivariados \cite{yin2012} e técnicas avançadas de aprendizado de máquina. A Seção~\ref{sec:methodology} descreve a formulação do problema e os detalhes de implementação. A Seção~\ref{sec:results} apresenta os resultados experimentais e a análise comparativa. Finalmente, a Seção~\ref{sec:conclusion} resume as conclusões e sugere direções para pesquisas futuras.
 
 \subsection{Notação e Convenções}
 \label{subsec:notation}
@@ -70,120 +71,156 @@ Ao longo deste trabalho, adotamos as seguintes convenções de notação: escala
 \section{Revisão Teórica e Trabalhos Relacionados}
 \label{sec:theoretical}
 
-As metodologias de detecção de falhas evoluíram significativamente ao longo das últimas décadas. Esta seção revisa os conceitos fundamentais e as técnicas relevantes para os oito métodos investigados neste trabalho.
+As metodologias de detecção de falhas evoluíram significativamente ao longo das últimas décadas \cite{yin2012}. Esta seção revisa os conceitos fundamentais e as técnicas relevantes para os oito métodos investigados neste trabalho, apresentando uma comparação compatível com estudos benchmarks pretritos.
 
 \subsection{Processos Industriais e Monitoramento Multivariável}
 \label{subsec:industrial_processes}
 
-Os processos industriais modernos geram quantidades vastas de dados de sensores de múltiplas variáveis operando simultaneamente. Um processo multivariável típico pode ser representado como uma coleção de $m$ variáveis medidas amostradas em instantes discretos de tempo $k = 1, 2, \ldots, N$:
+Os processos industriais modernos geram quantidades vastas de dados de sensores de múltiplas variáveis operando simultaneamente \cite{yin2012}. Um processo multivariável típico pode ser representado como uma coleção de $m$ variáveis medidas amostradas em instantes discretos de tempo $k = 1, 2, \ldots, N$:
 
 \begin{equation}
 \mathbf{Y} \in \mathbb{R}^{m \times N} = [\mathbf{y}_1, \mathbf{y}_2, \ldots, \mathbf{y}_N]
 \label{eq:process_data}
 \end{equation}
 
-onde cada coluna $\mathbf{y}_k = [y_{1,k}, y_{2,k}, \ldots, y_{m,k}]^T$ representa um snapshot do estado do processo no instante $k$. O monitoramento do processo geralmente se concentra em detectar quando o sistema se desvia das condições normais de operação, o que pode indicar o início de uma falha.
+onde cada coluna $\mathbf{y}_k = [y_{1,k}, y_{2,k}, \ldots, y_{m,k}]^T$ representa um snapshot do estado do processo no instante $k$. O monitoramento do processo geralmente se concentra em detectar quando o sistema se desvia das condições normais de operação, o que pode indicar o início de uma falha \cite{favoreel2000}.
 
-\subsection{O Processo Tennessee Eastman (TE)}
-\label{subsec:tee_process}
+\subsection{Definição de uma Falta num processo Industrial}
+\label{subsec:fault_process}
 
-O processo Tennessee Eastman (TE) é um simulador realista e complexo de um processo químico amplamente utilizado em pesquisas de detecção de falhas. Ele representa uma planta de polimerização com múltiplas operações unitárias interconectadas, incluindo reatores, separadores e colunas de destilação.
+Uma falta, ou falha, em um processo industrial refere-se a qualquer desvio do comportamento normal do sistema que pode levar a operação inadequada, redução de desempenho, ou até falha total do equipamento \cite{yin2012}. As falhas podem ser de natureza abruptas (mudanças repentinas nos parâmetros do processo) ou incipientes (mudanças graduais ao longo do tempo). A detecção precoce de falhas é crucial para prevenir danos maiores, garantir a segurança operacional e manter a eficiência do processo.
+
+
+
+\subsection{O Processo Tennessee Eastman (TEP)}
+\label{subsec:tep_process}
+
+O \textit{Tennessee Eastman Process} (TEP), proposto originalmente pela \textit{Eastman Chemical Company} \cite{downs_and_vogel_1993}, é um \textit{benchmark} industrial amplamente utilizado para avaliar estratégias de controle, monitoramento de processos e diagnóstico de falhas. Sua relevância decorre de sua natureza altamente não linear, forte acoplamento de variáveis e complexidade multivariável.
+
+O processo envolve quatro reagentes gasosos ($A, C, D$ e $E$), um componente inerte ($B$), dois produtos líquidos principais ($G$ e $H$) e um subproduto líquido ($F$). As transformações ocorrem por meio de quatro reações paralelas e em série, irreversíveis e exotérmicas, descritas na Equação \ref{eq:TEProcess}:
+
+\begin{equation}
+\label{eq:TEProcess}
+\begin{aligned}
+A(g) + C(g) + D(g) \xrightarrow{catalisador} G(liq) \\
+A(g) + C(g) + E(g) \xrightarrow{catalisador} H(liq) \\
+A(g) + E(g) \rightarrow F(liq) \\
+3D(g) \rightarrow 2F(l)
+\end{aligned}
+\end{equation}
+
+O sistema é composto por cinco unidades operacionais principais interconectadas: um reator CSTR, um condensador, um vaso separador líquido-vapor (\textit{flash}), um compressor de reciclo e uma coluna de esgotamento (\textit{stripper}), conforme ilustrado na Figura \ref{fig:TAEProcess}.
+
+\begin{figure*}[!ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{Figuras/Basicos/TEP.png}
+    \caption{Fluxograma do processo industrial e disposição das principais malhas de controle do benchmark Tennessee Eastman (adaptado de \cite{downs_and_vogel_1993}).} 
+    \label{fig:TAEProcess}
+\end{figure*}
 
 \subsubsection{Visão Geral do Processo}
 
-O processo TE compõe-se das seguintes unidades principais:
+As cinco unidades do TEP desempenham funções específicas para garantir a conversão dos reagentes e a purificação dos produtos, conforme sintetizado na Tabela \ref{tab:tep_units}.
 
-\begin{table*}
+\begin{table*}[!ht]
 \centering
-\caption{Unidades Principais do Processo Tennessee Eastman}
-\label{tab:tee_units}
+\caption{Unidades principais do processo Tennessee Eastman e suas respectivas funções.}
+\label{tab:tep_units}
 \small
-\begin{tabular}{llp{5.5cm}}
+\begin{tabular}{llp{7.5cm}}
 \toprule
 \rowcolor{gray!20}
-\textbf{Unidade} & \textbf{Função} & \textbf{Descrição} \\
+\textbf{Unidade} & \textbf{Tipo de Equipamento} & \textbf{Descrição Operacional} \\
 \midrule
-Reator & Vaso de reação primária & Polimerização catalítica das matérias-primas A, D e E \\
-Separador & Separação líquido-vapor & Separa os produtos da alimentação não reagida \\
-Coluna de destilação & Destilação & Remove componentes leves e recupera o produto \\
-Condensador & Troca térmica & Condensa vapores no separador \\
-Laço de reciclo & Circulação de material & Recicla materiais não reagidos para o reator \\
+Reator & Reator CSTR com camisa & Sedia as reações exotérmicas sob agitação mecânica e refrigeração controlada. \\
+Condensador & Trocador de calor parcial & Resfria o vapor do reator para condensar os produtos de menor volatilidade. \\
+Separador & Vaso de flash líquido-vapor & Separa fisicamente os gases não condensados do condensado líquido rico em produtos. \\
+Compressor & Compressor centrífugo & Recircula os reagentes gasosos não consumidos de volta à alimentação do reator. \\
+\textit{Stripper} & Coluna de esgotamento & Purifica o produto líquido, removendo reagentes voláteis em contracorrente. \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \subsubsection{Variáveis Medidas e Entradas Manipuladas}
 
-O processo TE fornece 41 variáveis continuamente medidas (XMEAS 1--41) e 12 entradas manipuladas (XMV 1--12), permitindo um monitoramento multivariável abrangente:
+Para fins de monitoramento e controle, o processo disponibiliza 12 variáveis manipuladas ($XMV_{1-12}$) e um total de 41 variáveis medidas continuamente. Estas últimas dividem-se em 22 medições de processo ($XMEAS_{1-22}$) e 19 medições de composição química via analisadores em linha ($XMEAS_{23-41}$), categorizadas nas Tabelas \ref{tab:xmeas_variables} e \ref{tab:xmv_variables}.
 
-\begin{table*}
+\begin{table*}[!ht]
 \centering
-\caption{Categorias de Variáveis Medidas no Processo TE}
-\label{tab:tee_variables}
+\caption{Categorias de variáveis de medição instrumentadas ($XMEAS$) no processo.}
+\label{tab:xmeas_variables}
 \small
-\begin{tabular}{lp{4.5cm}c}
+\begin{tabular}{lp{8.5cm}c}
 \toprule
 \rowcolor{gray!20}
-\textbf{Tipo de Variável} & \textbf{Categoria} & \textbf{Quantidade} \\
+\textbf{Tipo de Variável} & \textbf{Descrição e Componentes Associados} & \textbf{Quantidade} \\
 \midrule
-Vazões & Alimentação do reator, purga, separador, coluna & 6 \\
-Pressões & Reator, separador, coluna & 3 \\
-Temperaturas & Reator, separador, coluna, água de resfriamento & 7 \\
-Níveis de líquido & Reator, separador, coluna & 3 \\
-Água de resfriamento do reator/condensador & Temperaturas de entrada de água & 2 \\
-Trabalho do compressor & Consumo de energia & 1 \\
-Análise de composição & Frações de alimentação e produto (A, B, C, D, E, F, G, H) & 11 \\
-Sinais adicionais de processo & Temperatura do reator, várias vazões & 7 \\
+Vazões & Alimentações de reagentes ($A$, $D$, $E$, $A+C$), reciclo, alimentação total do reator, purga e fundos do separador e \textit{stripper}. & 9 \\
+Pressões & Monitoramento de pressão no reator, no separador e no \textit{stripper}. & 3 \\
+Níveis & Acúmulo de líquido no reator, no separador e na base do \textit{stripper}. & 3 \\
+Temperaturas & Controle térmico do reator, separador, topo/fundo do \textit{stripper} e águas de resfriamento. & 6 \\
+Potência & Consumo de trabalho/potência operacional do compressor de reciclo. & 1 \\
+Analisadores (Composição) & Frações molares de componentes na alimentação do reator (5), gás de purga (5) e correntes de produto (4 na corrente 1 e 5 na corrente 2). & 19 \\
+\midrule
+\textbf{Total de Medições} & Variáveis de processo contínuas ($XMEAS_{1-22}$) e de analisadores químicos ($XMEAS_{23-41}$). & \textbf{41} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!ht]
+\centering
+\caption{Categorias de variáveis manipuladas ($XMV$) e atuadores do processo.}
+\label{tab:xmv_variables}
+\small
+\begin{tabular}{lp{8.5cm}c}
+\toprule
+\rowcolor{gray!20}
+\textbf{Tipo de Atuador / Variável} & \textbf{Descrição e Malhas de Controle Típicas} & \textbf{Quantidade} \\
+\midrule
+Vazões de Alimentação & Controle de carga do processo ($A$, $D$, $E$ e mistura $A+C$). Associadas ao nível e pressão do reator e composição de entrada. & 4 \\
+Abertura de Válvulas & Válvulas de reciclo do compressor, de purga (inertes/pressão) e de vapor do \textit{stripper} (temperatura). & 3 \\
+Vazões de Processo Líquido & Controle de escoamento de líquido do fundo do separador e do produto do \textit{stripper} (controle de nível). & 2 \\
+Serviços de Resfriamento & Vazão de água de resfriamento do reator (temperatura interna) e do condensador. & 2 \\
+Agitação Mecânica & Velocidade de rotação do agitador do reator. & 1 \\
+\midrule
+\textbf{Total Manipuladas} & Atuadores, posicionadores de válvula e setpoints de vazão ($XMV_{1-12}$). & \textbf{12} \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \subsubsection{Cenários de Falha}
 
-O benchmark inclui 21 modos de falha (IDV 1--21) que representam diferentes cenários de falha:
+O \textit{benchmark} do TEP simula 21 cenários de distúrbios e falhas operacionais ($IDV_{1-21}$), detalhados na Tabela \ref{tab:tep_faults}, que servem como métricas rigorosas para algoritmos de detecção. Antes da aplicação dos métodos de diagnóstico, os dados históricos costumam ser padronizados para média zero e variância unitária \cite{yin2012}, mitigando disparidades de escala entre as variáveis físicas.
 
-\begin{table*}
+\begin{table*}[!ht]
 \centering
-\caption{Cenários de Falha do Processo TE}
-\label{tab:tee_faults}
-\footnotesize
-\begin{tabular}{cllp{3.2cm}}
+\caption{Cenários de distúrbios e falhas programadas ($IDV_{1-21}$) no Processo TE.}
+\label{tab:tep_faults}
+\small
+\begin{tabular}{cllp{4.5cm}}
 \toprule
 \rowcolor{gray!20}
-\textbf{IDV} & \textbf{Descrição} & \textbf{Tipo} & \textbf{Ocorrência} \\
+\textbf{Código} & \textbf{Descrição do Distúrbio / Falha} & \textbf{Tipo de Fenômeno} & \textbf{Instante de Ocorrência} \\
 \midrule
-1--2 & Mudanças na composição dos reagentes & Degrau & 500 segundos \\
-3--4 & Variações na temperatura de alimentação & Degrau & 500 segundos \\
-5--7 & Alterações na temperatura/pressão do fluido de arrefecimento & Degrau & 500 segundos \\
-8--12 & Variações aleatórias na composição da alimentação, temperatura & Aleatório & 500 segundos \\
-13--15 & Deriva lenta na cinética / agarramento de válvula & Deriva/Travamento & 500 segundos \\
-16--20 & Falhas desconhecidas (cenários ocultos) & Desconhecido & 500 segundos \\
-21 & Válvula fixa na posição de regime estacionário & Constante & 500 segundos \\
+IDV(1) -- IDV(2) & Mudanças de degrau na composição da alimentação & Degrau & 500 segundos \\
+IDV(3) -- IDV(4) & Variações na temperatura das correntes de alimentação & Degrau & 500 segundos \\
+IDV(5) -- IDV(7) & Alterações na temperatura/pressão do fluido de resfriamento & Degrau & 500 segundos \\
+IDV(8) -- IDV(12) & Variações aleatórias na composição e vazão de alimentação & Ruído Aleatório & 500 segundos \\
+IDV(13) -- IDV(15) & Deriva lenta na cinética de reação ou travamento de válvula & Deriva / Travamento & 500 segundos \\
+IDV(16) -- IDV(20) & Falhas de natureza desconhecida (cenários ocultos) & Desconhecido & 500 segundos \\
+IDV(21) & Posição de válvula fixa em regime estacionário & Constante & 500 segundos \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-Os dados são normalizados para média zero e variância unitária, a fim de garantir que todas as variáveis contribuam igualmente para os algoritmos de detecção.
+\subsubsection{Descrição Detalhada da Dinâmica do Processo}
 
-\subsubsection{Descrição Detalhada do Processo e Fluxograma}
-
-O processo Tennessee Eastman representa um sistema de fabricação química em múltiplos estágios. \textit{[Um fluxograma detalhado mostrando as operações unitárias, interconexões, composições das correntes e malhas de controle deve ser inserido aqui. O diagrama deve ilustrar as correntes de alimentação do reator (A, D, E, C), o vaso de reação, os estágios de recuperação do produto e os caminhos de reciclo.]}
-
-O processo opera continuamente sob controle por realimentação, sendo os principais objetivos de controle:
-
-\begin{itemize}
-    \item Manter o nível e a pressão do reator;
-    \item Regular as temperaturas do reator e do separador;
-    \item Estabilizar a composição e a pureza do produto;
-    \item Equilibrar o fluxo de material e as taxas de reciclo.
-\end{itemize}
-
-\textit{[As equações da dinâmica do processo e as relações de balanço de material podem ser incorporadas aqui para fornecer detalhes matemáticos do modelo do processo TE.]}
+O TEP opera continuamente em malha fechada por realimentação, com o objetivo de reciclar materiais não consumidos, garantir a estabilidade térmica e de pressão, e assegurar metas de produção e pureza comercial. Do ponto de vista matemático, o comportamento dinâmico e estacionário da planta é governado por um sistema acoplado de equações diferenciais e algébricas não lineares (DAEs), envolvendo cerca de 50 variáveis de estado fundamentais. Essa complexidade fenomenológica torna o TEP um ambiente altamente fidedigno para validar a robustez de novas ferramentas de ciência de dados e aprendizado de máquina.
 
 \subsection{Formulação do Problema de Detecção de Falhas}
 \label{subsec:fault_detection}
 
-O problema geral de detecção de falhas pode ser formulado como uma tarefa de classificação binária. Dados os dados do processo $\mathbf{Y}$, o objetivo é construir uma regra de decisão que classifique as observações como normais (nominais) ou anormais (com falha):
+O problema geral de detecção de falhas pode ser formulado como uma tarefa de classificação binária \cite{venkatasubramanian2003}. Dados os dados do processo $\mathbf{Y}$, o objetivo é construir uma regra de decisão que classifique as observações como normais (nominais) ou anormais (com falha):
 
 \begin{equation}
 \mathcal{D}(\mathbf{y}_k) = \begin{cases} 
@@ -195,14 +232,14 @@ O problema geral de detecção de falhas pode ser formulado como uma tarefa de c
 
 onde $\mathcal{T}_k$ é uma estatística de teste calculada a partir da observação $\mathbf{y}_k$, e $\tau$ é um limiar determinado com base na taxa desejada de falsos positivos. O desafio reside em selecionar estatísticas de teste e limiares adequados que maximizem a taxa de detecção de falhas, minimizando os alarmes falsos.
 
-\subsection{Métricas Estatísticas de Detecção: T² e SPE}
+\subsection{Métricas Estatísticas de Detecção}
 \label{subsec:statistical_metrics}
 
-A maioria dos métodos de monitoramento de processos baseia-se em duas métricas estatísticas fundamentais calculadas a partir de dados multivariados: a estatística $T^2$ de Hotelling e o Erro Quadrático de Predição (SPE, do inglês Squared Prediction Error), também conhecido como estatística Q.
+A maioria dos métodos estatísticos de monitoramento de processos baseia-se em métricas fundamentais calculadas a partir de dados multivariados \cite{venkatasubramanian2003}. Para a avaliação do estado operacional do sistema, destacam-se quatro principais estatísticas de teste utilizadas na literatura: a estatística $T^2$ de Hotelling, o Erro Quadrático de Predição (SPE, também conhecido como estatística $Q$), a estatística $I^2$ baseada em componentes independentes, e o índice combinado $D$.
 
 \subsubsection{Estatística T² de Hotelling}
 
-A estatística $T^2$ de Hotelling mede a distância de um ponto ao centro dos dados de treinamento no subespaço dos componentes principais. Para uma nova observação $\mathbf{x}_k$, após projeção nos primeiros $a$ componentes principais:
+A estatística $T^2$ de Hotelling é uma métrica fundamental em monitoramento multivariado \cite{yin2012}. Para uma nova observação $\mathbf{x}_k$, após projeção nos primeiros $a$ componentes principais:
 
 \begin{equation}
 T^2_k = \mathbf{t}_k^\top \boldsymbol{\Lambda}^{-1} \mathbf{t}_k
@@ -220,7 +257,7 @@ onde $n$ é o número de amostras de treinamento, $a$ é o número de componente
 
 \subsubsection{Erro Quadrático de Predição (Estatística Q)}
 
-O SPE (ou estatística Q) mede a contribuição de cada observação para o subespaço residual ortogonal ao subespaço do modelo:
+O SPE (ou estatística Q) é uma métrica complementar que mede a contribuição residual não capturada pelo modelo de dimensão reduzida \cite{yin2012}. Essa medida indica a contribuição de cada observação para o subespaço residual ortogonal ao subespaço do modelo:
 
 \begin{equation}
 Q_k = \|\mathbf{x}_k - \hat{\mathbf{x}}_k\|^2 = \|\mathbf{x}_k - \mathbf{x}_k \mathbf{P}_a \mathbf{P}_a^\top\|^2
@@ -236,14 +273,56 @@ Q_{\text{lim}} = \theta_1 \left[ \frac{c_\alpha \sqrt{2\theta_2 h_0^2}}{\theta_1
 
 onde $\theta_k = \sum_{i=a+1}^p \lambda_i^k$ e $h_0 = 1 - \frac{2\theta_1 \theta_3}{3\theta_2^2}$.
 
+\subsubsection{Estatística $I^2$ (Componentes Independentes)}
+\label{subsubsection:i2_statistic}
+
+A estatística $I^2$ é utilizada no contexto da Análise de Componentes Independentes (ICA) para monitorar o subespaço principal quando as variáveis apresentam comportamento não-Gaussiano \cite{lee2004}. Para uma nova observação $\mathbf{x}_k$, a estatística é calculada a partir dos escores independentes retidos $\mathbf{s}_{k,d}$:
+
+\begin{equation}
+I^2_k = \mathbf{s}_{k,d}^\top \mathbf{s}_{k,d}
+\label{eq:i2_statistic}
+\end{equation}
+
+onde $d$ é o número de componentes dominantes. Devido à não-gaussianidade dos dados, o limite de controle $I^2_{\text{lim}}$ é estimado de forma não-paramétrica via Estimação de Densidade por Kernel (KDE) sob um nível de significância $\alpha$:
+
+\begin{equation}
+I^2_{\text{lim}} = f_{\text{KDE}}(\mathbf{I}^2_{\text{train}}, \alpha)
+\label{eq:i2_limit}
+\end{equation}
+
+onde $f_{\text{KDE}}$ representa a função quantil empírica obtida a partir dos dados de treinamento.
+
+\subsubsection{Estatística D (Índice Combinado)}
+\label{subsubsection:d_statistic}
+
+A estatística $D$ unifica as informações de variabilidade do subespaço principal ($T^2$) e do subespaço residual ($Q$) em uma única métrica, reduzindo a taxa de alarmes falsos redundantes \cite{yue2001}. O índice para a amostra $k$ é definido por:
+
+\begin{equation}
+D_k = \frac{T^2_k}{T^2_{\text{lim}}} + \frac{Q_k}{Q_{\text{lim}}}
+\label{eq:d_statistic}
+\end{equation}
+
+O limite de controle $D_{\text{lim}}$ é obtido analiticamente através da aproximação de Box por uma distribuição Qui-Quadrado:
+
+\begin{equation}
+D_{\text{lim}} = g \cdot \chi^2_{\alpha}(h)
+\label{eq:d_limit}
+\end{equation}
+
+Os parâmetros de escala $g$ e os graus de liberdade efetivos $h$ são calculados a partir da média $\mu_D$ e da variância $\sigma^2_D$ de $D$ no conjunto de treinamento:
+
+\begin{equation}
+g = \frac{\sigma^2_D}{2\mu_D}, \quad h = \frac{2\mu_D^2}{\sigma^2_D}
+\end{equation}
+
 \subsection{Visão Geral Comparativa dos Métodos de Detecção de Falhas}
 \label{subsec:methods_overview}
 
-Este trabalho compara oito metodologias distintas de detecção de falhas aplicadas ao processo TE. Cada método emprega estratégias de transformação e fundamentos estatísticos próprios. A seguir, descrevemos a essência de cada um, destacando suas equações‑chave.
+Um estudo abrangente de benchmark \cite{yin2012, germano2016} é essencial para entender os pontos fortes e fracos de diferentes metodologias. Este trabalho compara oito metodologias distintas de detecção de falhas aplicadas ao processo TE, seguindo protocolos estabelecidos \cite{venkatasubramanian2003}. Cada método emprega estratégias de transformação e fundamentos estatísticos próprios. A seguir, descrevemos a essência de cada um, destacando suas equações-chave.
 
 \subsubsection{Análise de Componentes Principais (PCA)}
 
-A PCA decompõe a matriz de dados $\mathbf{X}$ (com $m$ variáveis e $N$ observações) em componentes não correlacionados que capturam a máxima variância.  
+A PCA é um método clássico de redução de dimensionalidade que decompõe a matriz de dados $\mathbf{X}$ (com $m$ variáveis e $N$ observações) em componentes não correlacionados que capturam a máxima variância \cite{yin2012}.  
 O primeiro passo é centralizar os dados e calcular a matriz de covariância $\mathbf{S} = \frac{1}{N-1}\mathbf{X}^\top\mathbf{X}$. A decomposição em autovalores e autovetores fornece:
 
 \begin{equation}
@@ -264,11 +343,11 @@ O monitoramento utiliza duas estatísticas complementares:
 
 Uma falha é declarada se $T^2 > T^2_{\text{lim}}$ ou $Q > Q_{\text{lim}}$, onde os limites são obtidos da distribuição $F$ e da aproximação de Jackson–Mudholkar (Equações~\eqref{eq:t2_limit} e~\eqref{eq:spe_limit}).
 
-Vantagens: eficiência computacional, interpretabilidade. Desvantagens: assume relações lineares e exige escolha adequada de $a$.
+Vantagens: eficiência computacional, interpretabilidade e ampla aceitação na indústria. Desvantagens: assume relações lineares e exige escolha adequada de $a$ \cite{yin2012}.
 
 \subsubsection{Análise de Componentes Principais Dinâmica (DPCA)}
 
-A DPCA incorpora a dinâmica temporal sem alterar a essência da PCA. Para cada instante $k$, constrói-se um vetor aumentado com $\ell$ defasagens:
+A DPCA incorpora a dinâmica temporal, melhorando a capacidade de detecção de falhas lentas \cite{favoreel2000}, sem alterar significativamente a essência da PCA. Para cada instante $k$, constrói-se um vetor aumentado com $\ell$ defasagens:
 
 \begin{equation}
 \mathbf{x}^{\text{aug}}_k = \begin{bmatrix}
@@ -281,7 +360,7 @@ Aplica‑se a PCA padrão a essa matriz aumentada. As estatísticas $T^2$ e $Q$ 
 
 \subsubsection{Mínimos Quadrados Parciais (PLS)}
 
-O PLS relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ (no nosso caso, a concentração do componente G, XMEAS 35). O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
+O PLS é um método supervisionado que relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ (no nosso caso, a concentração do componente G, XMEAS 35) \cite{dayal1997}. O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
 
 \begin{align}
 \mathbf{X} &= \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \label{eq:pls_x}\\
@@ -293,27 +372,26 @@ Na fase de monitoramento, calculam‑se $T^2$ e $Q$ a partir dos escores, de for
 
 \subsubsection{Mínimos Quadrados Parciais com Informação Temporal (TPLS)}
 
-O TPLS simplesmente aplica o PLS ao conjunto de dados aumentado com defasagens temporais, análogo à DPCA:
+O TPLS aplica o PLS ao conjunto de dados aumentado com defasagens temporais, análogo à DPCA, capturando simultaneamente a correlação temporal e a relação supervisionada com a qualidade \cite{dayal1997}:
 \begin{equation}
 \mathbf{X}^{\text{aug}} = \begin{bmatrix}
 \mathbf{X}_k & \mathbf{X}_{k-1} & \cdots & \mathbf{X}_{k-\ell}
 \end{bmatrix}.
 \label{eq:tpls_augmented}
 \end{equation}
-Com isso, o modelo captura simultaneamente a correlação temporal e a relação supervisionada com a qualidade.
 
 \subsubsection{Mínimos Quadrados Parciais Multivariados (MPLS)}
 
-O MPLS estende o PLS para múltiplas saídas de qualidade $\mathbf{Y}$ (por exemplo, várias concentrações). A decomposição torna‑se:
+O MPLS estende o PLS para múltiplas saídas de qualidade $\mathbf{Y}$ (por exemplo, várias concentrações), permitindo modelar relações mais complexas entre processo e qualidade \cite{dayal1997}. A decomposição torna-se:
 \begin{equation}
 \mathbf{X} = \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \qquad \mathbf{Y} = \mathbf{U} \mathbf{Q}^\top + \mathbf{F},
 \label{eq:mpls_model}
 \end{equation}
-e busca‑se maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$. Isso permite modelar relações mais complexas entre processo e qualidade, mantendo a estrutura de monitoramento baseada em $T^2$ e $Q$.
+e busca‑se maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$. Isso permite manter a estrutura de monitoramento baseada em $T^2$ e $Q$.
 
 \subsubsection{Análise de Componentes Independentes (ICA)}
 
-Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes. Assume‑se que as medições $\mathbf{x}$ são uma mistura linear de fontes independentes $\mathbf{s}$:
+Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes, oferecendo uma perspectiva complementar para identificação de padrões ocultos. Assume-se que as medições $\mathbf{x}$ são uma mistura linear de fontes independentes $\mathbf{s}$, proporcionando um modelo generativo para desacoplamento de sinais \cite{yin2012}:
 \begin{equation}
 \mathbf{x} = \mathbf{A} \mathbf{s},
 \label{eq:ica_model}
@@ -324,11 +402,11 @@ Para monitoramento, calcula‑se a estatística $I^2 = \hat{\mathbf{s}}^\top \ha
 
 \subsubsection{Análise de Componentes Independentes Multivariada (MICA)}
 
-O MICA combina a ICA com a mesma estratégia de aumento temporal da DPCA. Aplica‑se a ICA ao vetor aumentado $\mathbf{x}^{\text{aug}}_k$, capturando independência e dinâmica. As estatísticas $I^2$ e $Q_{\text{ICA}}$ são calculadas no espaço aumentado, proporcionando sensibilidade adicional a falhas que evoluem lentamente.
+O MICA combina a ICA com a mesma estratégia de aumento temporal da DPCA, proporcionando sensibilidade melhorada a falhas que evoluem lentamente \cite{yin2012}. Aplica-se a ICA ao vetor aumentado $\mathbf{x}^{\text{aug}}_k$, capturando independência e dinâmica. As estatísticas $I^2$ e $Q_{\text{ICA}}$ são calculadas no espaço aumentado, proporcionando sensibilidade adicional a falhas que evoluem lentamente.
 
 \subsubsection{Análise Discriminante de Fisher (FDA)}
 
-A FDA é um método supervisionado que busca direções $\mathbf{w}$ que maximizem a separação entre classes (normal vs. com falha). Define‑se a matriz de dispersão entre classes $\mathbf{S}_B$ e a matriz de dispersão intraclasse $\mathbf{S}_W$:
+A FDA é um método supervisionado clássico de classificação que busca direções $\mathbf{w}$ que maximizem a separação entre classes (normal vs. com falha), fornecendo uma fronteira de decisão ótima para detecção. Define‑se a matriz de dispersão entre classes $\mathbf{S}_B$ e a matriz de dispersão intraclasse $\mathbf{S}_W$:
 \begin{align}
 \mathbf{S}_B &= \sum_{c=1}^{C} n_c (\boldsymbol{\mu}_c - \boldsymbol{\mu})(\boldsymbol{\mu}_c - \boldsymbol{\mu})^\top, \label{eq:s_b}\\
 \mathbf{S}_W &= \sum_{c=1}^{C} \sum_{i \in c} (\mathbf{x}_i - \boldsymbol{\mu}_c)(\mathbf{x}_i - \boldsymbol{\mu}_c)^\top, \label{eq:s_w}
@@ -336,20 +414,37 @@ A FDA é um método supervisionado que busca direções $\mathbf{w}$ que maximiz
 onde $C=2$, $n_c$ é o número de amostras da classe $c$, $\boldsymbol{\mu}_c$ a média da classe e $\boldsymbol{\mu}$ a média global.  
 
 A direção ótima $\mathbf{w}$ é o autovetor associado ao maior autovalor de $\mathbf{S}_W^{-1}\mathbf{S}_B$. Projetando os dados nessas direções, obtém‑se uma estatística de monitoramento $D = \|\mathbf{W}^\top (\mathbf{x} - \boldsymbol{\mu}_{\text{normal}})\|^2$, com limite derivado da distribuição qui‑quadrado.
+
+\subsubsection{Autoencoder Probabilístico (PAE)}
+
+O PAE é um método não-supervisionado baseado em aprendizado profundo (frequentemente instanciado como um \textit{Variational Autoencoder} - VAE) que modela a distribuição de probabilidade dos dados normais em um espaço latente de baixa dimensão $\mathbf{z} \in \mathbb{R}^l$. Diferente de abordagens determinísticas, o codificador $q_\phi(\mathbf{z}|\mathbf{x})$ estima os parâmetros de uma distribuição Gaussiana, fornecendo um vetor de médias $\boldsymbol{\mu}_z$ e um vetor de log-variâncias $\log \boldsymbol{\sigma}_z^2$. Para viabilizar o fluxo de gradientes via retropropagação durante o treinamento, aplica-se o truque da reparametrização, e a função de perda total $\mathcal{L}_{\text{PAE}}$ é formulada como:
+\begin{align}
+\mathbf{z} &= \boldsymbol{\mu}_z + \boldsymbol{\sigma}_z \odot \boldsymbol{\epsilon}, \quad \text{com } \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \label{eq:pae_reparam}\\
+\mathcal{L}_{\text{PAE}} &= \|\mathbf{x} - \hat{\mathbf{x}}\|^2 - \frac{1}{2} \sum_{j=1}^{l} \left( 1 + \log\sigma_{zj}^2 - \mu_{zj}^2 - e^{\log\sigma_{zj}^2} \right), \label{eq:pae_loss}
+\end{align}
+onde $\odot$ denota o produto de Hadamard, $\hat{\mathbf{x}} = p_\theta(\mathbf{x}|\mathbf{z})$ é a reconstrução gerada pelo decodificador, e $l$ é a dimensão do espaço latente. O primeiro termo de \eqref{eq:pae_loss} minimiza o erro de reconstrução, enquanto o segundo termo penaliza o desvio da distribuição latente em relação a uma priori gaussiana padrão via Divergência de Kullback-Leibler ($D_{\text{KL}}$).
+
+No monitoramento online, o modelo projeta as novas observações de teste e calcula de forma complementar as estatísticas $T^2$ latente e $Q$ residual:
+\begin{align}
+T^2 &= \sum_{j=1}^{l} \frac{\mu_{zj}^2}{s_{zj}^2}, \label{eq:t2_pae}\\
+Q &= \sum_{i=1}^{m} (x_i - \hat{x}_i)^2, \label{eq:q_pae}
+\end{align}
+onde $s_{zj}^2$ representa a variância amostral do escore latente $j$ obtida exclusivamente no conjunto de treinamento normal e $m$ é o número total de variáveis do processo. Os limites de controle para a detecção de anomalias são derivados da distribuição $F$ de Snedecor para o espaço latente ($T^2$) e da aproximação de Box via distribuição qui-quadrado para o espaço residual ($Q$).
+
 \section{Metodologia e Implementação}
 \label{sec:methodology}
 
-Esta seção descreve a estrutura de implementação para ambas as abordagens de detecção de falhas, detalhando o pré-processamento dos dados, o desenvolvimento dos modelos e as estratégias de avaliação, conforme introduzido na Seção~\ref{sec:theoretical}.
+Esta seção descreve a estrutura de implementação para as oito abordagens de detecção de falhas, seguindo os protocolos de benchmark estabelecidos \cite{yin2012}, detalhando o pré-processamento dos dados, o desenvolvimento dos modelos e as estratégias de avaliação, conforme introduzido na Seção~\ref{sec:theoretical}.
 
 \subsection{Descrição do Problema e Características do Conjunto de Dados}
 \label{subsec:problem_description}
 
-Os algoritmos de detecção de falhas são avaliados utilizando o benchmark do processo Tennessee Eastman (TE). Os dados de treinamento contêm apenas amostras nominais (livres de falhas) ($n_{\text{treino}} = 500$ amostras), enquanto os dados de teste incluem observações normais e com falha ($n_{\text{teste}} = 960$ amostras por cenário de falha), correspondentes a 21 modos de falha diferentes (IDV 1--21). Todas as variáveis são normalizadas para média zero e variância unitária, utilizando estatísticas calculadas a partir do conjunto de treinamento.
+Os algoritmos de detecção de falhas são avaliados utilizando o benchmark do processo Tennessee Eastman (TE) \cite{downs_and_vogel_1993, yin2012}, amplamente aceito pela comunidade científica. Os dados de treinamento contém apenas amostras nominais (livres de falhas) ($n_{\text{treino}} = 500$ amostras), enquanto os dados de teste incluem observações normais e com falha ($n_{\text{teste}} = 960$ amostras por cenário de falha), correspondentes a 21 modos de falha diferentes (IDV 1--21). Todas as variáveis são normalizadas para média zero e variância unitária, utilizando estatísticas calculadas a partir do conjunto de treinamento.
 
 \subsection{Pré-processamento dos Dados e Seleção de Atributos}
 \label{subsec:preprocessing}
 
-Os dados brutos dos sensores são normalizados como:
+Os dados brutos dos sensores são normalizados como descrito na literatura de monitoramento \cite{yin2012}:
 
 \begin{equation}
 \mathbf{X}_{\text{normalizado}} = \frac{\mathbf{X} - \boldsymbol{\mu}}{\boldsymbol{\sigma}}
@@ -365,24 +460,68 @@ onde $\boldsymbol{\mu}$ e $\boldsymbol{\sigma}$ são calculados a partir dos dad
 
 com o parâmetro de defasagem $\ell = 2$ amostras.
 
+\subsection{Fluxograma de Implementação e Treinamento dos Algoritmos}
+\label{subsec:fluxograma}
+
+O procedimento para a implementação, treinamento e validação das metodologias baseadas em dados segue um fluxo sequencial estruturado em cinco etapas principais:
+
+\begin{enumerate}
+    \item \textbf{Aquisição dos Dados:} Leitura dos arquivos brutos do \textit{benchmark} TEP, utilizando a base \texttt{d00.dat} para representação do estado de operação normal e os arquivos \texttt{d{i}\_te.dat} (onde $i = 1, \dots, 21$) correspondentes aos cenários de falha para testes.
+    \item \textbf{Pré-processamento e Tratamento:} Centralização na média e escalonamento por variância unitária (normalização $Z$-score) de todas as séries temporais, mitigando discrepâncias de ordens de magnitude física entre os sensores.
+    \item \textbf{Seleção de Variáveis:} Filtragem e mapeamento das variáveis preditoras e de resposta de acordo com a arquitetura interna e objetivo de cada modelo, conforme especificado na Tabela~\ref{tab:metodos_variaveis}.
+    \item \textbf{Treinamento do Modelo:} Calibração matemática e cálculo dos limiares estatísticos críticos de controle (como as estatísticas $T^2$ de Hotelling e Q/SPE) utilizando exclusivamente a matriz de dados normais (\texttt{d00.dat}).
+    \item \textbf{Teste e Validação:} Submissão dos modelos treinados individualmente a cada um dos 21 arquivos de distúrbio (\texttt{d{i}\_te.dat}) para o cálculo das métricas de Taxa de Detecção de Falhas (FDR) e Taxa de Alarme Falso (FAR).
+\end{enumerate}
+
+\begin{table*}[!ht]
+\centering
+\caption{Classificação dos métodos de monitoramento segundo a estrutura temporal, abordagem e fluxo de variáveis.}
+\label{tab:metodos_variaveis_detalhado}
+\small
+\begin{tabular}{llllp{6.0cm}}
+\toprule
+\rowcolor{gray!20}
+\textbf{Métodos} & \textbf{Aspecto Temporal} & \textbf{Abordagem} & \textbf{Estrutura dos Dados} & \textbf{Variáveis Utilizadas no Processo} \\
+\midrule
+PCA, ICA & Estático & Não Supervisionada & Bloco Único ($X$) & Concentra as 22 medições ($XMEAS_{1-22}$) e 11 manipuladas ($XMV_{1-11}$) em uma única matriz, sem diferenciação de alvos. \\
+\midrule
+DPCA, MICA & Dinâmico & Não Supervisionada & Bloco Único ($X$) com \textit{Lags} & Mesmas 33 variáveis ($XMEAS$ e $XMV$), porém acrescidas de suas componentes de atraso temporal. \\
+\midrule
+PAE & Estático & Não Supervisionada & Bloco Único ($X$) & Concentra as 22 medições ($XMEAS_{1-22}$) e 11 manipuladas ($XMV_{1-11}$) para mapear de forma não-linear a distribuição de normalidade no espaço latente. \\
+\midrule
+FDA & Estático & Supervisionada & Entrada $\rightarrow$ Classes & Utiliza as 33 variáveis de processo como preditoras para discriminar os rótulos (classes discretas) de falha. \\
+\midrule
+PLS, MPLS & Estático & Supervisionada & Entrada $\rightarrow$ Saída  & Mapeia a correlação entre as 33 variáveis preditoras ($X$) e a variável contínua de qualidade $XMEAS_{35}$ ($Y$). \\
+\midrule
+TPLS & Dinâmico/Estático & Supervisionada & Entrada $\rightarrow$ Saída& Realiza a decomposição ortogonal separando as variações de $X$ que são correlacionadas e ortogonais a $XMEAS_{35}$. \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
 \subsection{Resumo da Implementação dos Métodos Individuais}
 \label{subsec:implementation_summary}
 
 \subsubsection{PCA e DPCA}
 
-A PCA é implementada via decomposição em valores singulares (SVD) da matriz de dados de treinamento centrada. O número de componentes é selecionado de forma a reter 95\% da variância total. Para cada observação de teste, as estatísticas $T^2$ e Q são calculadas e comparadas com os limites de controle derivados da distribuição $F$ e da aproximação de Jackson-Mudholkar, respectivamente. A DPCA segue o procedimento idêntico aplicado ao espaço de atributos temporalmente aumentado.
+A PCA é implementada via decomposição em valores singulares (SVD) da matriz de dados de treinamento centrada, usando limiares de truncação ótimos \cite{gavish2014}. O número de componentes é selecionado de forma a reter 95\% da variância total. Para cada observação de teste, as estatísticas $T^2$ e Q são calculadas e comparadas com os limites de controle derivados da distribuição $F$ e da aproximação de Jackson-Mudholkar, respectivamente. A DPCA segue o procedimento idêntico aplicado ao espaço de atributos temporalmente aumentado.
 
 \subsubsection{PLS, TPLS e MPLS}
 
-O PLS decompõe a relação entre as variáveis de processo (X) e a qualidade do produto (XMEAS 35, concentração do componente G) em variáveis latentes. O modelo é treinado para maximizar a covariância entre X e y utilizando o algoritmo NIPALS. Os componentes são retidos com base em validação cruzada. O TPLS aplica o PLS aos dados X temporalmente aumentados. O MPLS emprega uma estratégia aprimorada de extração de variáveis latentes através de múltiplos objetivos. A detecção prossegue com as mesmas estatísticas $T^2$ e Q da PCA.
+O PLS decompõe a relação entre as variáveis de processo (X) e a qualidade do produto (XMEAS 35, concentração do componente G) em variáveis latentes \cite{dayal1997}. O modelo é treinado para maximizar a covariância entre X e y utilizando o algoritmo NIPALS. Os componentes são retidos com base em validação cruzada. O TPLS aplica o PLS aos dados X temporalmente aumentados. O MPLS emprega uma estratégia aprimorada de extração de variáveis latentes através de múltiplos objetivos. A detecção prossegue com as mesmas estatísticas $T^2$ e Q da PCA.
 
 \subsubsection{ICA e MICA}
 
-A ICA é implementada utilizando o algoritmo FastICA para extrair componentes estatisticamente independentes dos dados de treinamento. Assumindo uma mistura linear ($\mathbf{X} = \mathbf{A} \mathbf{S}$), a matriz de mistura $\mathbf{A}$ e os componentes fonte $\mathbf{S}$ são estimados de modo que os componentes sejam mutuamente independentes. Para as observações de teste, são calculadas estatísticas baseadas em independência. O MICA estende esse processo aumentando os dados com defasagens temporais antes da decomposição ICA.
+A ICA é implementada utilizando o algoritmo FastICA para extrair componentes estatisticamente independentes dos dados de treinamento \cite{yin2012}. Assumindo uma mistura linear ($\mathbf{X} = \mathbf{A} \mathbf{S}$), a matriz de mistura $\mathbf{A}$ e os componentes fonte $\mathbf{S}$ são estimados de modo que os componentes sejam mutuamente independentes. Para as observações de teste, são calculadas estatísticas baseadas em independência. O MICA estende esse processo aumentando os dados com defasagens temporais antes da decomposição ICA.
+
 
 \subsubsection{Análise Discriminante de Fisher (FDA)}
 
-A FDA é treinada com dados rotulados (amostras normais vs. com falha) para encontrar direções de projeção que maximizam a separação entre classes. O subespaço discriminante projeta todas as observações; as falhas são identificadas quando a projeção se encontra distante do centro da classe normal.
+A FDA é treinada com dados rotulados (amostras normais vs. com falha) para encontrar direções de projeção que maximizam a separação entre classes \cite{yin2012}. O subespaço discriminante projeta todas as observações; as falhas são identificadas quando a projeção se encontra distante do centro da classe normal.
+
+\subsubsection{Autoencoder Probabilístico (PAE)}
+
+O PAE é implementado por meio de uma arquitetura de Autoencoder Variacional (VAE) não-linear, estruturada com redes neurais multicamadas (\textit{encoder} e \textit{decoder}). O treinamento é realizado de forma estritamente não-supervisionada, utilizando apenas a base de dados sob condições normais de operação. O \textit{encoder} mapeia as variáveis de processo para os parâmetros estatísticos (média $\mu_z$ e log-variância $\log \sigma_z^2$) de uma distribuição Gaussiana no espaço latente de dimensão reduzida, utilizando o truque da reparametrização para permitir a retropropagação do erro. O \textit{decoder} recebe o vetor latente amostrado e realiza a reconstrução das variáveis originais de processo. O modelo é otimizado via algoritmo Adam, minimizando uma função de perda composta pelo erro quadrático médio de reconstrução e pela regularização via divergência de Kullback-Leibler ($D_{KL}$). A detecção de falhas prossegue em tempo real através de duas métricas complementares: a estatística $T^2$ Latente, que quantifica a distância de Mahalanobis dos escores médios projetados sob limiar derivado da distribuição $F$, e a estatística $Q$ (SPE), que avalia a magnitude dos resíduos de reconstrução utilizando limites de controle estabelecidos pela aproximação de Box e pela distribuição Qui-quadrado ($\chi^2$).
 
 \subsection{Métricas de Desempenho}
 \label{subsec:metrics}
@@ -403,12 +542,12 @@ onde VP, VN, FP e FN denotam verdadeiros positivos, verdadeiros negativos, falso
 \section{Resultados e Discussão}
 \label{sec:results}
 
-Esta seção apresenta os resultados experimentais obtidos com a aplicação de todas as oito abordagens de detecção de falhas ao processo Tennessee Eastman. Métricas abrangentes de desempenho são avaliadas em 21 cenários de falha para permitir uma análise comparativa rigorosa. As implementações seguem a metodologia descrita na Seção~\ref{sec:methodology}.
+Esta seção apresenta os resultados experimentais obtidos com a aplicação de todas as oito abordagens de detecção de falhas ao processo Tennessee Eastman \cite{downs_and_vogel_1993, germano2016}. Métricas abrangentes de desempenho são avaliadas em 21 cenários de falha para permitir uma análise comparativa rigorosa. As implementações seguem a metodologia descrita na Seção~\ref{sec:methodology}.
 
 \subsection{Taxa de Alarmes Falsos (FAR)}
 \label{subsec:far_results}
 
-A taxa de alarmes falsos mede a porcentagem de amostras de operação normal incorretamente sinalizadas como falhas. Essa métrica é crítica para a implantação prática, pois uma FAR elevada leva a manutenções desnecessárias e à perda de confiança no sistema de detecção.
+A taxa de alarmes falsos mede a porcentagem de amostras de operação normal incorretamente sinalizadas como falhas. Essa métrica é crítica para a implantação prática \cite{yin2012}, pois uma FAR elevada leva a manutenções desnecessárias e à perda de confiança no sistema de detecção.
 
 \begin{table}[H]
 \centering
@@ -420,14 +559,15 @@ A taxa de alarmes falsos mede a porcentagem de amostras de operação normal inc
 \rowcolor{gray!20}
 \textbf{Posição} & \textbf{Método} & \textbf{FAR (\%)} \\
 \midrule
-1 & MICA & 0,52\% \\
-2 & FDA  & 1,15\% \\
-3 & PCA  & 5,62\% \\
-4 & DPCA & 6,56\% \\
-5 & ICA  & 6,98\% \\
-6 & TPLS & 10,42\% \\
-7 & MPLS & 10,31\% \\
-8 & PLS  & 12,19\% \\
+1 & PCA  & 5,62\% \\
+2 & DPCA & 6,56\% \\
+3 &ICA  & 6,98\% \\
+4 &MICA &  0,52\% \\
+5 &FDA  & 1,15\% \\
+6 &PLS  &  12,19\% \\
+7 &TPLS &  10,42\% \\
+8 &MPLS &  10,31\% \\
+9 & PAE  &  17,08\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -443,7 +583,7 @@ A taxa de alarmes falsos mede a porcentagem de amostras de operação normal inc
 \subsection{Taxa de Detecção de Falhas (FDR) por Tipo de Falha}
 \label{subsec:fdr_results}
 
-A taxa de detecção de falhas (sensibilidade) mede a porcentagem de amostras com falha corretamente identificadas como anormais. Uma avaliação abrangente em todos os 21 modos de falha revela os pontos fortes e as limitações de cada método.
+A taxa de detecção de falhas (sensibilidade) mede a porcentagem de amostras com falha corretamente identificadas como anormais \cite{yin2012, germano2016}. Uma avaliação abrangente em todos os 21 modos de falha revela os pontos fortes e as limitações de cada método, conforme detalhado na Tabela \ref{tab:fdr_all_faults}.
 
 \begin{table*}
 \centering
@@ -483,14 +623,31 @@ IDV(21) & 52,1\% & 52,2\% & 52,2\% & 61,1\% & 59,8\% & 55,0\% & 45,5\% & 1,8\% \
 \subsection{Análise de Desempenho por Categoria de Falha}
 \label{subsec:fault_category_analysis}
 
-\textbf{Falhas de Forte Detecção (FDR $>$ 95\%):} IDV(01), IDV(02), IDV(04), IDV(06), IDV(07), IDV(12), IDV(14). Representam falhas abruptas que perturbam significativamente as medições ou a composição do processo. A maioria dos métodos as detecta de forma confiável.
+A sensibilidade dos métodos varia significativamente conforme a natureza e a magnitude dos distúrbios. A Tabela~\ref{tab:fault_categories} categoriza os cenários de falha do processo Tennessee Eastman com base na Taxa de Detecção de Falhas (FDR) observada.
 
-\textbf{Falhas de Detecção Moderada (50\% $<$ FDR $<$ 95\%):} IDV(11), IDV(13), IDV(17), IDV(18). Correspondem a falhas sutis com início gradual ou impacto limitado nas medições. O TPLS e o MPLS geralmente apresentam melhor desempenho nessas falhas devido a considerações temporais e multivariadas.
-
-\textbf{Falhas de Difícil Detecção (FDR $<$ 50\%):} IDV(03), IDV(05), IDV(09), IDV(15), IDV(16), IDV(19), IDV(20), IDV(21). Representam cenários desafiadores nos quais as falhas têm impacto direto mínimo nas medições disponíveis ou interagem fracamente com a dinâmica do processo. Nenhum método isolado atinge alta sensibilidade em todas as falhas difíceis.
+\begin{table*}[!ht]
+\centering
+\caption{Classificação dos cenários de falha do TEP por nível de detectabilidade.}
+\label{tab:fault_categories}
+\small
+\begin{tabular}{llp{5.8cm}p{3.8cm}}
+\toprule
+\rowcolor{gray!20}
+\textbf{Categoria} & \textbf{FDR Operacional} & \textbf{Cenários Associados (IDV)} & \textbf{Características Operacionais} \\
+\midrule
+Forte Detecção & $\text{FDR} > 95\%$ & 1, 2, 4, 6, 7, 12, 14 & Distúrbios abruptos com impacto significativo nas medições. \\
+\midrule
+Detecção Moderada & $50\% < \text{FDR} < 95\%$ & 11, 13, 17, 18 & Falhas sutis de evolução gradual ou impacto limitado. \\
+\midrule
+Difícil Detecção & $\text{FDR} < 50\%$ & 3, 5, 9, 15, 16, 19, 20, 21 & Impacto direto mínimo ou fraca interação dinâmica com as variáveis. \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \subsection{Observações Específicas dos Métodos}
 \label{subsec:method_insights}
+
+Conforme os dados apresentados na Tabela \ref{tab:average_fdr}, as seguintes observações são feitas.
 
 \subsubsection{PCA e DPCA}
 
@@ -521,14 +678,15 @@ A FDA exibe a maior variância de desempenho: excelente para algumas falhas (IDV
 \rowcolor{gray!20}
 \textbf{Método} & \textbf{FDR Média} & \textbf{FAR (\%)} \\
 \midrule
-DPCA & 72,6\% & 6,56\% \\
-TPLS & 71,8\% & 10,42\% \\
-PCA  & 71,3\% & 5,62\% \\
-ICA  & 70,9\% & 6,98\% \\
-MPLS & 70,7\% & 10,31\% \\
-PLS  & 70,1\% & 12,19\% \\
-MICA & 62,3\% & 0,52\% \\
-FDA  & 66,7\% & 1,15\% \\
+PCA  & 71,34\% & 5,62\% \\
+DPCA & 72,95\% & 6,56\% \\
+ICA  & 72,98\% & 6,98\% \\
+MICA & 64,51\% & 0,52\% \\
+FDA  & 56,05\% & 1,15\% \\
+PLS  & 72,95\% & 12,19\% \\
+TPLS & 74,91\% & 10,42\% \\
+MPLS & 74,94\% & 10,31\% \\
+PAE  & 75,5\% & 17,08\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -544,7 +702,7 @@ O DPCA e o TPLS despontam como os melhores em FDR geral (71,8--72,6\%), enquanto
 \subsection{Resumo}
 \label{subsec:summary}
 
-Este trabalho apresenta uma comparação abrangente de benchmark de oito metodologias distintas de detecção de falhas baseadas em dados aplicadas ao processo Tennessee Eastman. O estudo avaliou tanto métodos estatísticos multivariados clássicos (PCA, DPCA) quanto técnicas avançadas que incorporam dinâmica temporal (ICA, MICA) e objetivos de aprendizado supervisionado (variantes do PLS, FDA). A análise comparativa revela que nenhum método único domina em todas as métricas de desempenho, destacando o trade-off entre sensibilidade (taxa de detecção de falhas) e especificidade (taxa de alarmes falsos).
+Este trabalho apresenta uma comparação abrangente de benchmark de oito metodologias distintas de detecção de falhas baseadas em dados aplicadas ao processo Tennessee Eastman \cite{downs_and_vogel_1993, germano2016, yin2012}. O estudo avaliou tanto métodos estatísticos multivariados clássicos (PCA, DPCA) \cite{favoreel2000} quanto técnicas avançadas que incorporam dinâmica temporal (ICA, MICA) e objetivos de aprendizado supervisionado (variantes do PLS, FDA).
 
 \subsection{Principais Constatações}
 \label{subsec:key_findings}
@@ -561,38 +719,12 @@ Este trabalho apresenta uma comparação abrangente de benchmark de oito metodol
     \item \textbf{A seleção do método depende dos requisitos da aplicação}: Para infraestruturas críticas que exigem alta especificidade, o MICA é a melhor opção. Para monitoramento de propósito geral com ênfase na cobertura de detecção, recomenda-se o DPCA. Para aplicações focadas em qualidade, o TPLS ou o MPLS são apropriados.
 \end{enumerate}
 
-\subsection{Tabela-Resumo dos Resultados}
-\label{subsec:conclusion_table}
-
-A Tabela~\ref{tab:conclusion_summary} consolida as principais métricas de desempenho, facilitando a comparação direta entre os métodos e servindo como guia para a seleção de acordo com as prioridades do sistema de monitoramento.
-
-\begin{table*}[H]
-\centering
-\caption{Tabela-Resumo dos Resultados -- Desempenho Geral}
-\label{tab:conclusion_summary}
-\small
-\begin{tabular}{lccc}
-\toprule
-\rowcolor{gray!20}
-\textbf{Método} & \textbf{FDR Média (\%)} & \textbf{FAR (\%)} & \textbf{Destaque} \\
-\midrule
-DPCA & 72,6 & 6,56  & Melhor equilíbrio FDR $\times$ FAR \\
-TPLS & 71,8 & 10,42 & Bom desempenho em falhas sutis \\
-PCA  & 71,3 & 5,62  & Linha de base confiável \\
-ICA  & 70,9 & 6,98  & Detecta direções independentes \\
-MPLS & 70,7 & 10,31 & Maior FDR para IDV(10) \\
-PLS  & 70,1 & 12,19 & Simples e supervisionado \\
-FDA  & 66,7 & 1,15  & Excelente em falhas selecionadas \\
-MICA & 62,3 & 0,52  & Menor FAR, alta especificidade \\
-\bottomrule
-\end{tabular}
-\end{table*}
 
 \subsection{Recomendações para a Prática}
 \label{subsec:recommendations}
 
 \begin{itemize}
-    \item \textbf{Implantação de método único}: Escolha o DPCA como linha de base confiável, oferecendo 72,6\% de FDR média com 6,56\% de FAR.
+    \item \textbf{Implantação de método único}: Escolha o DPCA como linha de base confiável \cite{yin2012}, oferecendo 72,6\% de FDR média com 6,56\% de FAR.
     \item \textbf{Abordagem em conjunto}: Combine múltiplos métodos (ex.: DPCA + MICA) para equilibrar sensibilidade e especificidade. Sinalize alarmes quando houver consenso.
     \item \textbf{Ajuste adaptativo de limiares}: Permita o ajuste dos limiares com base no modo de operação do processo e nas prioridades da política de manutenção.
     \item \textbf{Configuração específica por falha}: Para falhas críticas conhecidas, calibre os métodos individualmente em vez de aplicar limiares uniformes.
@@ -613,45 +745,75 @@ MICA & 62,3 & 0,52  & Menor FAR, alta especificidade \\
 
 O objetivo final é desenvolver sistemas adaptativos de detecção de falhas com múltiplos métodos, capazes de operar de forma confiável em diversos ambientes industriais, com o mínimo de configuração manual, mantendo ao mesmo tempo altos padrões de confiabilidade.
 
+
+
+\subsection{Código Fonte e Reprodutibilidade}
+\label{subsec:fonte}
+
+Os algoritmos, rotinas de pré-processamento e códigos computacionais implementados para a obtenção dos resultados apresentados neste trabalho estão disponíveis publicamente no repositório \cite{github_saulo_2026}. O material inclui scripts desenvolvidos em linguagem Python, estruturados de forma modular, utilizando POO e amplamente comentados para garantir a reprodutibilidade e fins de auditoria científica.
+
 % -------------------------------
 % REFERÊNCIAS
 % -------------------------------
-\begin{thebibliography}{9}
+\begin{thebibliography}{11}
 
 \bibitem{dayal1997}
 Dayal, B. S., \& MacGregor, J. F. (1997).
 \textit{Improved PLS algorithms}.
 Journal of Chemometrics, 11(1), 73-85.
 
-\bibitem{spina2024}
-Spina, D. E., Campos, L. F. O., de Arruda, W. F., Melo, A., Alves, M. F. S., Rabello, G. L., Anzai, T. K., \& Pinto, J. C. (2024).
-\textit{Comparison of autoencoder architectures for fault detection in industrial processes}.
-Digital Chemical Engineering, 12, 100162.
-
-\bibitem{geron2019}
-Géron, A. (2019).
-\textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems} (2nd ed.).
-O'Reilly Media, Inc.
-
-\bibitem{downs1993}
+\bibitem{downs_and_vogel_1993}
 Downs, J. J., \& Vogel, E. F. (1993).
 \textit{A plant-wide industrial process control problem}.
-Computers \& Chemical Engineering, 17(3), 245-255.
+Computers \& Chemical Engineering, 17(3), 245--255.
+
+\bibitem{favoreel2000}
+Favoreel, W., De Moor, B., \& Van Overschee, P. (2000).
+\textit{Subspace state space system identification for industrial processes}.
+Journal of Process Control, 10(2-3), 149-155.
 
 \bibitem{gavish2014}
 Gavish, M., \& Donoho, D. L. (2014).
 \textit{The optimal hard threshold for singular values is $4/\sqrt{3}$}.
 IEEE Transactions on Information Theory, 60(8), 5040-5053.
 
+\bibitem{germano2016}
+Germano, A., Guedes, L. A., Costa, B., \& Bezerra, C. (2016).
+\textit{Detecção de falhas no processo Tennessee Eastman utilizando métricas de tipicidade e excentricidade}.
+In Proceedings of the 13th International Conference on Control, Automation and Systems (ICCAS), pp. 1000--1005.
+
+\bibitem{gertler1998}
+Gertler, J. (1998).
+\textit{Fault detection and diagnosis in engineering systems}.
+Marcel Dekker, New York.
+
+\bibitem{geron2019}
+Géron, A. (2019).
+\textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems} (2nd ed.).
+O'Reilly Media, Inc.
+
+\bibitem{isermann2011}
+Isermann, R. (2011).
+\textit{Fault-diagnosis applications: Model-aided diagnosis and fault-tolerant control}.
+Berlin, Heidelberg: Springer-Verlag.
+
+\bibitem{github_saulo_2026}
+S. J. A. Silva, ``Atividade 3 - Identificação de Falhas (Sistemas Inteligentes 2026),'' \textit{GitHub repository}, 2026. [Online]. Disponível em: \url{https://github.com/SauloJose/SistemasInteligentes2026/tree/main/Atividade%203%20-%20Identifica%C3%A7%C3%A3o%20de%20Falhas}. Acesso em: 18 mai. 2026.
+
+\bibitem{spina2024}
+Spina, D. E., Campos, L. F. O., de Arruda, W. F., Melo, A., Alves, M. F. S., Rabello, G. L., Anzai, T. K., \& Pinto, J. C. (2024).
+\textit{Comparison of autoencoder architectures for fault detection in industrial processes}.
+Digital Chemical Engineering, 12, 100162.
+
+\bibitem{venkatasubramanian2003}
+Venkatasubramanian, V., Rengaswamy, R., Yin, K., \& Kavuri, S. N. (2003).
+\textit{A review of process fault detection and diagnosis: Part I. Quantitative model-based methods}.
+Computers \& Chemical Engineering, 27(3), 293-311.
+
 \bibitem{yin2012}
 Yin, S., Ding, S. X., Haghani, A., Hao, H., \& Zhang, P. (2012).
 \textit{A comparison study of basic data-driven fault diagnosis and process monitoring methods on the benchmark Tennessee Eastman process}.
 Journal of Process Control, 22(9), 1567-1581.
-
-\bibitem{favoreel2000}
-Favoreel, W., De Moor, B., \& Van Overschee, P. (2000).
-\textit{Subspace state space system identification for industrial processes}.
-Journal of Process Control, 10(2-3), 149-155.
 
 \end{thebibliography}
 
