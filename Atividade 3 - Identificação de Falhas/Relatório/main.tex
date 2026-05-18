@@ -42,7 +42,7 @@
 % RESUMO E PALAVRAS-CHAVE
 % -------------------------------
 \begin{abstract}
-A detecção precoce de falhas em processos industriais é crucial para manter a confiabilidade do sistema, a segurança e a eficiência operacional. Este trabalho apresenta um estudo abrangente de algoritmos de detecção de falhas baseados em oito metodologias distintas: métodos estatísticos multivariados (PCA, DPCA), abordagens supervisionadas (PLS, TPLS, MPLS, FDA) e técnicas baseadas em independência estatística (ICA, MICA). O trabalho avalia a eficácia de cada método na detecção de falhas incipientes e abruptas utilizando o benchmark do processo Tennessee Eastman. Os resultados demonstram trade-offs significativos entre a taxa de detecção (sensibilidade) e a taxa de alarmes falsos (especificidade), com o DPCA apresentando o melhor equilíbrio geral (72,6\% de FDR, 6,56\% de FAR), enquanto o MICA alcança a menor taxa de alarmes falsos (0,52\%). A análise comparativa fornece uma base para a seleção de métodos adequados conforme os requisitos específicos da aplicação industrial.
+A detecção precoce de falhas em processos industriais é crucial para manter a confiabilidade do sistema, a segurança e a eficiência operacional. Este trabalho apresenta um estudo abrangente de algoritmos de detecção de falhas baseados em oito metodologias distintas: métodos estatísticos multivariados (PCA, DPCA), abordagens supervisionadas (PLS, TPLS, MPLS, FDA), técnicas baseadas em independência estatística (ICA, MICA) e um autoencoder probabilístico (PAE). O trabalho avalia a eficácia de cada método na detecção de falhas incipientes e abruptas utilizando o benchmark do processo Tennessee Eastman. Os resultados demonstram trade-offs significativos entre a taxa de detecção (sensibilidade) e a taxa de alarmes falsos (especificidade). O PAE alcança a maior sensibilidade geral (75,5\% de FDR), porém com a maior taxa de alarmes falsos (17,08\%). O DPCA oferece o melhor equilíbrio entre sensibilidade e especificidade (72,95\% de FDR e 6,56\% de FAR), enquanto o MICA obtém a menor taxa de alarmes falsos (0,52\%), ideal para aplicações que priorizam a especificidade. A análise comparativa fornece uma base robusta para a seleção de métodos adequados conforme os requisitos específicos de cada aplicação industrial.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -468,7 +468,7 @@ O procedimento para a implementação, treinamento e validação das metodologia
 \begin{enumerate}
     \item \textbf{Aquisição dos Dados:} Leitura dos arquivos brutos do \textit{benchmark} TEP, utilizando a base \texttt{d00.dat} para representação do estado de operação normal e os arquivos \texttt{d{i}\_te.dat} (onde $i = 1, \dots, 21$) correspondentes aos cenários de falha para testes.
     \item \textbf{Pré-processamento e Tratamento:} Centralização na média e escalonamento por variância unitária (normalização $Z$-score) de todas as séries temporais, mitigando discrepâncias de ordens de magnitude física entre os sensores.
-    \item \textbf{Seleção de Variáveis:} Filtragem e mapeamento das variáveis preditoras e de resposta de acordo com a arquitetura interna e objetivo de cada modelo, conforme especificado na Tabela~\ref{tab:metodos_variaveis}.
+    \item \textbf{Seleção de Variáveis:} Filtragem e mapeamento das variáveis preditoras e de resposta de acordo com a arquitetura interna e objetivo de cada modelo, conforme especificados nas Tabelas~\ref{tab:xmeas_variables} e \ref{tab:xmv_variables}.
     \item \textbf{Treinamento do Modelo:} Calibração matemática e cálculo dos limiares estatísticos críticos de controle (como as estatísticas $T^2$ de Hotelling e Q/SPE) utilizando exclusivamente a matriz de dados normais (\texttt{d00.dat}).
     \item \textbf{Teste e Validação:} Submissão dos modelos treinados individualmente a cada um dos 21 arquivos de distúrbio (\texttt{d{i}\_te.dat}) para o cálculo das métricas de Taxa de Detecção de Falhas (FDR) e Taxa de Alarme Falso (FAR).
 \end{enumerate}
@@ -559,15 +559,15 @@ A taxa de alarmes falsos mede a porcentagem de amostras de operação normal inc
 \rowcolor{gray!20}
 \textbf{Posição} & \textbf{Método} & \textbf{FAR (\%)} \\
 \midrule
-1 & PCA  & 5,62\% \\
-2 & DPCA & 6,56\% \\
-3 &ICA  & 6,98\% \\
-4 &MICA &  0,52\% \\
-5 &FDA  & 1,15\% \\
-6 &PLS  &  12,19\% \\
-7 &TPLS &  10,42\% \\
-8 &MPLS &  10,31\% \\
-9 & PAE  &  17,08\% \\
+1 & MICA  & 0,52\% \\
+2 & FDA   & 1,15\% \\
+3 & PCA   & 5,62\% \\
+4 & DPCA  & 6,56\% \\
+5 & ICA   & 6,98\% \\
+6 & MPLS  & 10,31\% \\
+7 & TPLS  & 10,42\% \\
+8 & PLS   & 12,19\% \\
+9 & PAE   & 17,08\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -590,34 +590,7 @@ A taxa de detecção de falhas (sensibilidade) mede a porcentagem de amostras co
 \caption{Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}
 \label{tab:fdr_all_faults}
 \footnotesize
-\begin{tabular}{ccccccccc}
-\toprule
-\rowcolor{gray!20}
-\textbf{Falha} & \textbf{PCA} & \textbf{DPCA} & \textbf{PLS} & \textbf{TPLS} & \textbf{MPLS} & \textbf{ICA} & \textbf{MICA} & \textbf{FDA} \\
-\midrule
-IDV(01) & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,9\% & 99,8\% & 98,9\% \\
-IDV(02) & 98,8\% & 98,9\% & 98,9\% & 98,9\% & 98,8\% & 98,9\% & 97,9\% & 96,9\% \\
-IDV(03) & 12,9\% & 12,1\% & 12,1\% & 17,6\% & 13,6\% & 14,9\% & 3,4\%  & 1,5\% \\
-IDV(04) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 97,5\% & 100,0\%\\
-IDV(05) & 33,6\% & 37,1\% & 37,1\% & 37,4\% & 36,5\% & 35,9\% & 26,2\% & 99,9\% \\
-IDV(06) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%\\
-IDV(07) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 21,8\% \\
-IDV(08) & 98,0\% & 98,0\% & 98,0\% & 98,4\% & 98,5\% & 98,1\% & 97,1\% & 57,6\% \\
-IDV(09) & 8,4\%  & 10,1\% & 10,1\% & 16,1\% & 13,5\% & 10,6\% & 1,6\%  & 1,2\% \\
-IDV(10) & 60,5\% & 63,0\% & 63,0\% & 77,2\% & 90,0\% & 63,1\% & 41,1\% & 65,6\% \\
-IDV(11) & 78,9\% & 84,2\% & 84,2\% & 81,9\% & 81,0\% & 81,1\% & 64,2\% & 65,9\% \\
-IDV(12) & 99,1\% & 99,1\% & 99,1\% & 99,4\% & 99,5\% & 99,2\% & 99,0\% & 81,9\% \\
-IDV(13) & 95,4\% & 95,4\% & 95,4\% & 95,2\% & 95,2\% & 95,4\% & 94,4\% & 58,8\% \\
-IDV(14) & 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 100,0\%& 92,6\% \\
-IDV(15) & 14,1\% & 16,9\% & 16,9\% & 24,6\% & 21,1\% & 18,0\% & 5,5\%  & 1,5\% \\
-IDV(16) & 55,2\% & 58,0\% & 58,0\% & 65,5\% & 80,4\% & 58,9\% & 29,0\% & 6,9\% \\
-IDV(17) & 95,2\% & 96,2\% & 96,2\% & 95,9\% & 95,2\% & 96,0\% & 90,4\% & 81,4\% \\
-IDV(18) & 90,5\% & 90,5\% & 90,5\% & 91,6\% & 90,9\% & 90,6\% & 89,6\% & 85,9\% \\
-IDV(19) & 42,1\% & 53,9\% & 53,9\% & 43,6\% & 33,9\% & 51,4\% & 22,9\% & 2,0\% \\
-IDV(20) & 63,4\% & 66,4\% & 66,4\% & 68,9\% & 65,9\% & 65,5\% & 49,6\% & 54,9\% \\
-IDV(21) & 52,1\% & 52,2\% & 52,2\% & 61,1\% & 59,8\% & 55,0\% & 45,5\% & 1,8\% \\
-\bottomrule
-\end{tabular}
+\includegraphics[width=0.9\linewidth]{Figuras/Basicos/TAETOTAL.png}
 \end{table*}
 
 \subsection{Análise de Desempenho por Categoria de Falha}
@@ -635,11 +608,11 @@ A sensibilidade dos métodos varia significativamente conforme a natureza e a ma
 \rowcolor{gray!20}
 \textbf{Categoria} & \textbf{FDR Operacional} & \textbf{Cenários Associados (IDV)} & \textbf{Características Operacionais} \\
 \midrule
-Forte Detecção & $\text{FDR} > 95\%$ & 1, 2, 4, 6, 7, 12, 14 & Distúrbios abruptos com impacto significativo nas medições. \\
+Forte Detecção (Verde) & $\text{FDR} > 95\%$ & 1, 2, 4, 6, 7, 12, 14 & Distúrbios abruptos com impacto significativo nas medições. \\
 \midrule
-Detecção Moderada & $50\% < \text{FDR} < 95\%$ & 11, 13, 17, 18 & Falhas sutis de evolução gradual ou impacto limitado. \\
+Detecção Moderada (Amarelo) & $50\% < \text{FDR} < 95\%$ & 11, 13, 17, 18 & Falhas sutis de evolução gradual ou impacto limitado. \\
 \midrule
-Difícil Detecção & $\text{FDR} < 50\%$ & 3, 5, 9, 15, 16, 19, 20, 21 & Impacto direto mínimo ou fraca interação dinâmica com as variáveis. \\
+Difícil Detecção (Vermelho) & $\text{FDR} < 50\%$ & 3, 5, 9, 15, 16, 19, 20, 21 & Impacto direto mínimo ou fraca interação dinâmica com as variáveis. \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -665,6 +638,10 @@ A ICA mantém uma FAR moderada (7,0\%) e tem bom desempenho em falhas abruptas (
 
 A FDA exibe a maior variância de desempenho: excelente para algumas falhas (IDV(04), IDV(05), IDV(06): 100\%, 99,9\%, 100\%) e muito ruim para outras (IDV(03), IDV(09), IDV(15), IDV(19), IDV(21): $<$2\%). Isso sugere que a FDA é altamente sensível ao desbalanceamento de classes e à composição dos dados de treinamento.
 
+\subsubsection{PAE}
+
+O PAE exibe conseguiu um FDR  superio a 90\% em 11 das 21 falhas (IDV(1),IDV(2),IDV(4),IDV(6)-(8), IDV(12)-(14), IDV(17) e IDV(18)) e sua menor FDR foi de 27,1\% na IDV(9), tendo um resultado em média superior a todas as outras (75,5\%).
+
 \subsection{Métricas-Resumo}
 \label{subsec:summary_metrics}
 
@@ -678,24 +655,25 @@ A FDA exibe a maior variância de desempenho: excelente para algumas falhas (IDV
 \rowcolor{gray!20}
 \textbf{Método} & \textbf{FDR Média} & \textbf{FAR (\%)} \\
 \midrule
-PCA  & 71,34\% & 5,62\% \\
-DPCA & 72,95\% & 6,56\% \\
-ICA  & 72,98\% & 6,98\% \\
-MICA & 64,51\% & 0,52\% \\
-FDA  & 56,05\% & 1,15\% \\
-PLS  & 72,95\% & 12,19\% \\
-TPLS & 74,91\% & 10,42\% \\
-MPLS & 74,94\% & 10,31\% \\
-PAE  & 75,5\% & 17,08\% \\
+PAE   & 75,50\% & 17,08\% \\
+MPLS  & 74,94\% & 10,31\% \\
+TPLS  & 74,91\% & 10,42\% \\
+ICA   & 72,98\% & 6,98\% \\
+DPCA  & 72,95\% & 6,56\% \\
+PLS   & 72,95\% & 12,19\% \\
+PCA   & 71,34\% & 5,62\% \\
+MICA  & 64,51\% & 0,52\% \\
+FDA   & 56,05\% & 1,15\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-O DPCA e o TPLS despontam como os melhores em FDR geral (71,8--72,6\%), enquanto o MICA lidera em especificidade (FAR 0,52\%) e a FDA apresenta um bom equilíbrio entre especificidade e detecção seletiva de falhas.
+O PAE e o MPLS despontam como os melhores em FDR geral (74,9--75,5\%), enquanto o MICA lidera em especificidade (FAR 0,52\%) e a FDA apresenta um bom equilíbrio entre especificidade e detecção seletiva de falhas.
 
 % -------------------------------
 % SEÇÃO 5: CONCLUSÃO
 % -------------------------------
+
 \section{Conclusão}
 \label{sec:conclusion}
 
@@ -708,28 +686,16 @@ Este trabalho apresenta uma comparação abrangente de benchmark de oito metodol
 \label{subsec:key_findings}
 
 \begin{enumerate}
-    \item \textbf{Trade-off entre FDR e FAR}: O MICA atinge a menor taxa de alarmes falsos (0,52\%), mas com sensibilidade de detecção reduzida para falhas difíceis (FDR média de 62,3\%). Em contrapartida, o DPCA alcança a maior FDR média (72,6\%), mantendo uma FAR razoável (6,56\%).
+    \item \textbf{Trade-off entre FDR e FAR}: O MICA atinge a menor taxa de alarmes falsos (0,52\%), mas com sensibilidade de detecção reduzida para falhas difíceis (FDR média de 64,5\%). Em contrapartida, o PAE alcança a maior FDR média (75,5\%), porém com FAR elevada (17,08\%). O DPCA oferece um bom equilíbrio (FDR 72,95\%, FAR 6,56\%).
     
     \item \textbf{A informação temporal melhora o desempenho}: As extensões temporais (DPCA vs. PCA, TPLS vs. PLS, MICA vs. ICA) geralmente melhoram a FDR em falhas de evolução lenta ou sutis, justificando o custo computacional adicional em muitas aplicações.
     
     \item \textbf{A dificuldade das falhas varia}: Falhas abruptas e de magnitude significativa (IDV(01), IDV(02), IDV(04), IDV(06), IDV(07)) são detectadas de forma confiável (FDR $>$ 95\%) por todos os métodos. Falhas sutis com impacto mínimo nas medições (IDV(03), IDV(09), IDV(15)) permanecem desafiadoras, com FDR frequentemente abaixo de 25\%.
     
-    \item \textbf{Os métodos supervisionados apresentam desempenho variável}: Embora os métodos baseados em PLS atinjam FDR média competitiva (70,1--71,8\%), a FDA exibe alta variância, destacando-se em algumas falhas e falhando completamente em outras. Isso reflete a sensibilidade à composição dos dados de treinamento e ao desbalanceamento de classes.
+    \item \textbf{Os métodos supervisionados apresentam desempenho variável}: Embora os métodos baseados em PLS atinjam FDR média competitiva (72,9--74,9\%), a FDA exibe alta variância, destacando-se em algumas falhas e falhando completamente em outras. Isso reflete a sensibilidade à composição dos dados de treinamento e ao desbalanceamento de classes.
     
-    \item \textbf{A seleção do método depende dos requisitos da aplicação}: Para infraestruturas críticas que exigem alta especificidade, o MICA é a melhor opção. Para monitoramento de propósito geral com ênfase na cobertura de detecção, recomenda-se o DPCA. Para aplicações focadas em qualidade, o TPLS ou o MPLS são apropriados.
+    \item \textbf{A seleção do método depende dos requisitos da aplicação}: Para infraestruturas críticas que exigem alta especificidade, o MICA é a melhor opção. Para monitoramento de propósito geral com ênfase na cobertura de detecção, recomenda-se o DPCA ou o PAE. Para aplicações focadas em qualidade, o TPLS ou o MPLS são apropriados.
 \end{enumerate}
-
-
-\subsection{Recomendações para a Prática}
-\label{subsec:recommendations}
-
-\begin{itemize}
-    \item \textbf{Implantação de método único}: Escolha o DPCA como linha de base confiável \cite{yin2012}, oferecendo 72,6\% de FDR média com 6,56\% de FAR.
-    \item \textbf{Abordagem em conjunto}: Combine múltiplos métodos (ex.: DPCA + MICA) para equilibrar sensibilidade e especificidade. Sinalize alarmes quando houver consenso.
-    \item \textbf{Ajuste adaptativo de limiares}: Permita o ajuste dos limiares com base no modo de operação do processo e nas prioridades da política de manutenção.
-    \item \textbf{Configuração específica por falha}: Para falhas críticas conhecidas, calibre os métodos individualmente em vez de aplicar limiares uniformes.
-\end{itemize}
-
 \subsection{Direções para Pesquisas Futuras}
 \label{subsec:future_work}
 

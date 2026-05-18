@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1779118233.51976 "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" "main.pdf" "main" 1779118235.62207 0
+["pdflatex"] 1779119936.8078 "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" "main.pdf" "main" 1779119938.97844 0
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1776212945 279613 fe62a258ff6d99cc2243c3a2d16aa767 ""
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs10.tfm" 1766664564 688 37338d6ab346c2f1466b29e195316aa4 ""
   "C:/Users/saulo/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs5.tfm" 1776212946 684 3a51bd4fd9600428d5264cf25f04bb9a ""
@@ -153,12 +153,13 @@
   "C:/Users/saulo/AppData/Local/Programs/MiKTeX/tex/latex/translations/translations.sty" 1644048522 44247 2188b95d0ee74e31eca4d316263c58a7 ""
   "C:/Users/saulo/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/saulo/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
+  "Figuras/Basicos/TAETOTAL.png" 1779117624 142897 1a0d87580333cb1878120aef85e238ba ""
   "Figuras/Basicos/TEP.png" 1779106291 316706 34a2055573f11d1891892f87586bec6f ""
   "Figuras/Basicos/autor.png" 1777555358 186198 1f9313eb9cebeff9df45970d3b8ac7ce ""
-  "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" 1779118231 57861 18015c3e7c21fd9f67b6020d1b57d83c ""
-  "main.aux" 1779118235 19183 c643e51b7a46211021c617c20de57d53 "pdflatex"
-  "main.out" 1779118235 13151 340d6d4ab3989163d058047b5abdae41 "pdflatex"
-  "main.tex" 1779118231 57861 18015c3e7c21fd9f67b6020d1b57d83c ""
+  "c:/Users/saulo/Desktop/UFCG/AULAS/SISTEMAS INTELIGENTES - 2026/Atividade 3 - Identificação de Falhas/Relatório/main.tex" 1779119935 55817 2c1f03708037cf88615618efb545ad67 ""
+  "main.aux" 1779119938 19042 c35143e341241a897e53a8d92eac2547 "pdflatex"
+  "main.out" 1779119938 13018 e95e5fd177d80f99904523d460693230 "pdflatex"
+  "main.tex" 1779119935 55817 2c1f03708037cf88615618efb545ad67 ""
   (generated)
   "main.aux"
   "main.log"
