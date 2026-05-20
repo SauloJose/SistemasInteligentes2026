@@ -217,6 +217,17 @@ IDV(21) & Posição de válvula fixa em regime estacionário & Constante & 500 s
 
 O TEP opera continuamente em malha fechada por realimentação, com o objetivo de reciclar materiais não consumidos, garantir a estabilidade térmica e de pressão, e assegurar metas de produção e pureza comercial. Do ponto de vista matemático, o comportamento dinâmico e estacionário da planta é governado por um sistema acoplado de equações diferenciais e algébricas não lineares (DAEs), envolvendo cerca de 50 variáveis de estado fundamentais. Essa complexidade fenomenológica torna o TEP um ambiente altamente fidedigno para validar a robustez de novas ferramentas de ciência de dados e aprendizado de máquina.
 
+\subsubsection{Organização do benchmark}
+
+A base de dados padrão do \textit{Tennessee Eastman Process} (TEP) é estruturada em arquivos de simulação divididos entre matrizes de treinamento (\textit{training}) e de teste (\textit{testing}), organizadas conforme o estado de operação do processo:
+
+\begin{itemize}
+    \item \textbf{Operação Normal:} Os arquivos \texttt{d00.dat} e \texttt{d00\_te.dat} representam as rodadas de simulação sob condições nominais de operação (sem falhas), sendo utilizados respectivamente para o treinamento e teste dos modelos de monitoramento.
+    \item \textbf{Cenários de Falha (Falhas 1 a 21):} Os arquivos que contêm distúrbios introduzidos no sistema são nomeados sob o padrão \texttt{dXX.dat} (para a base de treinamento) e \texttt{dXX\_te.dat} (para a base de teste), onde \texttt{XX} varia de \texttt{01} a \texttt{21}. Cada número corresponde a um tipo específico de falha pré-programada no \textit{benchmark}, como variações em degrau, oscilações em variáveis de processo ou perdas de carga em válvulas.
+\end{itemize}
+
+Os arquivos de dados originais deste \textit{benchmark} encontram-se disponíveis publicamente para \textit{download} no repositório oficial em \cite{te_process_dataport}.
+
 \subsection{Formulação do Problema de Detecção de Falhas}
 \label{subsec:fault_detection}
 
@@ -342,32 +353,30 @@ As projeções no subespaço principal e o cálculo das estatísticas de monitor
 
 \subsubsection{Mínimos Quadrados Parciais (PLS)}
 
-O PLS é um método supervisionado que relaciona as variáveis de processo $\mathbf{X}$ com uma saída de qualidade $\mathbf{y}$ \cite{dayal1997}. O modelo extrai variáveis latentes $\mathbf{t}_i$ que maximizam a covariância entre $\mathbf{X}$ e $\mathbf{y}$:
+O método de Mínimos Quadrados Parciais (\textit{Partial Least Squares} - PLS) é uma técnica supervisionada que estabelece uma relação linear entre a matriz de variáveis de processo $\mathbf{X} \in \mathbb{R}^{n \times m}$ e um vetor de saída de qualidade $\mathbf{y} \in \mathbb{R}^{n \times 1}$ \cite{dayal1997}. O algoritmo extrai variáveis latentes (escores) que maximizam a covariância entre os blocos de entrada e saída, resultando no seguinte modelo de decomposição:
 \begin{align}
 \mathbf{X} &= \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \label{eq:pls_x}\\
 \mathbf{y} &= \mathbf{T} \mathbf{q} + \mathbf{f}, \label{eq:pls_y}
 \end{align}
-A matriz de escores $\mathbf{T}$ e os resíduos $\mathbf{E}$ resultantes dessa extração supervisionada são então utilizados diretamente para o cálculo das estatísticas $T^2$ e $Q$.
+onde $\mathbf{T}$ é a matriz de escores latentes, $\mathbf{P}$ é a matriz de \textit{loadings} de $\mathbf{X}$, $\mathbf{q}$ é o vetor de \textit{loadings} da saída $\mathbf{y}$, enquanto $\mathbf{E}$ e $\mathbf{f}$ representam as matrizes de resíduos. A matriz de escores $\mathbf{T}$ e os resíduos $\mathbf{E}$ obtidos nessa projeção são utilizados diretamente para o cálculo das estatísticas de monitoramento $T^2$ de Hotelling e $Q$.
 
-\subsubsection{Mínimos Quadrados Parciais com Informação Temporal (TPLS)}
+\subsubsection{Mínimos Quadrados Parciais Totais (TPLS)}
 
-O TPLS estende o modelo PLS para um conjunto de dados com defasagens temporais, unindo a modelagem supervisionada da qualidade à captura da dinâmica do processo \cite{dayal1997}:
-\begin{equation}
-\mathbf{X}^{\text{aug}} = \begin{bmatrix}
-\mathbf{X}_k & \mathbf{X}_{k-1} & \cdots & \mathbf{X}_{k-\ell}
-\end{bmatrix}.
-\label{eq:tpls_augmented}
-\end{equation}
+O TPLS (\textit{Total Partial Least Squares}) estende o PLS clássico ao realizar uma decomposição completa e ortogonal do espaço de entrada $\mathbf{X}$ em relação à saída de qualidade $\mathbf{y}$ \cite{zhou2010}. Esse método isola a variação dos dados de processo em um subespaço preditivo (relevante para a qualidade) e em um subespaço ortogonal (irrelevante para a qualidade, mas contendo variações internas do processo):
+\begin{align}
+\mathbf{X} &= \mathbf{T}_p \mathbf{P}_p^\top + \mathbf{T}_o \mathbf{P}_o^\top + \mathbf{E}, \label{eq:tpls_x}\\
+\mathbf{y} &= \mathbf{T}_p \mathbf{q}_p + \mathbf{f}, \label{eq:tpls_y}
+\end{align}
+onde $\mathbf{T}_p$ e $\mathbf{P}_p$ são os escores e \textit{loadings} do subespaço preditivo, enquanto $\mathbf{T}_o$ e $\mathbf{P}_o$ são os escores e \textit{loadings} do subespaço ortogonal, cumprindo a condição de ortogonalidade $\mathbf{T}_o^\top \mathbf{y} = \mathbf{0}$. Dessa forma, o monitoramento baseado em TPLS gera índices $T^2$ e $Q$ independentes para cada subespaço, permitindo distinguir falhas que de fato afetam o produto final de oscilações operacionais benignas.
 
-\subsubsection{Mínimos Quadrados Parciais Multivariados (MPLS)}
+\subsubsection{Mínimos Quadrados Parciais Multivias (MPLS)}
 
-O MPLS amplia o PLS para lidar com múltiplas saídas de qualidade $\mathbf{Y}$ \cite{dayal1997}. A decomposição busca maximizar a covariância entre os escores $\mathbf{T}$ e $\mathbf{U}$:
+O MPLS (\textit{Multi-way Partial Least Squares}) amplia a formulação do PLS para lidar com dados estruturados em três dimensões (variáveis $\times$ tempo $\times$ bateladas), cenário típico de processos industriais operados em batelada com uma matriz de múltiplas saídas de qualidade $\mathbf{Y}$ \cite{nomikos1994}. Mediante o desdobramento (\textit{unfolding}) do tensor tridimensional em uma matriz bidimensional expandida, a decomposição busca maximizar a covariância mútua entre os blocos de escores:
 \begin{equation}
 \mathbf{X} = \mathbf{T} \mathbf{P}^\top + \mathbf{E}, \qquad \mathbf{Y} = \mathbf{U} \mathbf{Q}^\top + \mathbf{F},
 \label{eq:mpls_model}
 \end{equation}
-preservando a mesma estrutura de monitoramento baseada nos índices globais aplicados a $\mathbf{T}$ e $\mathbf{E}$.
-
+onde $\mathbf{U}$ e $\mathbf{Q}$ representam, respectivamente, a matriz de escores e de \textit{loadings} do bloco de qualidade $\mathbf{Y}$, e $\mathbf{F}$ denota o seu resíduo associado. O monitoramento de novas bateladas preserva a mesma estrutura analítica baseada nos índices globais $T^2$ e $Q$ aplicados a $\mathbf{T}$ e $\mathbf{E}$.
 \subsubsection{Análise de Componentes Independentes (ICA)}
 
 Enquanto a PCA descorrelaciona os dados, a ICA busca componentes estatisticamente independentes, modelando as medições $\mathbf{x}$ como uma mistura linear de fontes $\mathbf{s}$ \cite{yin2012}:
@@ -765,6 +774,21 @@ Chemical Engineering Science, 59(14), 2995--3006.
 Yue, H. H., \& Qin, S. J. (2001).
 \textit{Reconstruction-based fault identification using a combined index}.
 Industrial \& Engineering Chemistry Research, 40(20), 4403--4414.
+
+\bibitem{dayal1997}
+DAYAL, B. S.; MACGREGOR, J. F. Improved PLS algorithms. 
+\textit{Journal of Chemometrics}, v. 11, n. 1, p. 73--85, 1997.
+
+\bibitem{zhou2010}
+ZHOU, D.; YIN, S.; DING, S. X. Total partial least squares (TPLS) for quality-relevant process monitoring and fault diagnosis. 
+\textit{IEEE Transactions on Industrial Electronics}, v. 57, n. 12, p. 4123--4132, 2010.
+
+\bibitem{nomikos1994}
+NOMIKOS, P.; MACGREGOR, J. F. Multi-way partial least squares in monitoring batch processes. 
+\textit{Chemometrics and Intelligent Laboratory Systems}, v. 30, n. 1, p. 97--108, 1995.
+
+\bibitem{te_process_dataport} 
+IEEE DataPort, ``Tennessee Eastman Process Dataset,'' 2019. [Online]. Disponível em: \url{https://ieee-dataport.org/documents/te-process}. Acesso em: 20 de maio de 2026.
 
 \end{thebibliography}
 

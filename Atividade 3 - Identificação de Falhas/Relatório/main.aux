@@ -29,9 +29,9 @@
 \citation{downs_and_vogel_1993}
 \citation{downs_and_vogel_1993}
 \citation{yin2012}
+\citation{te_process_dataport}
 \citation{venkatasubramanian2003}
 \citation{venkatasubramanian2003}
-\citation{yin2012}
 \citation{yin2012}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}O Processo Tennessee Eastman (TEP)}{2}{subsection.2.3}\protected@file@percent }
 \newlabel{subsec:tep_process}{{\mbox  {II-C}}{2}{O Processo Tennessee Eastman (TEP)}{subsection.2.3}{}}
@@ -40,6 +40,7 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}2}Variáveis Medidas e Entradas Manipuladas}{2}{subsubsection.2.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}3}Cenários de Falha}{2}{subsubsection.2.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}4}Descrição Detalhada da Dinâmica do Processo}{2}{subsubsection.2.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}5}Organização do benchmark}{2}{subsubsection.2.3.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Formulação do Problema de Detecção de Falhas}{2}{subsection.2.4}\protected@file@percent }
 \newlabel{subsec:fault_detection}{{\mbox  {II-D}}{2}{Formulação do Problema de Detecção de Falhas}{subsection.2.4}{}}
 \newlabel{eq:decision_rule}{{3}{2}{Formulação do Problema de Detecção de Falhas}{equation.3}{}}
@@ -47,24 +48,22 @@
 \newlabel{subsec:statistical_metrics}{{\mbox  {II-E}}{2}{Métricas Estatísticas de Detecção}{subsection.2.5}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-E}1}Estatística T² de Hotelling}{2}{subsubsection.2.5.1}\protected@file@percent }
 \newlabel{eq:t2_statistic}{{4}{2}{Estatística T² de Hotelling}{equation.4}{}}
-\newlabel{eq:t2_limit}{{5}{2}{Estatística T² de Hotelling}{equation.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-E}2}Erro Quadrático de Predição (Estatística Q)}{2}{subsubsection.2.5.2}\protected@file@percent }
-\newlabel{eq:spe_statistic}{{6}{2}{Erro Quadrático de Predição (Estatística Q)}{equation.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Fluxograma do processo industrial e disposição das principais malhas de controle do benchmark Tennessee Eastman (adaptado de \cite  {downs_and_vogel_1993}).}}{3}{figure.1}\protected@file@percent }
 \newlabel{fig:TAEProcess}{{1}{3}{Fluxograma do processo industrial e disposição das principais malhas de controle do benchmark Tennessee Eastman (adaptado de \cite {downs_and_vogel_1993})}{figure.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Unidades principais do processo Tennessee Eastman e suas respectivas funções.}}{3}{table.1}\protected@file@percent }
 \newlabel{tab:tep_units}{{I}{3}{Unidades principais do processo Tennessee Eastman e suas respectivas funções}{table.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Categorias de variáveis de medição instrumentadas ($XMEAS$) no processo.}}{3}{table.2}\protected@file@percent }
 \newlabel{tab:xmeas_variables}{{II}{3}{Categorias de variáveis de medição instrumentadas ($XMEAS$) no processo}{table.2}{}}
+\citation{yin2012}
 \citation{lee2004}
 \citation{yue2001}
-\citation{yin2012,germano2016}
-\citation{venkatasubramanian2003}
-\citation{yin2012}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Categorias de variáveis manipuladas ($XMV$) e atuadores do processo.}}{4}{table.3}\protected@file@percent }
 \newlabel{tab:xmv_variables}{{III}{4}{Categorias de variáveis manipuladas ($XMV$) e atuadores do processo}{table.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Cenários de distúrbios e falhas programadas ($IDV_{1-21}$) no Processo TE.}}{4}{table.4}\protected@file@percent }
 \newlabel{tab:tep_faults}{{IV}{4}{Cenários de distúrbios e falhas programadas ($IDV_{1-21}$) no Processo TE}{table.4}{}}
+\newlabel{eq:t2_limit}{{5}{4}{Estatística T² de Hotelling}{equation.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-E}2}Erro Quadrático de Predição (Estatística Q)}{4}{subsubsection.2.5.2}\protected@file@percent }
+\newlabel{eq:spe_statistic}{{6}{4}{Erro Quadrático de Predição (Estatística Q)}{equation.6}{}}
 \newlabel{eq:spe_limit}{{7}{4}{Erro Quadrático de Predição (Estatística Q)}{equation.7}{}}
 \newlabel{subsubsection:i2_statistic}{{\mbox  {II-E}3}{4}{Estatística $I^2$ (Componentes Independentes)}{subsubsection.2.5.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-E}3}Estatística $I^2$ (Componentes Independentes)}{4}{subsubsection.2.5.3}\protected@file@percent }
@@ -74,113 +73,112 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-E}4}Estatística D (Índice Combinado)}{4}{subsubsection.2.5.4}\protected@file@percent }
 \newlabel{eq:d_statistic}{{10}{4}{Estatística D (Índice Combinado)}{equation.10}{}}
 \newlabel{eq:d_limit}{{11}{4}{Estatística D (Índice Combinado)}{equation.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-F}}Visão Geral Comparativa dos Métodos de Detecção de Falhas}{4}{subsection.2.6}\protected@file@percent }
-\newlabel{subsec:methods_overview}{{\mbox  {II-F}}{4}{Visão Geral Comparativa dos Métodos de Detecção de Falhas}{subsection.2.6}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}1}Análise de Componentes Principais (PCA)}{4}{subsubsection.2.6.1}\protected@file@percent }
-\newlabel{eq:pca_decomposition}{{13}{4}{Análise de Componentes Principais (PCA)}{equation.13}{}}
+\citation{yin2012,germano2016}
+\citation{venkatasubramanian2003}
+\citation{yin2012}
 \citation{favoreel2000}
 \citation{dayal1997}
-\citation{dayal1997}
-\citation{dayal1997}
+\citation{zhou2010}
+\citation{nomikos1994}
 \citation{yin2012}
 \citation{yin2012}
-\citation{spina2024,geron2019}
-\citation{yin2012}
-\citation{downs_and_vogel_1993,yin2012}
-\citation{yin2012}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-F}}Visão Geral Comparativa dos Métodos de Detecção de Falhas}{5}{subsection.2.6}\protected@file@percent }
+\newlabel{subsec:methods_overview}{{\mbox  {II-F}}{5}{Visão Geral Comparativa dos Métodos de Detecção de Falhas}{subsection.2.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}1}Análise de Componentes Principais (PCA)}{5}{subsubsection.2.6.1}\protected@file@percent }
+\newlabel{eq:pca_decomposition}{{13}{5}{Análise de Componentes Principais (PCA)}{equation.13}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}2}Análise de Componentes Principais Dinâmica (DPCA)}{5}{subsubsection.2.6.2}\protected@file@percent }
 \newlabel{eq:dpca_augmented}{{14}{5}{Análise de Componentes Principais Dinâmica (DPCA)}{equation.14}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}3}Mínimos Quadrados Parciais (PLS)}{5}{subsubsection.2.6.3}\protected@file@percent }
 \newlabel{eq:pls_x}{{15}{5}{Mínimos Quadrados Parciais (PLS)}{equation.15}{}}
 \newlabel{eq:pls_y}{{16}{5}{Mínimos Quadrados Parciais (PLS)}{equation.16}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}4}Mínimos Quadrados Parciais com Informação Temporal (TPLS)}{5}{subsubsection.2.6.4}\protected@file@percent }
-\newlabel{eq:tpls_augmented}{{17}{5}{Mínimos Quadrados Parciais com Informação Temporal (TPLS)}{equation.17}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}5}Mínimos Quadrados Parciais Multivariados (MPLS)}{5}{subsubsection.2.6.5}\protected@file@percent }
-\newlabel{eq:mpls_model}{{18}{5}{Mínimos Quadrados Parciais Multivariados (MPLS)}{equation.18}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}4}Mínimos Quadrados Parciais Totais (TPLS)}{5}{subsubsection.2.6.4}\protected@file@percent }
+\newlabel{eq:tpls_x}{{17}{5}{Mínimos Quadrados Parciais Totais (TPLS)}{equation.17}{}}
+\newlabel{eq:tpls_y}{{18}{5}{Mínimos Quadrados Parciais Totais (TPLS)}{equation.18}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}5}Mínimos Quadrados Parciais Multivias (MPLS)}{5}{subsubsection.2.6.5}\protected@file@percent }
+\newlabel{eq:mpls_model}{{19}{5}{Mínimos Quadrados Parciais Multivias (MPLS)}{equation.19}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}6}Análise de Componentes Independentes (ICA)}{5}{subsubsection.2.6.6}\protected@file@percent }
-\newlabel{eq:ica_model}{{19}{5}{Análise de Componentes Independentes (ICA)}{equation.19}{}}
+\newlabel{eq:ica_model}{{20}{5}{Análise de Componentes Independentes (ICA)}{equation.20}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}7}Análise de Componentes Independentes Multivariada (MICA)}{5}{subsubsection.2.6.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}8}Análise Discriminante de Fisher (FDA)}{5}{subsubsection.2.6.8}\protected@file@percent }
-\newlabel{eq:s_b}{{20}{5}{Análise Discriminante de Fisher (FDA)}{equation.20}{}}
-\newlabel{eq:s_w}{{21}{5}{Análise Discriminante de Fisher (FDA)}{equation.21}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}9}Autoencoder Probabilístico (PAE)}{5}{subsubsection.2.6.9}\protected@file@percent }
-\newlabel{eq:pae_reparam}{{22}{5}{Autoencoder Probabilístico (PAE)}{equation.22}{}}
-\newlabel{eq:pae_loss}{{23}{5}{Autoencoder Probabilístico (PAE)}{equation.23}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {III}Metodologia e Implementação}{5}{section.3}\protected@file@percent }
-\newlabel{sec:methodology}{{III}{5}{Metodologia e Implementação}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Descrição do Problema e Características do Conjunto de Dados}{5}{subsection.3.1}\protected@file@percent }
-\newlabel{subsec:problem_description}{{\mbox  {III-A}}{5}{Descrição do Problema e Características do Conjunto de Dados}{subsection.3.1}{}}
+\citation{spina2024,geron2019}
+\citation{yin2012}
+\citation{downs_and_vogel_1993,yin2012}
+\citation{yin2012}
 \citation{gavish2014}
 \citation{dayal1997}
-\citation{yin2012}
-\citation{yin2012}
-\citation{downs_and_vogel_1993,germano2016}
+\newlabel{eq:s_b}{{21}{6}{Análise Discriminante de Fisher (FDA)}{equation.21}{}}
+\newlabel{eq:s_w}{{22}{6}{Análise Discriminante de Fisher (FDA)}{equation.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-F}9}Autoencoder Probabilístico (PAE)}{6}{subsubsection.2.6.9}\protected@file@percent }
+\newlabel{eq:pae_reparam}{{23}{6}{Autoencoder Probabilístico (PAE)}{equation.23}{}}
+\newlabel{eq:pae_loss}{{24}{6}{Autoencoder Probabilístico (PAE)}{equation.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Metodologia e Implementação}{6}{section.3}\protected@file@percent }
+\newlabel{sec:methodology}{{III}{6}{Metodologia e Implementação}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Descrição do Problema e Características do Conjunto de Dados}{6}{subsection.3.1}\protected@file@percent }
+\newlabel{subsec:problem_description}{{\mbox  {III-A}}{6}{Descrição do Problema e Características do Conjunto de Dados}{subsection.3.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Pré-processamento dos Dados e Seleção de Atributos}{6}{subsection.3.2}\protected@file@percent }
 \newlabel{subsec:preprocessing}{{\mbox  {III-B}}{6}{Pré-processamento dos Dados e Seleção de Atributos}{subsection.3.2}{}}
-\newlabel{eq:normalization}{{24}{6}{Pré-processamento dos Dados e Seleção de Atributos}{equation.24}{}}
-\newlabel{eq:augmented_features}{{25}{6}{Pré-processamento dos Dados e Seleção de Atributos}{equation.25}{}}
+\newlabel{eq:normalization}{{25}{6}{Pré-processamento dos Dados e Seleção de Atributos}{equation.25}{}}
+\newlabel{eq:augmented_features}{{26}{6}{Pré-processamento dos Dados e Seleção de Atributos}{equation.26}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Fluxograma de Implementação e Treinamento dos Algoritmos}{6}{subsection.3.3}\protected@file@percent }
 \newlabel{subsec:fluxograma}{{\mbox  {III-C}}{6}{Fluxograma de Implementação e Treinamento dos Algoritmos}{subsection.3.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Resumo da Implementação dos Métodos Individuais}{6}{subsection.3.4}\protected@file@percent }
 \newlabel{subsec:implementation_summary}{{\mbox  {III-D}}{6}{Resumo da Implementação dos Métodos Individuais}{subsection.3.4}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}1}PCA e DPCA}{6}{subsubsection.3.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}2}PLS, TPLS e MPLS}{6}{subsubsection.3.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}3}ICA e MICA}{6}{subsubsection.3.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}4}Análise Discriminante de Fisher (FDA)}{6}{subsubsection.3.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}5}Autoencoder Probabilístico (PAE)}{6}{subsubsection.3.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Métricas de Desempenho}{6}{subsection.3.5}\protected@file@percent }
-\newlabel{subsec:metrics}{{\mbox  {III-E}}{6}{Métricas de Desempenho}{subsection.3.5}{}}
-\newlabel{eq:fdr}{{26}{6}{Métricas de Desempenho}{equation.26}{}}
-\newlabel{eq:far}{{27}{6}{Métricas de Desempenho}{equation.27}{}}
-\newlabel{eq:f1}{{28}{6}{Métricas de Desempenho}{equation.28}{}}
 \citation{yin2012}
-\citation{yin2012,germano2016}
+\citation{yin2012}
+\citation{downs_and_vogel_1993,germano2016}
+\citation{yin2012}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Classificação dos métodos de monitoramento segundo a estrutura temporal, abordagem e fluxo de variáveis.}}{7}{table.5}\protected@file@percent }
 \newlabel{tab:metodos_variaveis_detalhado}{{V}{7}{Classificação dos métodos de monitoramento segundo a estrutura temporal, abordagem e fluxo de variáveis}{table.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}3}ICA e MICA}{7}{subsubsection.3.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}4}Análise Discriminante de Fisher (FDA)}{7}{subsubsection.3.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}5}Autoencoder Probabilístico (PAE)}{7}{subsubsection.3.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Métricas de Desempenho}{7}{subsection.3.5}\protected@file@percent }
+\newlabel{subsec:metrics}{{\mbox  {III-E}}{7}{Métricas de Desempenho}{subsection.3.5}{}}
+\newlabel{eq:fdr}{{27}{7}{Métricas de Desempenho}{equation.27}{}}
+\newlabel{eq:far}{{28}{7}{Métricas de Desempenho}{equation.28}{}}
+\newlabel{eq:f1}{{29}{7}{Métricas de Desempenho}{equation.29}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {IV}Resultados e Discussão}{7}{section.4}\protected@file@percent }
 \newlabel{sec:results}{{IV}{7}{Resultados e Discussão}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Taxa de Alarmes Falsos (FAR)}{7}{subsection.4.1}\protected@file@percent }
 \newlabel{subsec:far_results}{{\mbox  {IV-A}}{7}{Taxa de Alarmes Falsos (FAR)}{subsection.4.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Comparação das Taxas de Alarmes Falsos (FAR) entre Todos os Métodos}}{7}{table.6}\protected@file@percent }
-\newlabel{tab:far_comparison}{{VI}{7}{Comparação das Taxas de Alarmes Falsos (FAR) entre Todos os Métodos}{table.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Taxa de Detecção de Falhas (FDR) por Tipo de Falha}{7}{subsection.4.2}\protected@file@percent }
-\newlabel{subsec:fdr_results}{{\mbox  {IV-B}}{7}{Taxa de Detecção de Falhas (FDR) por Tipo de Falha}{subsection.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Análise de Desempenho por Categoria de Falha}{7}{subsection.4.3}\protected@file@percent }
-\newlabel{subsec:fault_category_analysis}{{\mbox  {IV-C}}{7}{Análise de Desempenho por Categoria de Falha}{subsection.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Observações Específicas dos Métodos}{7}{subsection.4.4}\protected@file@percent }
-\newlabel{subsec:method_insights}{{\mbox  {IV-D}}{7}{Observações Específicas dos Métodos}{subsection.4.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}PCA e DPCA}{7}{subsubsection.4.4.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}}{8}{table.7}\protected@file@percent }
-\newlabel{tab:fdr_all_faults}{{VII}{8}{Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}{table.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Classificação dos cenários de falha do TEP por nível de detectabilidade.}}{8}{table.8}\protected@file@percent }
-\newlabel{tab:fault_categories}{{VIII}{8}{Classificação dos cenários de falha do TEP por nível de detectabilidade}{table.8}{}}
+\citation{yin2012,germano2016}
+\citation{downs_and_vogel_1993,germano2016,yin2012}
+\citation{favoreel2000}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Comparação das Taxas de Alarmes Falsos (FAR) entre Todos os Métodos}}{8}{table.6}\protected@file@percent }
+\newlabel{tab:far_comparison}{{VI}{8}{Comparação das Taxas de Alarmes Falsos (FAR) entre Todos os Métodos}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Taxa de Detecção de Falhas (FDR) por Tipo de Falha}{8}{subsection.4.2}\protected@file@percent }
+\newlabel{subsec:fdr_results}{{\mbox  {IV-B}}{8}{Taxa de Detecção de Falhas (FDR) por Tipo de Falha}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Análise de Desempenho por Categoria de Falha}{8}{subsection.4.3}\protected@file@percent }
+\newlabel{subsec:fault_category_analysis}{{\mbox  {IV-C}}{8}{Análise de Desempenho por Categoria de Falha}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Observações Específicas dos Métodos}{8}{subsection.4.4}\protected@file@percent }
+\newlabel{subsec:method_insights}{{\mbox  {IV-D}}{8}{Observações Específicas dos Métodos}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}PCA e DPCA}{8}{subsubsection.4.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}2}Métodos PLS}{8}{subsubsection.4.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}3}ICA e MICA}{8}{subsubsection.4.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}4}PAE}{8}{subsubsection.4.4.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}5}FDA}{8}{subsubsection.4.4.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}6}PAE}{8}{subsubsection.4.4.6}\protected@file@percent }
-\citation{downs_and_vogel_1993,germano2016,yin2012}
-\citation{favoreel2000}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Métricas-Resumo}{8}{subsection.4.5}\protected@file@percent }
+\newlabel{subsec:summary_metrics}{{\mbox  {IV-E}}{8}{Métricas-Resumo}{subsection.4.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Resumo de Desempenho: FDR Média em Todas as Falhas}}{8}{table.9}\protected@file@percent }
+\newlabel{tab:average_fdr}{{IX}{8}{Resumo de Desempenho: FDR Média em Todas as Falhas}{table.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusão}{8}{section.5}\protected@file@percent }
+\newlabel{sec:conclusion}{{V}{8}{Conclusão}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Resumo}{8}{subsection.5.1}\protected@file@percent }
+\newlabel{subsec:summary}{{\mbox  {V-A}}{8}{Resumo}{subsection.5.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}}{9}{table.7}\protected@file@percent }
+\newlabel{tab:fdr_all_faults}{{VII}{9}{Taxas de Detecção de Falhas (FDR) para Todos os Métodos e Cenários de Falha}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Classificação dos cenários de falha do TEP por nível de detectabilidade.}}{9}{table.8}\protected@file@percent }
+\newlabel{tab:fault_categories}{{VIII}{9}{Classificação dos cenários de falha do TEP por nível de detectabilidade}{table.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Principais Constatações}{9}{subsection.5.2}\protected@file@percent }
+\newlabel{subsec:key_findings}{{\mbox  {V-B}}{9}{Principais Constatações}{subsection.5.2}{}}
 \citation{github_saulo_2026}
 \bibcite{dayal1997}{1}
 \bibcite{downs_and_vogel_1993}{2}
 \bibcite{favoreel2000}{3}
 \bibcite{gavish2014}{4}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Métricas-Resumo}{9}{subsection.4.5}\protected@file@percent }
-\newlabel{subsec:summary_metrics}{{\mbox  {IV-E}}{9}{Métricas-Resumo}{subsection.4.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Resumo de Desempenho: FDR Média em Todas as Falhas}}{9}{table.9}\protected@file@percent }
-\newlabel{tab:average_fdr}{{IX}{9}{Resumo de Desempenho: FDR Média em Todas as Falhas}{table.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusão}{9}{section.5}\protected@file@percent }
-\newlabel{sec:conclusion}{{V}{9}{Conclusão}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Resumo}{9}{subsection.5.1}\protected@file@percent }
-\newlabel{subsec:summary}{{\mbox  {V-A}}{9}{Resumo}{subsection.5.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Principais Constatações}{9}{subsection.5.2}\protected@file@percent }
-\newlabel{subsec:key_findings}{{\mbox  {V-B}}{9}{Principais Constatações}{subsection.5.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Direções para Pesquisas Futuras}{9}{subsection.5.3}\protected@file@percent }
-\newlabel{subsec:future_work}{{\mbox  {V-C}}{9}{Direções para Pesquisas Futuras}{subsection.5.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Código Fonte e Reprodutibilidade}{9}{subsection.5.4}\protected@file@percent }
-\newlabel{subsec:fonte}{{\mbox  {V-D}}{9}{Código Fonte e Reprodutibilidade}{subsection.5.4}{}}
-\@writefile{toc}{\contentsline {section}{Refer\^encias}{9}{section*.1}\protected@file@percent }
 \bibcite{germano2016}{5}
 \bibcite{gertler1998}{6}
 \bibcite{geron2019}{7}
@@ -191,6 +189,15 @@
 \bibcite{yin2012}{12}
 \bibcite{lee2004}{13}
 \bibcite{yue2001}{14}
+\bibcite{dayal1997}{15}
+\bibcite{zhou2010}{16}
+\bibcite{nomikos1994}{17}
+\bibcite{te_process_dataport}{18}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Direções para Pesquisas Futuras}{10}{subsection.5.3}\protected@file@percent }
+\newlabel{subsec:future_work}{{\mbox  {V-C}}{10}{Direções para Pesquisas Futuras}{subsection.5.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Código Fonte e Reprodutibilidade}{10}{subsection.5.4}\protected@file@percent }
+\newlabel{subsec:fonte}{{\mbox  {V-D}}{10}{Código Fonte e Reprodutibilidade}{subsection.5.4}{}}
+\@writefile{toc}{\contentsline {section}{Refer\^encias}{10}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{Biographies}{10}{IEEEbiography.0}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Saulo José Almeida Silva}{10}{IEEEbiography.1}\protected@file@percent }
 \gdef \@abspage@last{10}
