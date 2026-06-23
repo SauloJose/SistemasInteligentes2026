@@ -1,0 +1,46 @@
+====================================================
+        RESUMO DE MÉTRICAS - FILTRO DE KALMAN EKF     
+====================================================
+
+Cenário Sintético: Quadrado
+Data da Análise: 22/06/2026 11:11:32
+Total de Frames: 481
+FPS da Simulação: 30.00
+
+--- PARÂMETROS DO FILTRO ---
+Vetor de Variâncias de Processo (Q Diagonal Config):
+[0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+
+Vetor de Variâncias de Medição (R Diagonal Config):
+[0.1, 0.1, 0.1, 0.1]
+
+----------------------------------------------------
+
+--- TAXAS DE DETECÇÃO E CONSISTÊNCIA ---
+Taxa de Detecção (Visível): 100.00%
+Taxa de Inliers (Dentro da Janela): 28.07%
+
+--- ERROS DE ESTIMAÇÃO (METROS) ---
+RMSE X: 0.6009 m
+RMSE Y: 0.8171 m
+Erro Médio (viés) em X: -0.0233 m
+Erro Médio (viés) em Y: +0.0302 m
+Desvio Padrão Erro X: 0.6004 m
+Desvio Padrão Erro Y: 0.8165 m
+Erro Máximo Absoluto X: 1.7356 m
+Erro Máximo Absoluto Y: 2.2440 m
+
+--- CONVERGÊNCIA DO RMS ---
+RMS X convergiu em 96 frames (3.20 s)
+RMS Y convergiu em 96 frames (3.20 s)
+(Critério: erro RMS <= 5% do valor final por 10 frames consecutivos)
+
+--- AVALIAÇÃO DE CONSISTÊNCIA (NIS) BICAUDAL (95%) ---
+NIS Médio (ideal ≈ 4.0 devido a 4 Torres/DOF): 24.0664
+Percentual abaixo do limite de 2.5% (0.484): 0.21% (Superestimando erro/Pessimista)
+Percentual acima do limite de 97.5% (11.143): 50.52% (Subestimando erro/Otimista)
+ * Nota: O NIS avalia se a matriz de covariância (P) reflete de forma fidedigna
+   a real incerteza do modelo. Em um filtro perfeitamente calibrado estatisticamente,
+   espera-se que aproximadamente ~2.5% dos pontos caiam abaixo e ~2.5% caiam acima dos limites.
+
+====================================================

@@ -1,0 +1,28 @@
+% ============================================================
+% CAPÍTULO 1: INTRODUÇÃO
+% ============================================================
+
+\section{Introdução}
+\label{sec:introduction}
+
+\IEEEPARstart{A}{o} passo que os sistemas robóticos autônomos assumem tarefas mais complexas, cresce também a exigência por soluções de navegação precisas e confiáveis. Para mitigar as incertezas inerentes a esse processo, a literatura tem apostado fortemente em arquiteturas de fusão sensorial — que combinam dados de múltiplos sensores — associadas a análises estatísticas das medições. Essa integração tem se mostrado essencial para refinar a estimativa de estado do sistema e viabilizar sua aplicação no mundo real \cite{odry2018kalman, reina2007adaptive}.
+
+O grande desafio no desenvolvimento dessas soluções de localização está nos erros instrumentais e nos ruídos estocásticos que afetam a dinâmica do robô. Mesmo sob uma modelagem cinemática detalhada, perturbações ambientais e não-linearidades — presentes tanto na resposta física dos sensores quanto na própria dinâmica veicular — acabam inserindo margens inevitáveis de imprecisão no estado estimado.
+
+Para contornar essa limitação e obter estimativas de alta fidelidade, utiliza-se o Filtro de Kalman (KF), um estimador ótimo iterativo para sistemas lineares sob o critério do erro quadrático mínimo \cite{kalman1960new}. Como parte da família dos filtros bayesianos, o KF estima variáveis de estado não mensuradas diretamente, o que viabiliza sua aplicação em cenários de observabilidade incompleta \cite{thrun2005probabilistic}. Essa formulação clássica, no entanto, é limitada em sistemas de posicionamento baseados em distância (alcance), cujas equações de observação são essencialmente não-lineares. Nesses cenários, aplica-se o Filtro de Kalman Estendido (EKF), que contorna a não linearidade por meio da linearização do modelo em torno da estimativa corrente \cite{thrun2005probabilistic, chen2012kalman}.
+
+Embora o EKF possua uma fundamentação teórica consolidada, seu sucesso prático depende diretamente do ajuste das matrizes de covariância do processo ($\mathbf{Q}$) e de medição ($\mathbf{R}$). A sintonia desses parâmetros requer simulações computacionais detalhadas, etapa essencial no desenvolvimento de sistemas de navegação. Um exemplo dessa abordagem é o trabalho de Falek e Kaniewski \cite{falek2020computer}, que propuseram um ambiente em MATLAB para avaliar o comportamento do EKF em redes de posicionamento baseadas em estações fixas.
+
+Nesse contexto, este trabalho apresenta um simulador em Python voltado à análise do rastreamento bidimensional de alvos via quatro estações base. A ferramenta integra uma GUI interativa para avaliar a acurácia posicional (RMSE), a consistência estatística (NIS) e o comportamento da crença do robô (Taxa de \textit{Inliers}). Para detalhar essa abordagem, o artigo está estruturado da seguinte forma: a Seção II revisa a fundamentação do EKF; a Seção III detalha a modelagem cinemática proposta; a Seção IV descreve a metodologia e as métricas de validação; a Seção V discute os resultados comparativos de sintonia; e a Seção VI apresenta as conclusões e trabalhos futuros.
+
+
+\subsection{Notação e Convenções}
+\label{subsec:notation}
+
+Neste trabalho, adota-se a seguinte convenção de notação: escalares são representados por letras minúsculas em itálico ($a$), vetores por minúsculas em negrito ($\mathbf{a}$ ou $\hat{\mathbf{x}}$) e matrizes por maiúsculas em negrito ($\mathbf{A}$ ou $\mathbf{P}$).
+
+No domínio discreto, o subscrito $k$ denota a variável física real no instante de tempo atual (como o estado $\mathbf{x}_k$ ou a medição $\mathbf{z}_k$). Por outro lado, os estados e as covariâncias calculados pelo estimador utilizam uma notação composta:
+\begin{itemize}
+    \item $k|k-1$: indica os valores \textit{a priori} (etapa de predição), computados a partir do histórico do sistema até o instante $k-1$, tais como o estado predito $\hat{\mathbf{x}}_{k|k-1}$ e a covariância do erro $\mathbf{P}_{k|k-1}$.
+    \item $k|k$: representa os valores \textit{a posteriori} (etapa de correção), atualizados após a incorporação da nova medição, tais como o estado corrigido $\hat{\mathbf{x}}_{k|k}$ e a covariância do erro $\mathbf{P}_{k|k}$.
+\end{itemize}

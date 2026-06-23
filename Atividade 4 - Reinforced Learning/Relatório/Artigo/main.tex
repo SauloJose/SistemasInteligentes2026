@@ -1,0 +1,127 @@
+\documentclass[journal]{IEEEtran}
+
+% ============================================================
+% PREÂMBULO: PACOTES E CONFIGURAÇÕES
+% ============================================================
+
+% --- CODIFICAÇÃO E IDIOMA ---
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+
+% --- MATEMÁTICA ---
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{mathrsfs}
+
+% --- FIGURAS E TABELAS ---
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{subcaption}
+
+% --- UTILITÁRIOS ---
+\usepackage{cite}
+\usepackage{siunitx}        
+\usepackage[
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=green!50!black,
+    urlcolor=blue!80!black,
+    pdfborder={0 0 0},
+]{hyperref}   
+\usepackage{url}            
+\usepackage{siunitx}
+\sisetup{output-decimal-marker = {,}, retain-explicit-plus = true}
+
+% --- PSEUDOCÓDIGO ---
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% ============================================================
+% CONFIGURAÇÃO DO DOCUMENTO
+% ============================================================
+
+\title{Rastreamento Bidimensional de Alvos via Filtro de Kalman Estendido em Sistemas de Posicionamento por Estações Base}
+
+\author{Saulo José Almeida Silva,~\IEEEmembership{Mestrando,~UFCG,}%
+        \thanks{S. J. A. Silva é mestrando no Programa de Pós-Graduação em Engenharia Elétrica (PPgEE) da Universidade Federal de Campina Grande (UFCG), Campina Grande, PB, Brasil. E-mail: saulo.jose.silva@ee.ufcg.edu.br.}}
+
+% CABEÇALHO (Ajustado para refletir o tema real do seu trabalho)
+\markboth{PROCESSAMENTO ADAPTATIVO DE SINAIS, 2026. PPgEE. CEEI.}%
+{Silva \MakeLowercase{\textit{et al.}}: Rastreamento via EKF com Medições \textit{Range-Only}}
+
+% ============================================================
+% DOCUMENTO PRINCIPAL
+% ============================================================
+
+\begin{document}
+
+\maketitle
+
+% --- RESUMO E PALAVRAS-CHAVE ---
+\begin{abstract}
+A localização precisa é um requisito fundamental para a operação autônoma de sistemas robóticos móveis. Este trabalho apresenta o desenvolvimento, a implementação e a análise rigorosa de um Filtro de Kalman Estendido (EKF) aplicado ao rastreamento bidimensional de alvos utilizando medições não lineares de distância (\textit{range-only}). Fundamentado em um modelo cinemático de Posição-Velocidade-Aceleração (PVA), o estimador foi avaliado por meio de um ambiente de simulação em Python. A arquitetura viabiliza o monitoramento contínuo da acurácia posicional (RMSE), da consistência estatística via \textit{Normalized Innovation Squared} (NIS) e da validação espacial de crença através da Taxa de \textit{Inliers}. Os resultados demonstram que, sob sintonia adequada das matrizes de processo ($\mathbf{Q}$) e medição ($\mathbf{R}$), o EKF atinge precisão submétrica e robustez contra oclusões temporárias. Em contraste, a descalibração paramétrica revela um desacoplamento perigoso: subestimar $\mathbf{R}$ gera falsas altas taxas de \textit{inliers} enquanto corrompe o NIS, e subestimar $\mathbf{Q}$ induz a atrasos de fase severos. Conclui-se que cruzar métricas geométricas e estatísticas é imperativo para atestar a verdadeira confiabilidade do filtro.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Filtro de Kalman Estendido, Localização em Tempo Real, Posicionamento \textit{Range-Only}, Consistência Estatística.
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+% ============================================================
+% INCLUSÃO DOS CAPÍTULOS
+% ============================================================
+
+% Capítulo 1: Introdução
+\input{capitulos/01_introducao.tex}
+
+% Capítulo 2: Revisão Teórica
+\input{capitulos/02_revisao_teorica.tex}
+
+% Capítulo 3: Problemática
+\input{capitulos/03_problematica.tex}
+
+% Capítulo 4: Metodologia
+\input{capitulos/04_metodologia.tex}
+
+% Capítulo 5: Resultados
+\input{capitulos/05_resultados.tex}
+
+% Capítulo 6: Conclusão
+\input{capitulos/06_conclusao.tex}
+
+% ============================================================
+% REFERÊNCIAS BIBLIOGRÁFICAS
+% ============================================================
+
+\bibliographystyle{IEEEtran}
+\bibliography{referencias}
+
+
+% ============================================================
+% APÊNDICES
+% ============================================================
+\appendices
+
+\section{Material Suplementar e Repositório do Código}
+\label{apendice:material_suplementar}
+
+O código-fonte completo da ferramenta de simulação desenvolvida neste trabalho está disponível publicamente para consulta e reprodução dos testes. O repositório inclui a interface gráfica (GUI) em Python, os scripts de geração das trajetórias e a implementação matemática do EKF. 
+
+Também foram disponibilizados no link os gráficos de todas as simulações em alta resolução, incluindo as trajetórias espaciais e as métricas do NIS que não couberam na íntegra ao longo do texto.
+
+O acesso ao código e aos dados adicionais pode ser feito pelo link:
+
+\begin{center}
+    \url{https://github.com/SauloJose/PASKalmanTra}
+\end{center}
+
+No repositório \cite{silva2026ferramenta}, é possível rodar o simulador localmente para interagir com o ajuste das matrizes $\mathbf{Q}$ e $\mathbf{R}$, além de acompanhar a variação dinâmica da janela de ROI e das elipses de incerteza do filtro em tempo real.
+
+% Se você possui os gráficos detalhados do capítulo de Resultados neste arquivo:
+\input{apendices/simulacao.tex}
+
+
+\end{document}

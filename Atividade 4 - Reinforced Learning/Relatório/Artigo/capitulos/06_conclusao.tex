@@ -1,0 +1,40 @@
+% ============================================================
+% CAPÍTULO 6: CONCLUSÃO
+% ============================================================
+
+\section{Conclusão}
+\label{sec:conclusion}
+
+\subsection{Resumo e Principais Constatações}
+\label{subsec:summary_findings}
+
+Este trabalho analisou o comportamento de um Filtro de Kalman Estendido (EKF) sob o modelo Posição-Velocidade-Aceleração (PVA) no rastreamento 2D com medições \textit{range-only}. Em condições ideais de sintonia ($\mathbf{Q}=0{,}64$ e $\mathbf{R}=0{,}09$), o sistema apresentou alta precisão espacial (RMSE abaixo de $0{,}34$\,m) e consistência estatística (NIS dentro do intervalo de confiança em mais de $95\%$ do tempo), além de lidar com robustez em cenários de oclusão graças à inércia mecânica do modelo.
+
+A principal descoberta, evidenciada ao descalibrar as matrizes intencionalmente, foi o claro desacoplamento entre precisão visual e coerência matemática. Subestimar a covariância de processo ($\mathbf{Q}=0{,}01$) engessa o filtro, fazendo a Taxa de \textit{Inliers} desabar para cerca de $10\%$ por gerar elipses de incerteza artificialmente pequenas. Já a subestimação da medição ($\mathbf{R}=0{,}01$) cria uma falsa sensação de acerto: o filtro persegue o ruído às cegas, mantendo o RMSE baixo e os \textit{Inliers} acima de $93\%$. No entanto, ele opera em completa inconsistência matemática, uma falha crítica que só é exposta pelo fato do NIS estourar o limite de $11{,}143$.
+
+\subsection{Contribuições}
+\label{subsec:contributions}
+
+As principais entregas desta pesquisa incluem:
+\begin{itemize}
+    \item O desenvolvimento de um ambiente de simulação capaz de renderizar elipses de incerteza e auditar matrizes de covariância em tempo real.
+    \item A consolidação do uso conjunto de RMSE e NIS como ferramenta definitiva de diagnóstico, provando que erros de posição aparentes não bastam para validar o filtro.
+    \item A formulação da Taxa de \textit{Inliers} a partir de uma Região de Interesse (ROI) Dinâmica. Além de mensurar a coerência da crença do robô, essa estratégia abre um caminho promissor para sistemas de visão computacional, permitindo que o algoritmo processe apenas recortes preditivos da imagem.
+\end{itemize}
+
+\subsection{Limitações e Trabalhos Futuros}
+\label{subsec:limitations_future}
+
+O estudo limitou-se a modelar os ruídos como puramente gaussianos, desconsiderando distúrbios severos encontrados na prática (como efeitos de \textit{multipath} e NLOS em redes UWB), além de ter adotado um processo de calibração manual empírico. 
+
+Para solucionar essas lacunas e expandir o projeto, sugerem-se as seguintes frentes de trabalho:
+\begin{itemize}
+    \item \textbf{Sintonia Automática:} Implementar algoritmos de otimização matemática (como descida de gradiente ou algoritmos genéticos) para sintonizar $\mathbf{Q}$ e $\mathbf{R}$ de forma totalmente autônoma.
+    \item \textbf{Integração com Visão Computacional Prática:} Empregar a ROI preditiva calculada pelo EKF em fluxos reais de processamento de câmera para quantificar ganhos práticos em \textit{Frames Por Segundo} (FPS).
+    \item \textbf{Filtros Avançados:} Comparar este EKF com estimadores que não dependem do cálculo de matrizes Jacobianas para contornar dinâmicas altamente não lineares, como o Filtro de Kalman \textit{Unscented} (UKF) ou Filtros de Partículas.
+\end{itemize}
+
+\subsection{Conclusão Final}
+\label{subsec:final_conclusion}
+
+Em suma, projetar um bom estimador significa entender que quantificar a própria incerteza de maneira realista é tão vital quanto calcular a coordenada final do alvo. O equilíbrio entre a precisão macroespacial do RMSE e a auditoria interna do NIS, aliado às otimizações viabilizadas pela Taxa de \textit{Inliers}, consolida uma base metodológica segura e eficiente para o avanço de algoritmos em robótica móvel e sistemas embarcados.

@@ -1,0 +1,46 @@
+====================================================
+        RESUMO DE MÉTRICAS - FILTRO DE KALMAN EKF     
+====================================================
+
+Cenário Sintético: Tangente Hiperbólica
+Data da Análise: 22/06/2026 10:55:07
+Total de Frames: 1200
+FPS da Simulação: 30.00
+
+--- PARÂMETROS DO FILTRO ---
+Vetor de Variâncias de Processo (Q Diagonal Config):
+[0.64, 0.64, 0.64, 0.64, 0.64, 0.64]
+
+Vetor de Variâncias de Medição (R Diagonal Config):
+[0.09, 0.09, 0.09, 0.09]
+
+----------------------------------------------------
+
+--- TAXAS DE DETECÇÃO E CONSISTÊNCIA ---
+Taxa de Detecção (Visível): 100.00%
+Taxa de Inliers (Dentro da Janela): 100.00%
+
+--- ERROS DE ESTIMAÇÃO (METROS) ---
+RMSE X: 0.1167 m
+RMSE Y: 0.1441 m
+Erro Médio (viés) em X: +0.0015 m
+Erro Médio (viés) em Y: +0.0016 m
+Desvio Padrão Erro X: 0.1167 m
+Desvio Padrão Erro Y: 0.1440 m
+Erro Máximo Absoluto X: 0.4106 m
+Erro Máximo Absoluto Y: 0.5784 m
+
+--- CONVERGÊNCIA DO RMS ---
+RMS X convergiu em 452 frames (15.07 s)
+RMS Y convergiu em 240 frames (8.00 s)
+(Critério: erro RMS <= 5% do valor final por 10 frames consecutivos)
+
+--- AVALIAÇÃO DE CONSISTÊNCIA (NIS) BICAUDAL (95%) ---
+NIS Médio (ideal ≈ 4.0 devido a 4 Torres/DOF): 3.3398
+Percentual abaixo do limite de 2.5% (0.484): 4.42% (Superestimando erro/Pessimista)
+Percentual acima do limite de 97.5% (11.143): 0.92% (Subestimando erro/Otimista)
+ * Nota: O NIS avalia se a matriz de covariância (P) reflete de forma fidedigna
+   a real incerteza do modelo. Em um filtro perfeitamente calibrado estatisticamente,
+   espera-se que aproximadamente ~2.5% dos pontos caiam abaixo e ~2.5% caiam acima dos limites.
+
+====================================================

@@ -1,0 +1,248 @@
+% ============================================================
+% CAPÍTULO 2: REVISÃO TEÓRICA E TRABALHOS RELACIONADOS
+% ============================================================
+\section{Revisão Teórica e Trabalhos Relacionados}
+\label{sec:theoretical}
+
+Este capítulo apresenta a base teórica para o problema de estimativa de estados em robótica. O texto parte da modelagem determinística ideal e avança para os filtros probabilísticos usados na mitigação de incertezas em sistemas reais. Inicialmente, são apresentados os conceitos de sistemas dinâmicos e as fontes de ruído que afetam o comportamento do robô. Em seguida, introduz-se a definição de crença (\textit{belief}) sob a suposição de Markov, o que fundamenta a relação geométrica entre a matriz de covariância e a região de incerteza do agente. Por fim, são discutidos o modelo Gauss-Markov, a discretização temporal, as formulações do Filtro de Kalman (Linear e Estendido) e as métricas para validação do estimador.
+
+\subsection{Sistemas Dinâmicos e Modelagem Determinística}
+\label{subsec:dynamical_sys}
+
+A modelagem de robôs móveis para navegação e controle costuma utilizar a representação em espaço de estados. No domínio do tempo contínuo, a evolução do vetor de estados ocultos $\mathbf{x}(t) \in \mathbb{R}^n$ e as medições ideais do sistema são descritas por equações diferenciais e algébricas \cite{ogata2010}, na forma:
+
+\begin{equation}
+    \label{eq:dinamica_continua}
+    \dot{\mathbf{x}}(t) = f(\mathbf{x}(t), \mathbf{u}(t))
+    \quad \text{e} \quad
+    \mathbf{z}(t) = h(\mathbf{x}(t))
+\end{equation}
+
+onde $\mathbf{u}(t) \in \mathbb{R}^m$ é o vetor de entradas de controle e $\mathbf{z}(t) \in \mathbb{R}^d$ é o vetor de medições. Se as funções $f$ e $h$ forem lineares, o sistema pode ser escrito em sua forma canônica:
+
+\begin{equation}
+    \label{eq:sistema_linear_continuo}
+    \dot{\mathbf{x}}(t) = \mathbf{A}_c \mathbf{x}(t) + \mathbf{B}_c \mathbf{u}(t)
+    \quad \text{e} \quad
+    \mathbf{z}(t) = \mathbf{H}_c \mathbf{x}(t)
+\end{equation}
+
+As matrizes $\mathbf{A}_c$, $\mathbf{B}_c$ e $\mathbf{H}_c$ definem a dinâmica, a entrada e a observação contínuas \cite{ogata2010}. Essa abordagem determinística assume sensores perfeitos e um modelo físico exato, desconsiderando os ruídos e distúrbios comuns em ambientes reais.
+
+\subsection{Sistemas Estocásticos e Fontes de Incerteza}
+\label{subsec:incertezas}
+
+Na prática, os sistemas robóticos sofrem perturbações que inviabilizam o uso de modelos puramente determinísticos. Essas incertezas vêm de duas fontes principais \cite{reina2007adaptive}:
+
+\begin{enumerate}
+    \item \textbf{Ruído de Processo ($\boldsymbol{\epsilon}$):} Representa distúrbios dinâmicos, forças ambientais (como atrito variante, irregularidades no solo e correntes de ar) e erros de modelagem que afetam a locomoção do robô.
+    \item \textbf{Ruído de Medição ($\boldsymbol{\delta}$):} Agrupa as incertezas dos próprios sensores. Em sistemas de localização por radiofrequência ou acústicos, decorre de efeitos de multicaminho, ruído térmico nos circuitos, atenuação de sinal e falhas de calibração \cite{barshalom2001estimation}.
+\end{enumerate}
+
+Com a inclusão desses ruídos, o estado deixa de ser um ponto exato e passa a ser tratado como uma variável aleatória. A evolução temporal do sistema e as leituras dos sensores passam a ser modeladas por densidades de probabilidade condicionais:
+
+\begin{equation}
+    \label{eq:prob_transicao}
+    \mathbf{x}_k \sim P(\mathbf{x}_k \mid \mathbf{x}_{k-1}, \mathbf{u}_k)
+\end{equation}
+\begin{equation}
+    \label{eq:prob_medicao}
+    \mathbf{z}_k \sim P(\mathbf{z}_k \mid \mathbf{x}_k)
+\end{equation}
+
+onde $k \in \mathbb{N}$ indica o passo de tempo discreto. O tratamento matemático dessas incertezas garante que os estimadores operem de forma estável mesmo sob condições severas \cite{falek2020computer}.
+
+\subsection{Robótica Probabilística, Suposição de Markov e a Crença (\textit{Belief})}
+\label{subsec:prob_robotic}
+
+Para lidar com as incertezas de modelos e sensores, a robótica probabilística calcula a crença (\textit{belief}) do robô a respeito de seu próprio estado. O \textit{belief} é a distribuição de probabilidade a posteriori do vetor de estados $\mathbf{x}_k$, condicionada ao histórico de comandos enviados e medições recebidas \cite{thrun2005probabilistic}:
+
+\begin{equation}
+    \label{eq:belief}
+    bel(\mathbf{x}_k) = P(\mathbf{x}_k \mid \mathbf{z}_{1:k}, \mathbf{u}_{1:k})
+\end{equation}
+
+Para viabilizar o cálculo dessa distribuição em tempo real, aplica-se a \textbf{Suposição de Markov}. Esse postulado assume que o estado atual $\mathbf{x}_k$ é uma estatística suficiente do sistema, contendo toda a informação do passado. Assim, o estado futuro depende apenas do estado presente e da ação atual, o que simplifica a probabilidade condicional para:
+
+\begin{equation}
+    \label{eq:suposicao_markov}
+    P(\mathbf{x}_k \mid \mathbf{x}_{1:k-1}, \mathbf{u}_{1:k}, \mathbf{z}_{1:k-1}) = P(\mathbf{x}_k \mid \mathbf{x}_{k-1}, \mathbf{u}_k)
+\end{equation}
+
+A propriedade de Markov permite dividir o cálculo do \textit{belief} de forma recursiva em duas etapas: predição e correção, que formam a estrutura dos filtros de estimação sequenciais \cite{thrun2005probabilistic}.
+
+\subsection{O Modelo Gauss-Markov}
+\label{subsec:gauss_markov}
+
+O cálculo das distribuições probabilísticas torna-se tratável quando o sistema segue o Modelo Gauss-Markov. Esse modelo define um processo que obedece à propriedade de Markov e cujos ruídos de processo e medição ($\boldsymbol{\epsilon}_k$ e $\boldsymbol{\delta}_k$) são gaussianos, brancos e com média nula \cite{simon2006optimal}.
+
+A principal vantagem dessa modelagem está na conservação das propriedades estatísticas: transformações lineares aplicadas a variáveis gaussianas geram novas variáveis gaussianas \cite{barshalom2001estimation}. Com isso, o \textit{belief} $bel(\mathbf{x}_k)$ permanece estritamente gaussiano ao longo do tempo. 
+
+Como uma distribuição gaussiana é definida apenas pelo seu vetor de médias ($\hat{\mathbf{x}}$) e por sua matriz de covariância ($\mathbf{P}$), o problema de rastrear uma função contínua de dimensão infinita resume-se a atualizar esses dois parâmetros a cada passo de tempo discreto.
+
+\subsection{Discretização do Sistema e das Covariâncias}
+\label{subsec:discretization}
+
+Embora os modelos cinemáticos baseiem-se no tempo contínuo ($t$), os processadores digitais operam em intervalos discretos $\Delta t$. Considerando o vetor de controle $\mathbf{u}(t)$ constante dentro de cada intervalo de amostragem, o sistema linear contínuo $\dot{\mathbf{x}}(t) = \mathbf{A}_c \mathbf{x}(t) + \mathbf{B}_c \mathbf{u}(t)$ é convertido para sua forma discreta equivalente sob o modelo Gauss-Markov \cite{simon2006optimal}:
+
+\begin{equation}
+    \label{eq:sistema_discreto}
+    \mathbf{x}_k = \mathbf{A}_k \mathbf{x}_{k-1} + \mathbf{B}_k \mathbf{u}_k + \boldsymbol{\epsilon}_k
+\end{equation}
+
+As matrizes discretas de transição de estados ($\mathbf{A}_k$) e de entrada ($\mathbf{B}_k$) são obtidas a partir das matrizes contínuas pelas relações:
+\begin{equation}
+    \label{eq:matrizes_discretas}
+    \mathbf{A}_k = e^{\mathbf{A}_c \Delta t} \quad \text{e} \quad \mathbf{B}_k = \left( \int_{0}^{\Delta t} e^{\mathbf{A}_c \tau} \, d\tau \right) \mathbf{B}_c
+\end{equation}
+
+\subsubsection*{Discretização das Covariâncias de Ruído}
+
+A amostragem digital também exige a discretização das matrizes de covariância dos ruídos \cite{simon2006optimal}. A matriz de covariância do ruído de processo contínuo, $\mathbf{Q}_c$, propaga-se de acordo com a própria dinâmica do sistema. A matriz discreta equivalente, $\mathbf{Q}_k$, é calculada pela integral:
+
+\begin{equation}
+    \label{eq:covariancia_discreta}
+    \mathbf{Q}_k = \int_{0}^{\Delta t} e^{\mathbf{A}_c \tau} \mathbf{Q}_c e^{\mathbf{A}_c^T \tau} \, d\tau
+\end{equation}
+
+Para taxas de amostragem altas ($\Delta t \ll 1$), pode-se aproximar essa relação por $\mathbf{Q}_k \approx \mathbf{Q}_c \Delta t$, assumindo um crescimento linear da incerteza \cite{simon2006optimal}. No entanto, em modelos cinemáticos de ordem superior — como o espaço de estados Posição-Velocidade-Aceleração (PVA) deste trabalho —, a resolução analítica da Equação (\ref{eq:covariancia_discreta}) é necessária para manter o acoplamento cruzado das incertezas, gerando os termos polinomiais apresentados na Seção \ref{sec:problem_formulation}.
+
+\subsubsection*{Extensão para Sistemas Não Lineares}
+
+Se a dinâmica do sistema contínuo for não linear, utilizam-se métodos de integração numérica para a discretização. O método de Euler, por exemplo, resulta na aproximação:
+
+\begin{equation}
+    \label{eq:nl_discreto}
+    \mathbf{x}_k \approx \mathbf{x}_{k-1} + f(\mathbf{x}_{k-1}, \mathbf{u}_{k-1}) \Delta t
+\end{equation}
+
+Para propagar a incerteza gaussiana nesses casos, o modelo aproximado deve ser linearizado localmente por meio de matrizes Jacobianas a cada passo $k$ \cite{thrun2005probabilistic}.
+
+\subsection{Filtros de Estimação Baseados em Kalman}
+\label{subsec:Kalman}
+
+O Filtro de Kalman é a solução ótima para propagar e corrigir o \textit{belief} gaussiano em sistemas lineares sob a suposição de Markov. O algoritmo não estima o estado como um ponto fixo, mas rastreia os parâmetros que definem sua distribuição de probabilidade.
+
+\subsubsection{Filtro de Kalman Linear}
+\label{subsubsec:KalmanLinear}
+
+Com base no modelo Gauss-Markov discreto, a dinâmica e o modelo de observação incorporam os ruídos de processo ($\boldsymbol{\epsilon}_k$) e medição ($\boldsymbol{\delta}_k$):
+
+\begin{equation}
+    \label{eq:kalman_dinamica}
+    \mathbf{x}_k = \mathbf{A}_k \mathbf{x}_{k-1} + \mathbf{B}_k \mathbf{u}_k + \boldsymbol{\epsilon}_k
+\end{equation}
+\begin{equation}
+    \label{eq:kalman_medicao}
+    \mathbf{z}_k = \mathbf{H}_k \mathbf{x}_k + \boldsymbol{\delta}_k
+\end{equation}
+
+onde $\boldsymbol{\epsilon}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_k)$ e $\boldsymbol{\delta}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R}_k)$. O filtro calcula recursivamente o estado corrigido $\hat{\mathbf{x}}_{k|k}$ (média) e sua matriz de covariância $\mathbf{P}_{k|k}$ (incerteza). O processo é dividido em etapas de predição e correção, conforme descrito no Algoritmo \ref{alg:kalman_linear} \cite{thrun2005probabilistic}.
+
+\begin{algorithm}[H]
+\caption{Filtro de Kalman Linear}
+\label{alg:kalman_linear}
+\begin{algorithmic}[1]
+\Require $\hat{\mathbf{x}}_{k-1|k-1}, \mathbf{P}_{k-1|k-1}, \mathbf{u}_k, \mathbf{z}_k$
+\Statex \textbf{Predição (Propagação do Modelo):}
+\State $\hat{\mathbf{x}}_{k|k-1} \gets \mathbf{A}_k \hat{\mathbf{x}}_{k-1|k-1} + \mathbf{B}_k \mathbf{u}_k$
+\State $\mathbf{P}_{k|k-1} \gets \mathbf{A}_k \mathbf{P}_{k-1|k-1} \mathbf{A}_k^T + \mathbf{Q}_k$
+\Statex \textbf{Correção (Atualização pela Medição):}
+\State $\mathbf{K}_k \gets \mathbf{P}_{k|k-1} \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_{k|k-1} \mathbf{H}_k^T + \mathbf{R}_k)^{-1}$
+\State $\hat{\mathbf{x}}_{k|k} \gets \hat{\mathbf{x}}_{k|k-1} + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \hat{\mathbf{x}}_{k|k-1})$
+\State $\mathbf{P}_{k|k} \gets (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_{k|k-1} (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k)^T + \mathbf{K}_k \mathbf{R}_k \mathbf{K}_k^T$
+\Ensure $\hat{\mathbf{x}}_{k|k}, \mathbf{P}_{k|k}$
+\end{algorithmic}
+\end{algorithm}
+
+Se houver oclusão de sinal ou indisponibilidade dos sensores, a etapa de correção (linhas 4 a 6) não é executada. Nessas situações, o filtro opera em malha aberta apenas com a predição cinemática. Como consequência, a covariância $\mathbf{P}_{k|k-1}$ cresce a cada passo, resultando no aumento contínuo do ROI Dinâmico.
+
+\subsubsection{Filtro de Kalman Estendido (EKF)}
+\label{subsubsec:KalmanExtended}
+
+Quando o sistema de localização utiliza distâncias radiais em relação a estações com coordenadas conhecidas, as equações de observação tornam-se não lineares devido à geometria do problema. Nesses cenários, utiliza-se o Filtro de Kalman Estendido (EKF) \cite{thrun2005probabilistic}, que aceita funções não lineares genéricas $g$ e $h$:
+
+\begin{equation}
+    \label{eq:ekf_dinamica}
+    \mathbf{x}_k = g(\mathbf{u}_k, \mathbf{x}_{k-1}) + \boldsymbol{\epsilon}_k
+\end{equation}
+\begin{equation}
+    \label{eq:ekf_medicao}
+    \mathbf{z}_k = h(\mathbf{x}_k) + \boldsymbol{\delta}_k
+\end{equation}
+
+Para propagar as matrizes de incerteza, o algoritmo utiliza uma expansão em série de Taylor de primeira ordem. Essa linearização local exige o cálculo das matrizes Jacobianas $\mathbf{G}_k$ e $\mathbf{H}_k$ em torno das estimativas atuais:
+
+\begin{equation}
+    \label{eq:jacobiano_G}
+    \mathbf{G}_k = \frac{\partial g(\mathbf{u}_k, \mathbf{x}_{k-1})}{\partial \mathbf{x}_{k-1}} \Bigg|_{\mathbf{x}_{k-1} = \hat{\mathbf{x}}_{k-1|k-1}} 
+\end{equation}
+\begin{equation}
+    \label{eq:jacobiano_H}
+    \mathbf{H}_k = \frac{\partial h(\mathbf{x}_k)}{\partial \mathbf{x}_k} \Bigg|_{\mathbf{x}_k = \hat{\mathbf{x}}_{k|k-1}}
+\end{equation}
+
+Essas matrizes Jacobianas substituem as matrizes fixas do caso linear na propagação das incertezas e no cálculo do ganho de Kalman ($\mathbf{K}_k$), permitindo o rastreamento em sistemas com não linearidades geométricas (Algoritmo \ref{alg:kalman_estendido}).
+
+\begin{algorithm}[H]
+\caption{Filtro de Kalman Estendido (EKF)}
+\label{alg:kalman_estendido}
+\begin{algorithmic}[1]
+\Require $\hat{\mathbf{x}}_{k-1|k-1}, \mathbf{P}_{k-1|k-1}, \mathbf{u}_k, \mathbf{z}_k$
+\Statex \textbf{Predição (Propagação do Modelo):}
+\State $\hat{\mathbf{x}}_{k|k-1} \gets g(\mathbf{u}_k, \hat{\mathbf{x}}_{k-1|k-1})$
+\State $\mathbf{G}_k \gets \text{Jacobiano}(g, \mathbf{u}_k, \hat{\mathbf{x}}_{k-1|k-1})$
+\State $\mathbf{P}_{k|k-1} \gets \mathbf{G}_k \mathbf{P}_{k-1|k-1} \mathbf{G}_k^T + \mathbf{Q}_k$
+\Statex \textbf{Correção (Atualização pela Medição):}
+\State $\mathbf{H}_k \gets \text{Jacobiano}(h, \hat{\mathbf{x}}_{k|k-1})$
+\State $\mathbf{K}_k \gets \mathbf{P}_{k|k-1} \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_{k|k-1} \mathbf{H}_k^T + \mathbf{R}_k)^{-1}$
+\State $\hat{\mathbf{x}}_{k|k} \gets \hat{\mathbf{x}}_{k|k-1} + \mathbf{K}_k (\mathbf{z}_k - h(\hat{\mathbf{x}}_{k|k-1}))$
+\State $\mathbf{P}_{k|k} \gets (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_{k|k-1} (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k)^T + \mathbf{K}_k \mathbf{R}_k \mathbf{K}_k^T$
+\Ensure $\hat{\mathbf{x}}_{k|k}, \mathbf{P}_{k|k}$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Métricas de Avaliação e Consistência Estocástica}
+\label{subsec:metricas_validacao}
+
+O desempenho do estimador é avaliado por meio de métricas de precisão geométrica e testes estatísticos baseados nos resíduos da inovação \cite{barshalom2001estimation}.
+
+\subsubsection{Root Mean Square Error (RMSE)}
+
+A precisão geométrica espacial nas trajetórias bidimensionais é medida pela Raiz do Erro Quadrático Médio (RMSE). O RMSE calcula a distância euclidiana média entre o estado real $\mathbf{x}_k$ e o estado corrigido $\hat{\mathbf{x}}_{k|k}$ em um horizonte de $N$ amostras:
+
+\begin{equation}
+    \label{eq:rmse}
+    \text{RMSE} = \sqrt{\frac{1}{N} \sum_{k=1}^{N} \|\mathbf{x}_k - \hat{\mathbf{x}}_{k|k}\|^2}
+\end{equation}
+
+Essa métrica também pode ser calculada de forma independente para os eixos cartesianos ($X$ e $Y$) para identificar a direção de eventuais falhas de rastreamento.
+
+\subsubsection{Normalized Innovation Squared (NIS)}
+
+A precisão medida pelo RMSE não garante que o estimador seja consistente do ponto de vista estatístico. Um filtro é consistente se seus erros de estimação tiverem média nula e covariância compatível com os valores teóricos calculados pelo próprio algoritmo \cite{barshalom2001estimation}. O teste do quadrado da inovação normalizada (NIS) verifica se a incerteza estimada na matriz $\mathbf{P}_k$ condiz com o comportamento real das medições.
+
+A inovação $\boldsymbol{\nu}_k \in \mathbb{R}^d$ representa a diferença entre a medição real e a predição calculada pelo filtro:
+
+\begin{equation}
+    \label{eq:inovacao}
+    \boldsymbol{\nu}_k = \mathbf{z}_k - h(\hat{\mathbf{x}}_{k|k-1})
+\end{equation}
+
+A matriz de covariância teórica da inovação, obtida na etapa de correção, é dada por:
+
+\begin{equation}
+    \label{eq:cov_inovacao}
+    \mathbf{S}_k = \mathbf{H}_k \mathbf{P}_{k|k-1} \mathbf{H}_k^T + \mathbf{R}_k
+\end{equation}
+
+O escalar NIS ($\epsilon_k$) é calculado pela forma quadrática baseada na distância de Mahalanobis:
+
+\begin{equation}
+    \label{eq:nis}
+    \epsilon_k = \boldsymbol{\nu}_k^T \mathbf{S}_k^{-1} \boldsymbol{\nu}_k
+\end{equation}
+
+Se o modelo cinemático e as matrizes de ruído ($\mathbf{Q}_k$ e $\mathbf{R}_k$) estiverem corretos, a variável $\epsilon_k$ segue uma distribuição Qui-Quadrado ($\chi^2$) com $n_z$ graus de liberdade, onde $n_z$ é a dimensão do vetor de medições $\mathbf{z}_k$ \cite{barshalom2001estimation}.
+
+Quando o histograma empírico dos resultados se mantém dentro dos limites de aceitação da distribuição Qui-Quadrado, o filtro e o ROI Dinâmico são considerados consistentes. Desvios prolongados para fora desses limites indicam erros de parametrização, sinalizando que o filtro está subestimando ou superestimando as incertezas reais do sistema \cite{barshalom2001estimation}.
